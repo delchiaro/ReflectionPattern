@@ -1,0 +1,46 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
+             version="1.0">
+
+    <persistence-unit name="hellojpa" transaction-type="RESOURCE_LOCAL">
+        <!-- JPA assume automaticamente che il provider sia hibernate!
+             Inoltre inserendolo manualmente mi da errore (probabilmente non è la classe giusta).
+            <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        -->
+
+        <properties>
+            <!-- not need to include hibernate.cfg.xml because we moved hibernate config to this file!
+                <property name="hibernate.ejb.cfgfile" value="/hibernate.cfg.xml" />
+            -->
+
+            <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
+            <property name="hibernate.connection.url" value="jdbc:mysql://localhost/testdb" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+            <property name="hibernate.connection.username" value="root" />
+            <property name="hibernate.connection.password" value="root" />
+
+            <property name="hibernate.archive.autodetection" value="class, hbm" />
+            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.format_sql" value="true" />
+
+            <property name="hibernate.c3p0.min_size" value="5" />
+            <property name="hibernate.c3p0.max_size" value="20" />
+            <property name="hibernate.c3p0.timeout" value="300" />
+            <property name="hibernate.c3p0.max_statements" value="50" />
+
+            <!-- Drop and re-create the database schema on startup-->
+            <property name="hibernate.hbm2ddl.auto" value="create"/>
+
+        </properties>
+
+
+
+        <!-- Not needed, Hibernate supports auto-detection in JSE
+            <class>hello.Message</class>
+        -->
+
+
+    </persistence-unit>
+
+</persistence>
