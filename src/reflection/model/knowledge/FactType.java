@@ -49,4 +49,9 @@ public abstract class FactType {
             return true;
         else return false;
     }
+
+    @Override
+    public String toString() {
+        return this.getTypeName();
+    }
 }

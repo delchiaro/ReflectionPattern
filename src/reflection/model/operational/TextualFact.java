@@ -9,29 +9,36 @@ import javax.persistence.*;
 
 
 @Entity
+@Access(AccessType.FIELD)
 @DiscriminatorValue("TEXTUAL")
-public class TextualFact extends Fact<String> {
+public class TextualFact extends Fact {
 
 
     protected TextualFact(){}
 
     public TextualFact(TextualType type, String value) {
-        super(type, value);
+        super(type);
     }
 
     @Column(name="textual_value")
-    @Access(AccessType.PROPERTY)
+    private String value;
+
     public String getValue() {
-        return super.value;
+        return value;
     }
-    protected void setValue(String value) {
-        super.value = value;
-    }
+//    protected void setValue(String value) {
+//        value = value;
+//    }
 
     @Override
     public boolean equals(Object obj) {
         if(!(obj instanceof  TextualFact)) return false;
         return super.equals(obj);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + ": " + this.value;
     }
 
 }

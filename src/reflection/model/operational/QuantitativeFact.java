@@ -11,43 +11,31 @@ import javax.persistence.*;
 
 
 @Entity
-@Access(AccessType.PROPERTY)
+@Access(AccessType.FIELD)
 @DiscriminatorValue("QUANTITATIVE")
-public class QuantitativeFact extends Fact<Number> {
+public class QuantitativeFact extends Fact {
 
     // ONLY FOR HIBERNATE:
-    private Unit unit = null;
+    @Embedded
+    private Quantity quantity;
 
     protected QuantitativeFact(){}
 
     public QuantitativeFact(QuantitativeType factType, Number value, Unit measurementUnit) throws IllegalQuantitativeUnitException {
-        super(factType, value);
-        if(factType.isUnitLegal(measurementUnit) == false )
-            throw new IllegalQuantitativeUnitException();
-        else this.unit = measurementUnit;
+        this(factType, new Quantity(value, measurementUnit));
+
     }
     public QuantitativeFact(QuantitativeType factType, Quantity quantity) throws IllegalQuantitativeUnitException {
-        this(factType, quantity.getValue(), quantity.getUnit());
-    }
-
-
-
-    @ManyToOne (fetch=FetchType.LAZY)
-    public Unit getUnit() { return unit; }
-    protected void setUnit(Unit unit) throws IllegalQuantitativeUnitException {
-        if( ((QuantitativeType)(super.getType())).isUnitLegal(unit) == false )
+        super(factType);
+        if(factType.isUnitLegal(quantity.getUnit()) == false )
             throw new IllegalQuantitativeUnitException();
-        this.unit = unit;
+        else this.quantity = quantity;
+
     }
 
-    @Column(name="number_value")
-    public Number getValue(){
-        return super.value;
+    public Quantity getQuantity() {
+        return this.quantity;
     }
-    protected void setValue( Number newValue){
-        super.value = newValue;
-    }
-
 
     @Override
     public boolean equals(Object obj) {
@@ -56,10 +44,17 @@ public class QuantitativeFact extends Fact<Number> {
 
         // TODO: implementare una logica diversa senza richiamare super.equals(), in modo da considerare uguali
         // due numeri con valori diversi ma che convertiti alla stessa unitá di misura risultano di egual valore.
-        if(super.equals(qFact) && unit.equals(qFact.unit))
+        if(super.equals(qFact) && quantity.equals(qFact.quantity))
             return true;
         else return false;
     }
 
     public class IllegalQuantitativeUnitException extends IllegalValueException {}
+
+
+
+    @Override
+    public String toString() {
+        return super.toString() + ": " + this.quantity.getValue();
+    }
 }

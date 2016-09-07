@@ -9,29 +9,30 @@ import reflection.model.knowledge.QualitativeType;
 import javax.persistence.*;
 
 @Entity
+@Access(AccessType.FIELD)
 @DiscriminatorValue("QUALITATIVE")
-public class QualitativeFact extends Fact<Phenomenon> {
+public class QualitativeFact extends Fact {
+
+    @ManyToOne (fetch=FetchType.LAZY)
+    private Phenomenon phenomenon;
 
     protected QualitativeFact(){}
-    public QualitativeFact(QualitativeType factType, Phenomenon value) throws IllegalQualitativePhenomenonException {
-        super(factType, value);
-        if(factType.isPhenomenonLegal(value) == false )
+    public QualitativeFact(QualitativeType factType, Phenomenon phen) throws IllegalQualitativePhenomenonException {
+        super(factType);
+        this.phenomenon = phen;
+        if(factType.isPhenomenonLegal(phen) == false )
             throw new IllegalQualitativePhenomenonException();
     }
 
 
-    // TODO: Doesn't work.. solve!
-    @ManyToOne(fetch = FetchType.LAZY)
-    @Access(AccessType.PROPERTY)
-    @JoinColumn(name = "qualitative_value_phenom_id")
-    public Phenomenon getValue() {
-        return super.value;
+    public Phenomenon getPhenomenon() {
+        return phenomenon;
     }
-    protected void setValue(Phenomenon value) throws IllegalQualitativePhenomenonException {
-        if( ((QualitativeType)(super.getType())).isPhenomenonLegal(value) == false )
-            throw new IllegalQualitativePhenomenonException();
-        super.value = value;
-    }
+//    protected void setPhenomenon(Phenomenon value) throws IllegalQualitativePhenomenonException {
+//        if( ((QualitativeType)(super.getType())).isPhenomenonLegal(value) == false )
+//            throw new IllegalQualitativePhenomenonException();
+//        phenomenon = value;
+//    }
 
 
     @Override
@@ -43,4 +44,8 @@ public class QualitativeFact extends Fact<Phenomenon> {
     public class IllegalQualitativePhenomenonException extends IllegalValueException {}
 
 
+    @Override
+    public String toString() {
+        return super.toString() + ": " + this.phenomenon.getValue();
+    }
 }

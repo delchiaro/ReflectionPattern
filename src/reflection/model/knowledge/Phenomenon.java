@@ -35,6 +35,6 @@ public class Phenomenon {
 
     @Override
     public String toString() {
-        return value; //+ "  -  JAVA_ADDRESS:" + super.toString();
+        return value;
     }
 }

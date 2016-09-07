@@ -10,10 +10,13 @@ import java.util.HashMap;
 
 @Embeddable
 public class Quantity {
-    @ManyToOne
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "unit_id")
     private Unit    unit;
 
-    @Column
+    @Column(name="quantity_value")
     private Number  value;
 
     protected Quantity() {}
@@ -33,4 +36,13 @@ public class Quantity {
         return UnitConverter.converter().convert(this, toUnit);
     }
 
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof  Quantity)) return false;
+        Quantity q = (Quantity) obj;
+        if(this.getUnit().equals(q.getUnit()) && this.getValue().equals(q.getValue()))
+            return true;
+        else return false;
+    }
 }

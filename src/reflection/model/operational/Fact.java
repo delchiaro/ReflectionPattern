@@ -52,7 +52,7 @@ import java.util.Objects;
 @Access(AccessType.FIELD)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "FACT_DISCRIM", discriminatorType = DiscriminatorType.STRING )
-public abstract class Fact<T> {
+public abstract class Fact {
 
     @Id @GeneratedValue
     @Column(name = "id")
@@ -64,16 +64,10 @@ public abstract class Fact<T> {
     @ManyToOne
     private FactType type;
 
-    @Transient
-    protected T value;
-
-    public abstract T getValue();
-    protected abstract void setValue(T value) throws IllegalValueException;
 
     protected Fact(){}
-    public Fact(FactType factType, T value){
+    public Fact(FactType factType){
         this.type = factType;
-        this.value = value;
     }
     public FactType getType() {
         return type;
@@ -84,12 +78,19 @@ public abstract class Fact<T> {
     public boolean equals(Object obj) {
         if(!(obj instanceof Fact)) return false;
         Fact fact = (Fact) obj;
-        if(this.id.equals(fact.id) && this.type.equals(fact.type) && this.value.equals(((Fact) obj).value))
+        if(this.id.equals(fact.id) && this.type.equals(fact.type))
             return true;
         else return false;
     }
 
 
     public class IllegalValueException extends Exception {}
+
+
+
+    @Override
+    public String toString() {
+        return this.getType().toString();
+    }
 }
 

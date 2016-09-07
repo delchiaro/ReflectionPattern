@@ -1,7 +1,6 @@
 package reflection.IO.compositeAdapter;
 
-import reflection.model.operational.CompositeFact;
-import reflection.model.operational.Fact;
+import reflection.model.operational.*;
 
 import java.util.Set;
 
@@ -34,6 +33,7 @@ public class FactCompositeAdapter extends CompositeAdapter<Fact, String> {
         if(getAdapted() instanceof CompositeFact) // evito di stampare ": null" per ogni CompositeFact (getValue() restituisce null)
             return getAdapted().getType().getTypeName();
 
-        else return getAdapted().getType().getTypeName() + ": " + getAdapted().getValue();
+        else return getAdapted().toString();
+
     }
 }

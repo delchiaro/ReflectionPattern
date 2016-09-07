@@ -12,15 +12,9 @@ import java.util.function.BooleanSupplier;
 
 
 @Entity
+@Access(AccessType.FIELD)
 @DiscriminatorValue("COMPOSITE")
-public class CompositeFact extends Fact<Void> {
-
-
-
-    public Void getValue() {
-        return null;
-    }
-    protected void setValue(Void value) throws IllegalValueException {}
+public class CompositeFact extends Fact {
 
     public class IllegalFactTypeException extends Exception {}
 
@@ -37,7 +31,7 @@ public class CompositeFact extends Fact<Void> {
 
     protected CompositeFact() {}
     public CompositeFact(CompositeType compType) {
-        super(compType, null);
+        super(compType);
         for(FactType type : compType.getChildTypes())
             compositionTypeCheck.put(type, 0);
     }
@@ -76,6 +70,11 @@ public class CompositeFact extends Fact<Void> {
             return true;
         }
         else return false;
+    }
 
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }
