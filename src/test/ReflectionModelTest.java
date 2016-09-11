@@ -1,15 +1,14 @@
 package test;
 
-import reflection.IO.compositeAdapter.FactCompositeAdapter;
-import reflection.IO.compositeAdapter.FactTypeCompositeAdapter;
-import reflection.IO.OutputManager;
-import reflection.model.knowledge.*;
-import reflection.model.knowledge.quantity.ImpossibleConversionException;
-import reflection.model.knowledge.quantity.Quantity;
-import reflection.model.knowledge.quantity.Unit;
-import reflection.model.operational.QualitativeFact;
-import reflection.model.operational.QuantitativeFact;
-import reflection.model.operational.TextualFact;
+import reflectionPattern.IO.compositeAdapter.FactTypeCompositeAdapter;
+import reflectionPattern.IO.OutputManager;
+import reflectionPattern.model.knowledge.*;
+import reflectionPattern.model.knowledge.quantity.ImpossibleConversionException;
+import reflectionPattern.model.knowledge.quantity.Quantity;
+import reflectionPattern.model.knowledge.quantity.Unit;
+import reflectionPattern.model.operational.QualitativeFact;
+import reflectionPattern.model.operational.QuantitativeFact;
+import reflectionPattern.model.operational.TextualFact;
 
 import static org.junit.Assert.*;
 

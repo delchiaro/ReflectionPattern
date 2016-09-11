@@ -1,0 +1,25 @@
+Done:
+- Creare generatore di dati per DB per fare test di performance su un database grosso.
+- Sistema per contare le query e tempi
+
+
+TODO:
+- Test Case:
+     U.C.1: l'apertura di una nuova visita medica, con l'istanziazione dei Fact (vuoti) corrispondenti alla struttura dei FactType.
+     U.C.2: il salvataggio di una visita medica compilata
+     U.C.3: la lettura di una visita medica precedentemente salvata.
+
+
+
+
+- Fare un DB diverso per ogni modifica (ogni branch dovrá avere un diverso nome dello schema del db, semplicemente).
+
+
+- Implementare branch con modalitá JOIN TABLE (oltre che single table)
+
+- Implementare branch Riferimenti ai padri (anchestor) nei tipi composti, in modo da fare un DAO che con una semplice query trovi tutti i figli: (seleziona tutti i figli che hanno un riferimento a tale padre).
+
+- Implementa sublcass di Phenomenon così da avere una tabella che elenca certi tipi di phenomenon che appartengono a questo subtype (gestire con JOINTABLE nel mapping).
+- Rifare la stessa cosa sopra  ma con aggregazione dei fenomeni che sostituisce la ereditarietá.
+
+
