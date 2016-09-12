@@ -1,14 +1,13 @@
 /**
  * Created by nagash on 31/08/16.
  */
-package reflection.model.operational;
+package reflectionPattern.model.operational;
 
-import reflection.model.knowledge.CompositeType;
-import reflection.model.knowledge.FactType;
+import reflectionPattern.model.knowledge.CompositeType;
+import reflectionPattern.model.knowledge.FactType;
 
 import javax.persistence.*;
 import java.util.*;
-import java.util.function.BooleanSupplier;
 
 
 @Entity
@@ -18,7 +17,7 @@ public class CompositeFact extends Fact {
 
     public class IllegalFactTypeException extends Exception {}
 
-    @OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.PERSIST /* , mappedBy = "parent_fact",*/ )//EAGER = carico tutti i figli subito!
+    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.PERSIST /* , mappedBy = "parent_fact",*/ )//EAGER = carico tutti i figli subito!
     @JoinColumn(name="parent_fact")
     private Set<Fact> _childFacts = new HashSet<>();
 

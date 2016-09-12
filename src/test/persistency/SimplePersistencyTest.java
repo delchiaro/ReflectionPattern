@@ -1,4 +1,4 @@
-package test;
+package test.persistency;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 /**
  * Created by nagash on 02/09/16.
  */
-public class PersistencyTest {
+public class SimplePersistencyTest {
 
     Set<Unit> units = new HashSet<>();
     CompositeType   rootFactTypes;

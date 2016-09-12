@@ -1,8 +1,6 @@
-package reflection.model.knowledge.quantity;
+package reflectionPattern.model.knowledge.quantity;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.HashMap;
 
 /**
  * Created by nagash on 02/09/16.

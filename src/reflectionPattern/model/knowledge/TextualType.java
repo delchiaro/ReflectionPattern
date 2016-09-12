@@ -1,7 +1,7 @@
 /**
  * Created by nagash on 31/08/16.
  */
-package reflection.model.knowledge;
+package reflectionPattern.model.knowledge;
 
 
 import javax.persistence.DiscriminatorValue;

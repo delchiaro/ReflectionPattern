@@ -1,4 +1,4 @@
-package reflection.IO.compositeAdapter;
+package reflectionPattern.IO.compositeAdapter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,7 +14,7 @@ public abstract class CompositeAdapter<ADAPTED, T> {
     }
 
 
-    protected ADAPTED getAdapted(){
+    public ADAPTED getAdapted(){
         return adapted;
     }
 

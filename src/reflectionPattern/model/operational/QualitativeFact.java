@@ -1,10 +1,10 @@
 /**
  * Created by nagash on 31/08/16.
  */
-package reflection.model.operational;
+package reflectionPattern.model.operational;
 
-import reflection.model.knowledge.Phenomenon;
-import reflection.model.knowledge.QualitativeType;
+import reflectionPattern.model.knowledge.Phenomenon;
+import reflectionPattern.model.knowledge.QualitativeType;
 
 import javax.persistence.*;
 

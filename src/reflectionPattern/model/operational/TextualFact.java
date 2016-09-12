@@ -1,9 +1,9 @@
 /**
  * Created by nagash on 31/08/16.
  */
-package reflection.model.operational;
+package reflectionPattern.model.operational;
 
-import reflection.model.knowledge.TextualType;
+import reflectionPattern.model.knowledge.TextualType;
 
 import javax.persistence.*;
 

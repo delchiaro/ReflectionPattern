@@ -1,13 +1,11 @@
 /**
  * Created by nagash on 31/08/16.
  */
-package reflection.model.operational;
+package reflectionPattern.model.operational;
 
-import reflection.model.knowledge.FactType;
-import reflection.model.knowledge.quantity.Quantity;
+import reflectionPattern.model.knowledge.FactType;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 
 

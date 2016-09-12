@@ -1,4 +1,4 @@
-package reflection.model.knowledge.quantity;
+package reflectionPattern.model.knowledge.quantity;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;

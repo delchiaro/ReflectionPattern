@@ -1,9 +1,7 @@
 /**
  * Created by nagash on 31/08/16.
  */
-package reflection.model.knowledge;
-
-import reflection.model.operational.QualitativeFact;
+package reflectionPattern.model.knowledge;
 
 import javax.persistence.*;
 

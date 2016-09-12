@@ -1,8 +1,11 @@
-package reflection.IO;
+package reflectionPattern.IO;
 
-import reflection.IO.compositeAdapter.CompositeAdapter;
-import reflection.model.knowledge.CompositeType;
-import reflection.model.knowledge.FactType;
+import org.hibernate.Hibernate;
+import reflectionPattern.IO.compositeAdapter.CompositeAdapter;
+import reflectionPattern.IO.compositeAdapter.FactCompositeAdapter;
+import reflectionPattern.IO.compositeAdapter.FactTypeCompositeAdapter;
+import reflectionPattern.model.knowledge.FactType;
+import reflectionPattern.model.operational.Fact;
 
 import java.util.ArrayList;
 
@@ -103,6 +106,14 @@ public class OutputManager {
 
     }
 
+
+    public static void printFactTypeTree(FactType root) {
+        System.out.print(adapterExplorer(new FactTypeCompositeAdapter(root)));
+    }
+
+    public static void printFactTree(Fact root) {
+        System.out.print(adapterExplorer(new FactCompositeAdapter(root)));
+    }
 
 
 

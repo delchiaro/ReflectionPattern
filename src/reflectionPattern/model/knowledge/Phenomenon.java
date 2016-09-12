@@ -1,4 +1,4 @@
-package reflection.model.knowledge;
+package reflectionPattern.model.knowledge;
 
 import javax.persistence.*;
 

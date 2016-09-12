@@ -1,4 +1,4 @@
-package reflectionPattern.profiling;
+package profiling;
 
 import java.util.Timer;
 
@@ -14,6 +14,10 @@ public class TimeProfiler {
     }
 
     public final long elapsed() {
-        return _startTime - System.nanoTime();
+        return  System.nanoTime() - _startTime;
+    }
+
+    public final double elapsedMs() {
+        return  (((double)System.nanoTime()) - _startTime) / (1000000);
     }
 }

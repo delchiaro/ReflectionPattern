@@ -1,0 +1,114 @@
+package it.unifi.ing.stlab.empedocle.dao.health;
+
+
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+@Stateless
+@TransactionAttribute
+public class ExaminationTypeDaoBean implements ExaminationTypeDao{
+
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	@Override
+	public int count(ExaminationTypeQueryBuilder builder) {
+		return ((Long)builder.getCountQuery( entityManager ).getSingleResult()).intValue();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ExaminationType> find(ExaminationTypeQueryBuilder builder, int offset, int limit) {
+		return builder.getListQuery( entityManager )
+						.setFirstResult( offset )
+						.setMaxResults(limit).getResultList();
+	}
+
+	@Override
+	public ExaminationType findById(Long id) {
+		List<?> results = entityManager.createQuery(
+				"select distinct et " +
+				" from ExaminationType et " +
+				"  left join fetch et.type " +
+				"  left join fetch et.viewers " +
+				"  left join fetch et.authorizations " +
+				" where et.id = :id")
+			.setParameter("id", id )
+			.getResultList();
+
+		if ( results.size() == 0 ) {
+			return null;
+		}
+
+		return (ExaminationType)results.get( 0 );
+	}
+
+	@Override
+	public void delete(Long id) {
+		ExaminationType toRemove = findById(id);
+		entityManager.remove(toRemove);
+	}
+
+	@Override
+	public boolean isUsed( Long id ) {
+		return entityManager.createQuery(
+				"select e " +
+				" from Examination e " +
+				" where e.type.id = :typeId" )
+			.setParameter( "typeId", id )
+			.setMaxResults( 1 )
+			.getResultList()
+			.size() > 0 ||
+			entityManager.createQuery(
+				"select a " +
+				" from Agenda a " +
+				" where a.examinationType.id = :typeId" )
+			.setParameter( "typeId", id )
+			.setMaxResults( 1 )
+			.getResultList()
+			.size() > 0;
+	}
+
+	@Override
+	public ExaminationType findByExaminationId(Long id) {
+		List<?> result = entityManager.createQuery(
+			"select et " +
+			" from Examination e " +
+			"  join e.appointment.services s " +
+			"  join s.agenda.examinationType et " +
+			" where e.id = :id" )
+			.setParameter("id", id )
+			.setMaxResults( 1 )
+			.getResultList();
+
+		if ( result.size() > 0 ) {
+			return (ExaminationType)result.get( 0 );
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ExaminationType> findAll() {
+		return entityManager
+					.createQuery( "from ExaminationType et" )
+					.getResultList();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ExaminationType> findOthers(Long excludeId) {
+		return entityManager
+					.createQuery(" select distinct a.examinationType " +
+									" from Agenda a " +
+									" where a.examinationType.id != :excludeId" )
+					.setParameter( "excludeId", excludeId )
+					.getResultList();
+	}
+
+}

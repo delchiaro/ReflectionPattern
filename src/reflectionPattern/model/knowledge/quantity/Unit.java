@@ -1,4 +1,4 @@
-package reflection.model.knowledge.quantity;
+package reflectionPattern.model.knowledge.quantity;
 
 import javax.persistence.*;
 import java.util.Map;

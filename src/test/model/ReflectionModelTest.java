@@ -1,4 +1,4 @@
-package test;
+package test.model;
 
 import reflectionPattern.IO.compositeAdapter.FactTypeCompositeAdapter;
 import reflectionPattern.IO.OutputManager;
@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 /**
  * Created by nagash on 02/09/16.
  */
-public class CompositeFactTest {
+public class ReflectionModelTest {
 
     @org.junit.Test
     public void testQuantityConversion() throws Exception {

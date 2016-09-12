@@ -1,7 +1,98 @@
 package reflectionPattern.persistency;
 
+import org.hibernate.Hibernate;
+import reflectionPattern.model.knowledge.CompositeType;
+import reflectionPattern.model.knowledge.FactType;
+
+import javax.persistence.EntityManager;
+import java.util.List;
+
 /**
- * Created by nagash on 11/09/16.
+ * Created by nagash on 12/09/16.
  */
 public class FactTypeDAO {
+
+    private EntityManager entityManager;
+
+    public FactTypeDAO(EntityManager em) {
+        entityManager = em;
+    }
+
+
+    public FactType findById(Long id) {
+//        List<?> results = entityManager.createQuery(
+//                        "select distinct et " +
+//                        " from FactType ft " +
+//                        " where ft.id = :id")
+//                .setParameter("id", id )
+//                .getResultList();
+//
+//        if ( results.size() == 0 ) {
+//            return null;
+//        }
+//
+//        return (FactType) results.get( 0 );
+        return entityManager.find(FactType.class, id);
+    }
+
+
+    public List<FactType> findAllRoots(boolean eager) {
+        List<FactType> types =  entityManager
+                .createQuery(   "select ft " +
+                                "from FactType ft " +
+                                "where ft.parent_type IS NULL")
+                .getResultList();
+
+        if(eager && types != null)
+            for(FactType t : types)
+                if(t instanceof CompositeType)
+                    fetchCompositeEager((CompositeType) t);
+
+        return types;
+    }
+
+    public List<CompositeType> findAllCompositeRoots(boolean eager) {
+        List<CompositeType> types = entityManager
+                                        .createQuery(   "select ft " +
+                                                " from FactType ft " +
+                                                " where TYPE(ft)= :type AND ft.parent_type IS NULL")
+                                        .setParameter("type", CompositeType.class)
+                                        .getResultList();
+
+        if(eager && types != null)
+            for(CompositeType t : types)
+                fetchCompositeEager((CompositeType) t);
+
+        return types;
+    }
+
+
+
+    // Enforce EAGER fetch
+    // TODO: test performance with annotation EAGER vs annotation LAZY + this function
+    public void fetchCompositeEager(CompositeType comp)
+    {
+//        EntityTransaction loadTransact = entityManager.getTransaction();
+//        loadTransact.begin();
+
+        if(comp.getChildTypes() != null && comp.getChildTypes().size() > 0)
+        {
+            Hibernate.initialize((comp.getChildTypes()));
+
+            for( FactType child : comp.getChildTypes() )
+                if(child instanceof  CompositeType)
+                    fetchCompositeEager((CompositeType) child);
+        }
+
+//        loadTransact.commit();
+    }
+
+
+
+    public void delete(Long id) {
+        FactType toRemove = findById(id);
+        entityManager.remove(toRemove);
+    }
+
+
 }

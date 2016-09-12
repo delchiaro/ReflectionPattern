@@ -1,6 +1,6 @@
-package reflection.IO.compositeAdapter;
+package reflectionPattern.IO.compositeAdapter;
 
-import reflection.model.operational.*;
+import reflectionPattern.model.operational.*;
 
 import java.util.Set;
 

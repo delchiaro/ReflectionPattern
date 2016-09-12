@@ -1,10 +1,9 @@
 /**
  * Created by nagash on 31/08/16.
  */
-package reflection.model.knowledge;
-import com.google.common.collect.ImmutableSet;
+package reflectionPattern.model.knowledge;
 import com.sun.istack.internal.NotNull;
-import reflection.model.knowledge.quantity.Unit;
+import reflectionPattern.model.knowledge.quantity.Unit;
 
 import javax.persistence.*;
 import java.util.Collections;

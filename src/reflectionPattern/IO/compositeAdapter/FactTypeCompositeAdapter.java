@@ -1,7 +1,7 @@
-package reflection.IO.compositeAdapter;
+package reflectionPattern.IO.compositeAdapter;
 
-import reflection.model.knowledge.CompositeType;
-import reflection.model.knowledge.FactType;
+import reflectionPattern.model.knowledge.CompositeType;
+import reflectionPattern.model.knowledge.FactType;
 
 import java.util.Set;
 
