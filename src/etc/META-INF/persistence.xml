@@ -4,26 +4,18 @@
              version="1.0">
 
 
-    <persistence-unit name="hellojpa" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="join-table" transaction-type="RESOURCE_LOCAL">
         <!-- JPA assume automaticamente che il provider sia hibernate!
              Inoltre inserendolo manualmente mi da errore (probabilmente non è la classe giusta).
-            <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        -->
+            <provider>org.hibernate.ejb.HibernatePersistence</provider>  -->
 
         <!-- FORCE JOIN TABLE STRATEGY for inheritance! -->
         <mapping-file>META-INF/orm-joinTable.xml</mapping-file>
 
-        <!-- FORCE SINGLE TABLE STRATEGY for inheritance! -->
-        <!--<mapping-file>META-INF/orm-joinTable.xml</mapping-file> -->
-
-
         <properties>
-            <!-- not need to include hibernate.cfg.xml because we moved hibernate config to this file!
-                <property name="hibernate.ejb.cfgfile" value="/hibernate.cfg.xml" />
-            -->
 
             <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
-            <property name="hibernate.connection.url" value="jdbc:mysql://localhost/testdb" />
+            <property name="hibernate.connection.url" value="jdbc:mysql://localhost/reflection-join-table" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
             <property name="hibernate.connection.username" value="root" />
             <property name="hibernate.connection.password" value="root" />
@@ -36,7 +28,6 @@
             <property name="hibernate.c3p0.timeout" value="300" />
             <property name="hibernate.c3p0.max_statements" value="50" />
 
-            <!-- Drop and re-create the database schema on startup-->
             <property name="hibernate.hbm2ddl.auto" value="update"/>
 
             <property name="hibernate.show_sql" value="false" />
@@ -44,11 +35,41 @@
 
         </properties>
 
-
-        <!-- Not needed, Hibernate supports auto-detection in JSE
-            <class>hello.Message</class>    -->
+        <!--  <class>hello.Message</class>   Not needed, Hibernate supports auto-detection in JSE -->
 
 
     </persistence-unit>
 
+
+
+
+    <persistence-unit name="single-table" transaction-type="RESOURCE_LOCAL">
+
+        <!-- FORCE SIGLE TABLE STRATEGY for inheritance! -->
+        <mapping-file>META-INF/orm-singleTable.xml</mapping-file>
+
+        <properties>
+
+            <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
+            <property name="hibernate.connection.url" value="jdbc:mysql://localhost/reflection-single-table" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+            <property name="hibernate.connection.username" value="root" />
+            <property name="hibernate.connection.password" value="root" />
+
+            <property name="hibernate.archive.autodetection" value="class, hbm" />
+
+
+            <property name="hibernate.c3p0.min_size" value="5" />
+            <property name="hibernate.c3p0.max_size" value="20" />
+            <property name="hibernate.c3p0.timeout" value="300" />
+            <property name="hibernate.c3p0.max_statements" value="50" />
+
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+
+            <property name="hibernate.show_sql" value="false" />
+            <property name="hibernate.format_sql" value="true" />
+
+        </properties>
+
+    </persistence-unit>
 </persistence>

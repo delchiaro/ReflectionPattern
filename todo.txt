@@ -7,14 +7,12 @@ Done:
      U.C.2: il salvataggio di una visita medica compilata
      U.C.3: la lettura di una visita medica precedentemente salvata.
 
+- Implementare branch con modalitá JOIN TABLE (oltre che single table)
 
 
 TODO:
 
 - Fare un DB diverso per ogni modifica (ogni branch dovrá avere un diverso nome dello schema del db, semplicemente).
-
-
-- Implementare branch con modalitá JOIN TABLE (oltre che single table)
 
 - Implementare branch Riferimenti ai padri (anchestor) nei tipi composti, in modo da fare un DAO che con una semplice query trovi tutti i figli: (seleziona tutti i figli che hanno un riferimento a tale padre).
 

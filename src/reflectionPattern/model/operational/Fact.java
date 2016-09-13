@@ -52,6 +52,18 @@ import javax.persistence.*;
 //@DiscriminatorColumn(name = "FACT_DISCRIM", discriminatorType = DiscriminatorType.STRING )
 public abstract class Fact {
 
+
+
+
+//    @ManyToOne
+//    private Fact parent_fact;
+    @Column(name="parent_fact")
+    private Long parent_fact;
+    // this property (bidirectional access) is needed from the FactTypeDAO.. this field would be still created in the relactional model
+    // but JPA need the java property, otherwise the field can't be accessed from a SELECT query in JPQL (sure..?)
+
+
+
     @Id @GeneratedValue
     @Column(name = "id")
     private Long id = null;

@@ -10,6 +10,7 @@ import reflectionPattern.IO.compositeAdapter.FactTypeCompositeAdapter;
 import reflectionPattern.model.knowledge.*;
 import reflectionPattern.model.knowledge.quantity.Unit;
 import reflectionPattern.model.operational.*;
+import reflectionPattern.persistency.PersistencyHelper;
 
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
@@ -34,8 +35,9 @@ public class SimplePersistencyTest {
 
 
     @org.junit.Test
-    public void persistencyTestLoadSave() throws NamingException, QuantitativeFact.IllegalQuantitativeUnitException, CompositeFact.IllegalFactTypeException, QualitativeFact.IllegalQualitativePhenomenonException {
-
+    public void persistencyTestLoadSave() throws NamingException, QuantitativeFact.IllegalQuantitativeUnitException, CompositeFact.IllegalFactTypeException, QualitativeFact.IllegalQualitativePhenomenonException
+    {
+        PersistencyHelper.silenceGlobalHibernateLogs();
         // * * * * * * * * * * * * * KNOWLEDGE MODEL * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         rootFactTypes = new CompositeType("Analisi Medico Sportiva");
 
@@ -170,45 +172,33 @@ public class SimplePersistencyTest {
 
 
         // HIBERNATE SAVING ENTITIES:
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hellojpa");
+        PersistencyHelper ph = new PersistencyHelper(true).connect();
 
-        // Activate hibernate statistics
-        SessionFactory sessionFactory =  emf.unwrap(SessionFactory.class);
-        Statistics stats = sessionFactory.getStatistics();
-        stats.setStatisticsEnabled(true);
-
-        EntityManager em = emf.createEntityManager();
-
-
-
-
-        long startQueries = stats.getPrepareStatementCount();
+        long startQueries = ph.statistics().getPrepareStatementCount();
 
         long idPaziente1;
         long idPaziente2;
         long idFactType;
 
-        EntityTransaction saveTransact = em.getTransaction();
+        EntityTransaction saveTransact = ph.newTransaction();
 
             saveTransact.begin();
-                em.persist(rootFactTypes);
-                em.persist(rootPaziente1);
-                em.persist(rootPaziente2);
+                ph.persist(rootFactTypes);
+                ph.persist(rootPaziente1);
+                ph.persist(rootPaziente2);
                 idPaziente1 = rootPaziente1.getId();
                 idPaziente2 = rootPaziente2.getId();
                 idFactType=rootFactTypes.getId();
             saveTransact.commit();
 
+        long nQueries = ph.statistics().getPrepareStatementCount() ;//- startQueries;
 
 
 
-        long nQueries = stats.getPrepareStatementCount() ;//- startQueries;
-        System.out.print("\n\n\nExecuted queries: "  + nQueries +"\n\n\n");
 
-
-        CompositeType persistedRootFactTypes = em.find(CompositeType.class, idFactType);
-        CompositeFact persistedRootPaziente1 = em.find(CompositeFact.class, idPaziente1);
-        CompositeFact persistedRootPaziente2 = em.find(CompositeFact.class, idPaziente2);
+        CompositeType persistedRootFactTypes = ph.find(CompositeType.class, idFactType);
+        CompositeFact persistedRootPaziente1 = ph.find(CompositeFact.class, idPaziente1);
+        CompositeFact persistedRootPaziente2 = ph.find(CompositeFact.class, idPaziente2);
 
         assertTrue(persistedRootFactTypes.equals(rootFactTypes));
         assertTrue(persistedRootPaziente1.equals(rootPaziente1));
@@ -216,7 +206,7 @@ public class SimplePersistencyTest {
 
 
 
-        em.close();
+        ph.close();
 
         System.out.print("Original (saved) Fact Type:\n");
         System.out.print(OutputManager.adapterExplorer(new FactTypeCompositeAdapter(rootFactTypes)));
@@ -236,6 +226,8 @@ public class SimplePersistencyTest {
         System.out.print("\n\nPersisted (loaded) Fact 2:\n");
         System.out.print(OutputManager.adapterExplorer(new FactCompositeAdapter(persistedRootPaziente2)));
 
+
+        System.out.print("\n\n\nExecuted queries: "  + nQueries +"\n\n");
 
 
     }

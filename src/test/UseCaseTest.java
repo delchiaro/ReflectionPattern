@@ -1,12 +1,9 @@
 package test;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.varia.NullAppender;
-import org.hibernate.AssertionFailure;
-import org.junit.Ignore;
 import org.junit.Test;
-import profiling.ProfilerHibernateJPA;
-import profiling.TimeProfiler;
+import reflectionPattern.persistency.PersistencyHelper;
+import reflectionPattern.persistency.profiling.ProfilerHibernateJPA;
+import reflectionPattern.persistency.profiling.TimeProfiler;
 import reflectionPattern.IO.OutputManager;
 import reflectionPattern.dataGeneration.FactGenerator;
 import reflectionPattern.model.knowledge.CompositeType;
@@ -20,36 +17,23 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Created by nagash on 12/09/16.
  */
 public class UseCaseTest {
 
-
-    private static void silentLog() {
-        Logger.getRootLogger().removeAllAppenders();
-        Logger.getRootLogger().addAppender(new NullAppender());
-        java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
-    }
-
     @Test
     public void UC1_UC2() {
-        silentLog();
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hellojpa");
-        EntityManager em = emf.createEntityManager();
 
-        FactTypeDAO typeDao = new FactTypeDAO(em);
+        PersistencyHelper.silenceGlobalHibernateLogs();
+
+        PersistencyHelper ph = new PersistencyHelper(true).connect();
 
 
         List<CompositeType> rootTypes;
         CompositeType rootType;
-
-        ProfilerHibernateJPA profiler = new ProfilerHibernateJPA(emf);
-        TimeProfiler timer = new TimeProfiler();
-
 
 
         //     U.C.1: apertura di una nuova visita medica, istanziazione dei Fact (vuoti) corrispondenti alla struttura dei FactType.
@@ -59,19 +43,21 @@ public class UseCaseTest {
         System.out.print("...Lazy loading of all composite type root...\n");
         System.out.print("...Eager fetching of first composite type root...\n");
 
-        EntityTransaction loadTransact = em.getTransaction();
-        timer.resetStart();
+
+        EntityTransaction loadTransact = ph.newTransaction();
+
+        ph.timer().reset_start();
+
+        loadTransact.begin();
         {
-            loadTransact.begin();
-            {
-                rootTypes = typeDao.findAllCompositeRoots(false);
-                rootType = rootTypes.get(0);
-                typeDao.fetchCompositeEager(rootType);
-            }
-            loadTransact.commit();
+            rootTypes = ph.factTypeDAO().findAllCompositeRoots(false);
+            rootType = rootTypes.get(0);
+            ph.factTypeDAO().fetchCompositeEager(rootType);
         }
-        double loadTime = timer.elapsedMs();
-        long    loadQueries = profiler.getStatistics().getPrepareStatementCount();
+        loadTransact.commit();
+
+        double loadTime = ph.timer().elapsedMs();
+        long    loadQueries = ph.statistics().getPrepareStatementCount();
 
 
 
@@ -85,22 +71,21 @@ public class UseCaseTest {
 
         System.out.print("...Persisting the generated Fact...\n");
 
-        EntityTransaction saveTransact = em.getTransaction();
-        timer.resetStart();
+        EntityTransaction saveTransact = ph.newTransaction();
+
+        ph.timer().reset_start();
+
+        saveTransact.begin();
         {
-            saveTransact.begin();
-            {
-                em.persist(fRoot);
-            }
-            saveTransact.commit();
+                ph.persist(fRoot);
         }
-        double saveTime = timer.elapsedMs();
-        long   saveQueries = profiler.getStatistics().getPrepareStatementCount() - loadQueries;
+        saveTransact.commit();
+
+        double saveTime = ph.timer().elapsedMs();
+        long   saveQueries = ph.statistics().getPrepareStatementCount() - loadQueries;
 
 
-        em.close();
-        emf.close();
-
+        ph.close();
 
         System.out.print("\n\n\nLoaded Fact Type: \n");
         OutputManager.printFactTypeTree(rootType);
@@ -130,72 +115,68 @@ public class UseCaseTest {
     @Test
     public void UC3() {
 
-        silentLog();
+        PersistencyHelper.silenceGlobalHibernateLogs();
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hellojpa");
-        EntityManager em = emf.createEntityManager();
-
-        FactTypeDAO typeDao = new FactTypeDAO(em);
-
+        PersistencyHelper ph = new PersistencyHelper(true).connect();
 
         List<CompositeType> rootTypes;
         CompositeType rootType = null;
-
-        ProfilerHibernateJPA profiler = new ProfilerHibernateJPA(emf);
-        TimeProfiler timer = new TimeProfiler();
 
 
         System.out.print("...Lazy loading of all composite type root...\n");
         System.out.print("...Eager fetching of first composite type root...\n");
 
-        EntityTransaction loadTransact = em.getTransaction();
-        timer.resetStart();
+        EntityTransaction loadTransact = ph.newTransaction();
+
+        ph.timer().reset_start();
+
+        loadTransact.begin();
         {
-            loadTransact.begin();
-            {
-                rootTypes = typeDao.findAllCompositeRoots(false);
+                rootTypes = ph.factTypeDAO().findAllCompositeRoots(false);
                 rootType = rootTypes.get(0);
-                typeDao.fetchCompositeEager(rootType);
-            }
-            loadTransact.commit();
+                ph.factTypeDAO().fetchCompositeEager(rootType);
         }
-        double loadTypeTime = timer.elapsedMs();
-        long loadTypeQueries = profiler.getStatistics().getPrepareStatementCount();
+        loadTransact.commit();
+
+        double loadTypeTime = ph.timer().elapsedMs();
+        long loadTypeQueries = ph.statistics().getPrepareStatementCount();
 
 
 
         if(rootType == null){
             System.out.print("\n\n\nFake test: can't find a rootType in DB \n");
+            ph.close();
         }
         else
         {
 
 
-            FactDAO fDao = new FactDAO(em);
             List<Fact> associatedFacts;
             Fact rootFact = null;
 
             System.out.print("...Loading Facts associated with the first FactType...\n");
 
-            EntityTransaction loadFactTransact = em.getTransaction();
-            timer.resetStart();
+            EntityTransaction loadFactTransact = ph.newTransaction();
+            ph.timer().reset_start();
             {
                 loadFactTransact.begin();
                 {
-                    associatedFacts = fDao.findAssociatedFacts(rootType, false);
+                    associatedFacts = ph.factDAO().findAssociatedFacts(rootType, false);
                     if(associatedFacts.size() > 0)
                     {
                         rootFact = associatedFacts.get(0);
                         if (rootFact instanceof CompositeFact)
-                            fDao.fetchCompositeEager((CompositeFact) rootFact);
+                            ph.factDAO().fetchCompositeEager((CompositeFact) rootFact);
                     }
 
                 }
                 loadFactTransact.commit();
             }
-            double loadFactTime = timer.elapsedMs();
-            long   loadFactQueries = profiler.getStatistics().getPrepareStatementCount() - loadTypeQueries;
+            double loadFactTime = ph.timer().elapsedMs();
+            long   loadFactQueries = ph.statistics().getPrepareStatementCount() - loadTypeQueries;
 
+
+            ph.close();
 
             System.out.print("\n\n\nLoaded Fact Type: \n");
             OutputManager.printFactTypeTree(rootType);
@@ -219,8 +200,7 @@ public class UseCaseTest {
 
         }
 
-        em.close();
-        emf.close();
+
 
 
 

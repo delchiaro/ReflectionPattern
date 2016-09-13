@@ -1,25 +1,16 @@
 package test.persistency;
 
 
-import org.hibernate.SessionFactory;
-import org.hibernate.stat.Statistics;
-import org.junit.Ignore;
-import profiling.ProfilerHibernateJPA;
-import profiling.TimeProfiler;
 import reflectionPattern.IO.OutputManager;
 import reflectionPattern.dataGeneration.FactGenerator;
 import reflectionPattern.dataGeneration.FactTypeGenerator;
-import reflectionPattern.dataGeneration.RandomUtils;
 import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;
 import reflectionPattern.model.operational.CompositeFact;
 import reflectionPattern.model.operational.Fact;
-import reflectionPattern.persistency.FactTypeDAO;
+import reflectionPattern.persistency.PersistencyHelper;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import java.util.List;
 
 /**
@@ -30,32 +21,33 @@ public class PersistencyPerformanceTest {
 
 
     @org.junit.Test
-    public void testDAO() {
+    public void loadType_saveFact() {
         // HIBERNATE SAVING ENTITIES:
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hellojpa");
-        EntityManager em = emf.createEntityManager();
-        FactTypeDAO dao = new FactTypeDAO(em);
 
-        ProfilerHibernateJPA profiler = new ProfilerHibernateJPA(emf);
+        PersistencyHelper.silenceGlobalHibernateLogs();
+        PersistencyHelper helper = new PersistencyHelper().connect();
+        EntityTransaction   transact = helper.newTransaction();
 
-        TimeProfiler timeProf = new TimeProfiler();
-        EntityTransaction transact = em.getTransaction();
-        timeProf.resetStart();
+        helper.timer().reset_start();
+
         transact.begin();
-            List<CompositeType> factTypes = dao.findAllCompositeRoots(true);
+            List<CompositeType> factTypes = helper.factTypeDAO().findAllCompositeRoots(true);
         transact.commit();
-        long count = profiler.getStatistics().getPrepareStatementCount();
-        double time = timeProf.elapsedMs();
 
-        em.close();
-        emf.close();
+        double time = helper.timer().elapsedMs();
+        long count = helper.statistics().getPrepareStatementCount();
+
+        helper.close();
+
+
+        System.out.print("\n\n\nLoaded FactType trees: \n\n" );
 
         for (FactType ft : factTypes) {
             OutputManager.printFactTypeTree(ft);
         }
 
         System.out.print("\n\n\n Prepared Statements: " + count);
-        System.out.print("\n\n\n Time: " + time);
+        System.out.print("\n Time: " + time + "\n\n\n");
     }
 
 
@@ -64,9 +56,10 @@ public class PersistencyPerformanceTest {
     private static final int N_ROOT_FACTS = 2;
 
 
-    @Ignore
     @org.junit.Test
-    public void persistencyTestSave() throws CompositeFact.IllegalFactTypeException {
+    public void saveType_saveFacts() throws CompositeFact.IllegalFactTypeException {
+
+        PersistencyHelper.silenceGlobalHibernateLogs();
 
         FactType rootType = FactTypeGenerator.fixedFactType("");
 
@@ -76,36 +69,40 @@ public class PersistencyPerformanceTest {
             rootFacts[i] = FactGenerator.randomFact(rootType);
 
 
-        // HIBERNATE SAVING ENTITIES:
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hellojpa");
 
-        // Activate hibernate statistics
-        SessionFactory sessionFactory = emf.unwrap(SessionFactory.class);
-        Statistics stats = sessionFactory.getStatistics();
-        stats.setStatisticsEnabled(true);
+        PersistencyHelper helper = new PersistencyHelper().connect();
 
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction saveTransact = em.getTransaction();
+        EntityTransaction   saveTransact = helper.newTransaction();
 
-
-        ProfilerHibernateJPA profiler = new ProfilerHibernateJPA(emf);
+        helper.timer().reset_start();
 
         saveTransact.begin();
-        em.persist(rootType);
-        for (int i = 0; i < N_ROOT_FACTS; i++)
-            em.persist(rootFacts[i]);
-
+            helper.persist(rootType);
+            for (int i = 0; i < N_ROOT_FACTS; i++)
+                helper.persist(rootFacts[i]);
         saveTransact.commit();
-        em.close();
 
-        System.out.print("\n\n\nPrepared statements: " +profiler.getStatistics().getPrepareStatementCount() + "\n\n" );
+        double time = helper.timer().elapsedMs();
+        long count = helper.statistics().getPrepareStatementCount();
+
+
+        helper.close();
+
+
+
+        System.out.print("\n\n\nPersisted fixed FactType tree: \n\n" );
+            OutputManager.printFactTypeTree(rootType);
+
+        System.out.print("\n\n\nPersisted facts: \n\n" );
+        for (int i = 0; i < N_ROOT_FACTS; i++)
+            OutputManager.printFactTree(rootFacts[i]);
+
+
+        System.out.print("\n\n\nPrepared statements: " + count );
+        System.out.print("\n Time: " + time + "\n\n\n");
+
     }
 
 
-    @Ignore
-    @org.junit.Test
-    public void persistencyTestLoad() {
-
-    }
 
 }

@@ -1,11 +1,11 @@
-package reflectionPattern.IO;
-
 import org.apache.log4j.Logger;
 import org.apache.log4j.varia.NullAppender;
+import reflectionPattern.IO.OutputManager;
 import reflectionPattern.IO.compositeAdapter.FactTypeCompositeAdapter;
 import reflectionPattern.dataGeneration.*;
 import reflectionPattern.model.knowledge.FactType;
 import reflectionPattern.persistency.FactTypeDAO;
+import reflectionPattern.persistency.PersistencyHelper;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -22,16 +22,10 @@ public class FactTypeManager {
 
 
     public static void main(String ... params) throws Range.MinimumValueException, Range.InfSupValueException {
-        Logger.getRootLogger().removeAllAppenders();
-        Logger.getRootLogger().addAppender(new NullAppender());
+       PersistencyHelper.silenceGlobalHibernateLogs();
 
-        java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
+        PersistencyHelper ph = new PersistencyHelper().connect();
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hellojpa");
-        EntityManager em = emf.createEntityManager();
-
-
-        FactTypeDAO dao = new FactTypeDAO(em);
 
         boolean loop = true;
         while(loop)
@@ -40,7 +34,7 @@ public class FactTypeManager {
             Scanner keyboard = new Scanner(System.in);
             System.out.print("\n\n");
             System.out.print("~ MANAGE FACT TYPE ~\n\n");
-            long[] ids = list(em);
+            long[] ids = list(ph);
             System.out.print("\n\n");
             System.out.print("Usage: [command] [list-index]\n");
             System.out.print("n - new random FactType generation (no list-index required)\n");
@@ -70,13 +64,13 @@ public class FactTypeManager {
                     if(pieces.length < 2){ break; }
                     index = Integer.parseInt(pieces[1]); index--;
                     if(index != null && index>=0 && index<ids.length)
-                        dao.delete(ids[index]);
+                        ph.factTypeDAO().delete(ids[index]);
                     break;
 
                 case "s":if(pieces.length < 2) { break; }
                     index = Integer.parseInt(pieces[1]); index--;
                     if(index != null && index>=0 && index<ids.length)
-                        OutputManager.printFactTypeTree( dao.findById(ids[index]));
+                        OutputManager.printFactTypeTree( ph.factTypeDAO().findById(ids[index]));
                     break;
 
                 default: break;
@@ -85,20 +79,17 @@ public class FactTypeManager {
 
         }
 
-        em.close();
-        emf.close();
+        ph.close();
     }
 
 
 
-    public static long[] list(EntityManager em)
+    public static long[] list(PersistencyHelper ph)
     {
-        FactTypeDAO dao = new FactTypeDAO(em);
 
-
-        EntityTransaction transact = em.getTransaction();
+        EntityTransaction transact = ph.newTransaction();
         transact.begin();
-        List<FactType> factTypes = dao.findAllRoots(false);
+        List<FactType> factTypes = ph.factTypeDAO().findAllRoots(false);
         transact.commit();
 
 
@@ -154,15 +145,16 @@ public class FactTypeManager {
         OutputManager.printFactTypeTree(factType);
         if(  answerNy("\n\nPersist this FactType?")  )
         {
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("hellojpa");
-            EntityManager em = emf.createEntityManager();
-            EntityTransaction saveTransact = em.getTransaction();
-            saveTransact.begin();
-            em.persist(factType);
-            saveTransact.commit();
-            em.close();
-            emf.close();
+            PersistencyHelper help = new PersistencyHelper(false).connect();
+            EntityTransaction saveTransact = help.newTransaction();
 
+            saveTransact.begin();
+            {
+                help.persist(factType);
+            }
+            saveTransact.commit();
+
+            help.close();
             return true;
         }
         else return false;

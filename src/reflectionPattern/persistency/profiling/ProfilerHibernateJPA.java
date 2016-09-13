@@ -1,4 +1,4 @@
-package profiling;
+package reflectionPattern.persistency.profiling;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.stat.Statistics;
