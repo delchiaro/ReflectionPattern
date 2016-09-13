@@ -44,8 +44,7 @@ Corresponding annotations in EclipseLink are
 @DiscriminatorValue("COMPOSITE")
 public class CompositeType extends FactType {
 
-    @Column(name="parent_type")
-    private Long parent_type;
+
 
     @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL /* , mappedBy = "parent_type",*/ )//LAZY = non carico subito tutti i figli
     @JoinColumn(name="parent_type")

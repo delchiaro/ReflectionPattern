@@ -7,8 +7,8 @@ import javax.persistence.*;
 
 @Entity
 
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "FACT_TYPE_DISCRIM", discriminatorType = DiscriminatorType.STRING )
+//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+//@DiscriminatorColumn(name = "FACT_TYPE_DISCRIM", discriminatorType = DiscriminatorType.STRING )
 public abstract class FactType {
     //private CompositeType   fatherType = null; // serve avere la bidirezionalitá?
 //    void setFatherType(CompositeType fatherType){
