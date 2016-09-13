@@ -18,6 +18,7 @@ public class TextualFact extends Fact {
 
     public TextualFact(TextualType type, String value) {
         super(type);
+        this.value=value;
     }
 
     @Column(name="textual_value")

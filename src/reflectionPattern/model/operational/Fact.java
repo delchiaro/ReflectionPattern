@@ -48,8 +48,8 @@ import javax.persistence.*;
 
 @Entity
 @Access(AccessType.FIELD)
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "FACT_DISCRIM", discriminatorType = DiscriminatorType.STRING )
+//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+//@DiscriminatorColumn(name = "FACT_DISCRIM", discriminatorType = DiscriminatorType.STRING )
 public abstract class Fact {
 
     @Id @GeneratedValue

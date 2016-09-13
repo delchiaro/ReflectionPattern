@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"  version="1.0">
+
+
+    <description>Force JOIN TABLE strategy for inheritance in FactType and Fact</description>
+    <!--<package>reflectionPattern.model</package>-->
+
+
+    <entity class="reflectionPattern.model.knowledge.FactType" name="FactType">
+        <!--<table name="  "/>-->
+        <inheritance strategy="JOINED"/>
+    </entity>
+
+    <entity class="reflectionPattern.model.operational.Fact" name="Fact">
+        <!--<table name="  "/>-->
+        <inheritance strategy="JOINED"/>
+    </entity>
+
+
+</entity-mappings>
