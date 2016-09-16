@@ -7,6 +7,7 @@
         <setting name="provider-name" value="" />
         <datasource-mapping>
           <factory-entry name="hellojpa" />
+          <factory-entry name="join-table" />
           <factory-entry name="single-table" />
         </datasource-mapping>
         <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/src/etc/META-INF/persistence.xml" />

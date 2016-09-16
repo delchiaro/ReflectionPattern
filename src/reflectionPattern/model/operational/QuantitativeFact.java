@@ -3,6 +3,7 @@
  */
 package reflectionPattern.model.operational;
 
+import com.sun.istack.internal.NotNull;
 import reflectionPattern.model.knowledge.QuantitativeType;
 import reflectionPattern.model.knowledge.quantity.Quantity;
 import reflectionPattern.model.knowledge.quantity.Unit;
@@ -21,11 +22,11 @@ public class QuantitativeFact extends Fact {
 
     protected QuantitativeFact(){}
 
-    public QuantitativeFact(QuantitativeType factType, Number value, Unit measurementUnit) throws IllegalQuantitativeUnitException {
+    public QuantitativeFact(@NotNull QuantitativeType factType, @NotNull Number value, @NotNull Unit measurementUnit) throws IllegalQuantitativeUnitException {
         this(factType, new Quantity(value, measurementUnit));
 
     }
-    public QuantitativeFact(QuantitativeType factType, Quantity quantity) throws IllegalQuantitativeUnitException {
+    public QuantitativeFact( @NotNull QuantitativeType factType, @NotNull Quantity quantity) throws IllegalQuantitativeUnitException {
         super(factType);
         if(factType.isUnitLegal(quantity.getUnit()) == false )
             throw new IllegalQuantitativeUnitException();
@@ -39,19 +40,28 @@ public class QuantitativeFact extends Fact {
 
     @Override
     public boolean equals(Object obj) {
+        if(this==obj) return true;
+        if(super.equals(obj) == false) return false;
         if(!(obj instanceof  QuantitativeFact)) return false;
         QuantitativeFact qFact = (QuantitativeFact) obj;
 
         // TODO: implementare una logica diversa senza richiamare super.equals(), in modo da considerare uguali
         // due numeri con valori diversi ma che convertiti alla stessa unitá di misura risultano di egual valore.
-        if(super.equals(qFact) && quantity.equals(qFact.quantity))
-            return true;
-        else return false;
+        if(this.quantity == null)
+            return (qFact.quantity == this.quantity) && super.equals(obj);
+        else return super.equals(obj) && this.quantity.equals(qFact.quantity);
     }
+
 
     public class IllegalQuantitativeUnitException extends IllegalValueException {}
 
 
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + quantity.hashCode();
+        return result;
+    }
 
     @Override
     public String toString() {

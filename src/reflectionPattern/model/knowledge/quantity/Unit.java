@@ -1,5 +1,7 @@
 package reflectionPattern.model.knowledge.quantity;
 
+import com.sun.istack.internal.NotNull;
+
 import javax.persistence.*;
 import java.util.Map;
 
@@ -19,8 +21,6 @@ public class Unit {
 
 
     private String name;
-
-
     private String symbol;
 
     //for persistency
@@ -28,7 +28,7 @@ public class Unit {
         name = symbol = null;
     }
 
-    public Unit(String name, String symbol){
+    public Unit(@NotNull String name, @NotNull String symbol){
         this.name=name;
         this.symbol=symbol;
     }
@@ -61,5 +61,13 @@ public class Unit {
             else return false;
         }
         else return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + name.hashCode();
+        result = 31 * result + symbol.hashCode();
+        return result;
     }
 }

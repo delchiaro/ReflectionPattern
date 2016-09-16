@@ -3,6 +3,7 @@
  */
 package reflectionPattern.model.operational;
 
+import com.sun.istack.internal.NotNull;
 import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;
 
@@ -29,13 +30,14 @@ public class CompositeFact extends Fact {
 
 
     protected CompositeFact() {}
-    public CompositeFact(CompositeType compType) {
+    public CompositeFact(@NotNull  CompositeType compType) {
         super(compType);
         for(FactType type : compType.getChildTypes())
             compositionTypeCheck.put(type, 0);
     }
 
 
+    //if true, we impose that this compositeFact must have max 1 fact of each FactType contained in the associated CompositeType.
     private static final  boolean child_limit = true;
     public void addChild(Fact childFact ) throws IllegalFactTypeException {
         Integer n = compositionTypeCheck.get(childFact.getType());
@@ -55,11 +57,14 @@ public class CompositeFact extends Fact {
 
     @Override
     public boolean equals(Object obj) {
+        if(this==obj) return true;
+        if(super.equals(obj) == false ) return false;
         if(!(obj instanceof  CompositeFact)) return false;
         CompositeFact head = (CompositeFact)obj;
 
         // Don't call super.equals() with CompositeFact because generics T = Void, so super.value is null!
-        if( this.getType().equals(head.getType()) && this.getId().equals(head.getId()) && head._childFacts.size() == this._childFacts.size())
+        if( this.getType().equals(head.getType())
+                && head._childFacts.size() == this._childFacts.size())
         {
             for (Fact childType : head._childFacts)
             {
@@ -71,6 +76,15 @@ public class CompositeFact extends Fact {
         else return false;
     }
 
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (_childFacts != null ? _childFacts.hashCode() : 0);
+        // TODO: check if it's correct to include compositionTypeCheck field in the hashCode, for now I think it's useless:
+            //result = 31 * result + (compositionTypeCheck.hashCode() != null ? ;compositionTypeCheck.hashCode() : 0 );
+        return result;
+    }
 
     @Override
     public String toString() {

@@ -22,11 +22,11 @@ public class QuantitativeType extends FactType {
 
     protected QuantitativeType() {}
 
-    public QuantitativeType(String typeName) {
+    public QuantitativeType(@NotNull String typeName) {
         super(typeName);
         this.legalUnits = new HashSet<>();
     }
-    public QuantitativeType(String typeName, @NotNull Set<Unit> legalUnits) {
+    public QuantitativeType(@NotNull String typeName, @NotNull Set<Unit> legalUnits) {
         super(typeName);
         this.legalUnits = new HashSet<>(legalUnits);
     }
@@ -37,7 +37,7 @@ public class QuantitativeType extends FactType {
         else return false;
     }
 
-    public void addLegalUnit(Unit unit) {
+    public void addLegalUnit(@NotNull Unit unit) {
         legalUnits.add(unit);
     }
     public Set<Unit> getLegalUnits() {
@@ -49,10 +49,11 @@ public class QuantitativeType extends FactType {
 
     @Override
     public boolean equals(Object obj) {
+        if(this==obj) return true;
+        if(super.equals(obj) == false) return false;
         if(! (obj instanceof  QuantitativeType)) return false;
         QuantitativeType qtObj = (QuantitativeType)obj;
-        if( super.equals(qtObj) &&
-                qtObj.getLegalUnits().size() == this.getLegalUnits().size()  )
+        if( qtObj.getLegalUnits().size() == this.getLegalUnits().size()  )
         {
             for (Unit unit : qtObj.getLegalUnits())
             {
@@ -62,5 +63,12 @@ public class QuantitativeType extends FactType {
             return true;
         }
         else return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        //result = 31 * result + (legalUnits != null ? legalUnits.hashCode() : 0);
+        return result;
     }
 }

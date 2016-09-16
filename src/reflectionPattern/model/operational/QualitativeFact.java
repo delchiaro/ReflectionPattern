@@ -3,6 +3,7 @@
  */
 package reflectionPattern.model.operational;
 
+import com.sun.istack.internal.NotNull;
 import reflectionPattern.model.knowledge.Phenomenon;
 import reflectionPattern.model.knowledge.QualitativeType;
 
@@ -17,7 +18,7 @@ public class QualitativeFact extends Fact {
     private Phenomenon phenomenon;
 
     protected QualitativeFact(){}
-    public QualitativeFact(QualitativeType factType, Phenomenon phen) throws IllegalQualitativePhenomenonException {
+    public QualitativeFact(@NotNull QualitativeType factType, @NotNull  Phenomenon phen) throws IllegalQualitativePhenomenonException {
         super(factType);
         this.phenomenon = phen;
         if(factType.isPhenomenonLegal(phen) == false )
@@ -37,8 +38,22 @@ public class QualitativeFact extends Fact {
 
     @Override
     public boolean equals(Object obj) {
+        if(this==obj) return true;
+        if(super.equals(obj) == false) return false;
+        if(this==obj) return true;
         if(!(obj instanceof  QualitativeFact)) return false;
-        return super.equals(obj);
+
+        QualitativeFact qf = (QualitativeFact)obj;
+        if(this.phenomenon == null)
+            return qf.phenomenon == null;
+        else return this.phenomenon.equals(qf.phenomenon);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + phenomenon.hashCode();
+        return result;
     }
 
     public class IllegalQualitativePhenomenonException extends IllegalValueException {}

@@ -3,6 +3,7 @@
  */
 package reflectionPattern.model.operational;
 
+import com.sun.istack.internal.NotNull;
 import reflectionPattern.model.knowledge.TextualType;
 
 import javax.persistence.*;
@@ -16,7 +17,7 @@ public class TextualFact extends Fact {
 
     protected TextualFact(){}
 
-    public TextualFact(TextualType type, String value) {
+    public TextualFact(@NotNull TextualType type, @NotNull String value) {
         super(type);
         this.value=value;
     }
@@ -33,8 +34,24 @@ public class TextualFact extends Fact {
 
     @Override
     public boolean equals(Object obj) {
+        if(this==obj) return true;
+        if(super.equals(obj) == false) return false;
         if(!(obj instanceof  TextualFact)) return false;
-        return super.equals(obj);
+        boolean superEquals = super.equals(obj) ;
+
+        TextualFact tf = (TextualFact)obj;
+
+        if(this.value == null)
+            return superEquals && this.value == tf.value;
+        else return superEquals && this.value.equals(tf.value);
+    }
+
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + value.hashCode();
+        return result;
     }
 
     @Override

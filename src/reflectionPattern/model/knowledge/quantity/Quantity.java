@@ -1,5 +1,7 @@
 package reflectionPattern.model.knowledge.quantity;
 
+import com.sun.istack.internal.NotNull;
+
 import javax.persistence.*;
 
 /**
@@ -18,7 +20,7 @@ public class Quantity {
     private Number  value;
 
     protected Quantity() {}
-    public Quantity(Number value, Unit unit){
+    public Quantity(@NotNull Number value, @NotNull Unit unit){
         this.unit=unit;
         this.value=value;
     }
@@ -30,7 +32,7 @@ public class Quantity {
         return unit;
     }
 
-    public Quantity convert(Unit toUnit) throws ImpossibleConversionException {
+    public Quantity convert(@NotNull Unit toUnit) throws ImpossibleConversionException {
         return UnitConverter.converter().convert(this, toUnit);
     }
 
@@ -42,5 +44,12 @@ public class Quantity {
         if(this.getUnit().equals(q.getUnit()) && this.getValue().equals(q.getValue()))
             return true;
         else return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = unit.hashCode();
+        result = 31 * result + value.hashCode();
+        return result;
     }
 }

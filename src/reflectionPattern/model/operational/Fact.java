@@ -3,6 +3,7 @@
  */
 package reflectionPattern.model.operational;
 
+import com.sun.istack.internal.NotNull;
 import reflectionPattern.model.knowledge.FactType;
 
 import javax.persistence.*;
@@ -76,7 +77,7 @@ public abstract class Fact {
 
 
     protected Fact(){}
-    public Fact(FactType factType){
+    public Fact(@NotNull FactType factType){
         this.type = factType;
     }
     public FactType getType() {
@@ -84,19 +85,134 @@ public abstract class Fact {
     }
 
 
-    @Override
-    public boolean equals(Object obj) {
-        if(!(obj instanceof Fact)) return false;
-        Fact fact = (Fact) obj;
-        if(this.id.equals(fact.id) && this.type.equals(fact.type))
-            return true;
-        else return false;
-    }
 
 
     public class IllegalValueException extends Exception {}
 
 
+
+
+
+    private static final EqualCheck defaultEqualCheck = EqualCheck.pk_if_exists_and_deeep;
+    //private static final EqualCheck defaultEqualCheck = EqualCheck.pk_if_exists;
+
+
+
+
+// Old equals:
+//    @Override
+//    public boolean equals(Object obj) {
+//        if(!(obj instanceof Fact)) return false;
+//        Fact fact = (Fact) obj;
+//        if(this.id.equals(fact.id) && this.type.equals(fact.type))
+//            return true;
+//        else return false;
+//    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        return equals(obj, defaultEqualCheck);
+    }
+
+    public boolean equals(Object obj, EqualCheck equalCheck) {
+        if(this==obj) return true;
+        if(obj == null) return false;
+        if ( !(obj instanceof Fact) ) return false;
+
+        Fact fact = (Fact) obj;
+
+        switch(equalCheck)
+        {
+            case pk_forced:              return equals_pkForcedCheck(fact);
+            case pk_if_exists:           return equals_pkIfExistsCheck(fact);
+            case deep:                   return equals_deepCheck(fact);
+            case pk_if_exists_and_deeep: return equals_pkIfExistsAndDeepCheck(fact);
+            case pk_forced_and_deeep:    return equals_pkForcedAndDeepCheck(fact);
+            default: return false;
+        }
+    }
+
+
+
+    public enum EqualCheck { pk_forced, pk_if_exists, deep, pk_if_exists_and_deeep, pk_forced_and_deeep}
+
+
+ /* EQUALS
+         TRUTH TABLE:        (where D is the result of the deep check)
+
+                        |   pk            pk if   pkIfExists   deep      pk forced
+        PK1     PK2     | forced    --    exists   and deep    only      and deep
+        ----------------|-----------------------------------------------------------
+        null    null    |   F       D       D         D         D          F
+        null    A       |   F       F       D         D         D          F
+        A       null    |   F       F       D         D         D          F
+        A       A       |   T       T       T         D         D          D
+        A       B       |   F       F       F         F         D          F
+        ----------------|-----------------------------------------------------------
+
+     */
+
+    /**
+     * Check if both objects have an instance of the primary key (id). If they have, it compares the two pk values and return
+     * the compare results. If they don't, it return false.
+     * @param fact
+     * @return
+     */
+    private boolean equals_pkForcedCheck(Fact fact) {
+        if(this.id != null && fact.id != null)
+            return this.id.equals(fact.id);
+        else return false;
+    }
+
+    /**
+     * Check the value of the properties, excluding the primary key value (id).
+     * @param fact
+     * @return
+     */
+    private boolean equals_deepCheck(Fact fact) {
+        if(this.type == null)
+            return fact.type == null; // true if both are null, false otherwise
+        else return this.type.equals(fact.type);
+    }
+
+    /**
+     * Check if both objects have an instance of the primary key (id). If they have, it compares the two pk values and return
+     * the compare results. If they don't, it return the result of a deep check.
+     * @param fact
+     * @return
+     */
+    private boolean equals_pkIfExistsCheck(Fact fact) {
+        if(this.id != null && fact.id != null)
+            return this.id.equals(fact.id);
+        else return equals_deepCheck(fact);
+    }
+
+    /**
+     * Deep equals check and, if exists, pk check.
+     * If pk does not exists, returns deep equals check.
+     * If pk exists returns (deep equals check) && (pk equals check)
+     * @param fact
+     * @return
+     */
+    private boolean equals_pkIfExistsAndDeepCheck(Fact fact) {
+        boolean pkCheck = true;
+        if(this.id != null  &&  fact.id != null)
+            pkCheck = this.id.equals(fact.id);
+        return pkCheck && equals_deepCheck(fact);
+    }
+
+    private boolean equals_pkForcedAndDeepCheck(Fact fact) {
+        return equals_pkForcedCheck(fact) && equals_deepCheck(fact);
+    }
+
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + type.hashCode();
+        return result;
+    }
 
     @Override
     public String toString() {

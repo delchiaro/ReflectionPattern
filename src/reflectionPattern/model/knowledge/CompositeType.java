@@ -3,6 +3,7 @@
  */
 package reflectionPattern.model.knowledge;
 
+import com.sun.istack.internal.NotNull;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -56,7 +57,7 @@ public class CompositeType extends FactType {
 
     }
 
-    public void addChild(FactType childType ){
+    public void addChild(@NotNull FactType childType ){
         this._childTypes.add(childType);
         //childType.setFatherType(this);
     }
@@ -67,23 +68,32 @@ public class CompositeType extends FactType {
 
     @Override
     public boolean equals(Object obj) {
+        if(this==obj) return true;
+        if(super.equals(obj) == false) return false;
         if(!(obj instanceof  CompositeType)) return false;
         CompositeType head = (CompositeType)obj;
 
-        if( super.equals(head) && head.getChildTypes().size() == this.getChildTypes().size())
+        if( super.equals(head) && head._childTypes.size() == this._childTypes.size())
         {
-            for (FactType childType : head.getChildTypes())
+            for (FactType childType : head._childTypes)
             {
-                if(!(this.getChildTypes().contains(childType))) // Set.contains() usa equals() dell'oggetto per capire se sono uguali, abbiamo quindi una ricorsivita' nel caso di figli CompositeType.
+                if(!(this._childTypes.contains(childType))) // Set.contains() usa equals() dell'oggetto per capire se sono uguali, abbiamo quindi una ricorsivita' nel caso di figli CompositeType.
                     return false;
+
             }
             return true;
         }
         else return false;
-
     }
 
-    public static Set<FactType> explorer(CompositeType head) {
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (_childTypes != null ? _childTypes.hashCode() : 0);
+        return result;
+    }
+
+    public static Set<FactType> explorer(@NotNull CompositeType head) {
         Set<FactType> list = new HashSet<>();
 
         for (FactType childType : head._childTypes)
