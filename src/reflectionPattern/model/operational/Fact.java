@@ -4,9 +4,11 @@
 package reflectionPattern.model.operational;
 
 import com.sun.istack.internal.NotNull;
+import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;
 
 import javax.persistence.*;
+import java.util.*;
 
 
 
@@ -52,6 +54,20 @@ import javax.persistence.*;
 //@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 //@DiscriminatorColumn(name = "FACT_DISCRIM", discriminatorType = DiscriminatorType.STRING )
 public abstract class Fact {
+
+
+    // ANCESTOR STRATEGY * * * * * * * * * * * * * * * * * * * *
+    @OneToMany(fetch=FetchType.LAZY )
+    private List<CompositeFact> ancestors = new LinkedList<>();
+
+    public void addAncestor(CompositeFact ancestorFact) {
+         ancestors.add(ancestorFact);
+    }
+    public List<CompositeFact> getAncestors() {
+        return Collections.unmodifiableList(ancestors);
+    }
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
 
 
 

@@ -49,6 +49,18 @@ public class CompositeFact extends Fact {
             compositionTypeCheck.put(childFact.getType(), n+1);
             this._childFacts.add(childFact);
             //childFact.setFatherFact(this);
+
+            // ANCESTOR STRATEGY
+            // The  LAST ELEMENT OF THE LIST is the direct ancestor of this (FATHER).
+            // The FIRST ELEMENT OF THE LIST is the most far ancestor of this (ROOT COMPOSITE).
+
+            // So, the most far ancestor of this CompositeType, become the most far ancestor of the childType, and so on..
+            // .. the most near ancestor of this (last element of the list, the father)
+            // became the most near ancestor of the child (..will be the grandfather after adding this to the child ancestors)...
+            for( CompositeFact ancestor : getAncestors())
+                childFact.addAncestor(ancestor); // add at the end of the list.
+            childFact.addAncestor(this);
+            // .. add at the end of the list, so.. this become the last ancestor of the child (the father).
         }
     }
     public Set<Fact> getChildFacts() {
@@ -80,9 +92,8 @@ public class CompositeFact extends Fact {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (_childFacts != null ? _childFacts.hashCode() : 0);
-        // TODO: check if it's correct to include compositionTypeCheck field in the hashCode, for now I think it's useless:
-            //result = 31 * result + (compositionTypeCheck.hashCode() != null ? ;compositionTypeCheck.hashCode() : 0 );
+        // result = 31 * result + (_childFacts != null ? _childFacts.hashCode() : 0); // REMOVED
+        //result = 31 * result + (compositionTypeCheck.hashCode() != null ? ;compositionTypeCheck.hashCode() : 0 );
         return result;
     }
 

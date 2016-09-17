@@ -60,6 +60,19 @@ public class CompositeType extends FactType {
     public void addChild(@NotNull FactType childType ){
         this._childTypes.add(childType);
         //childType.setFatherType(this);
+
+        // ANCESTOR STRATEGY
+        // The  LAST ELEMENT OF THE LIST is the direct ancestor of this (FATHER).
+        // The FIRST ELEMENT OF THE LIST is the most far ancestor of this (ROOT COMPOSITE).
+
+        // So, the most far ancestor of this CompositeType, become the most far ancestor of the childType, and so on..
+        // .. the most near ancestor of this (last element of the list, the father)
+        // became the most near ancestor of the child (..will be the grandfather after adding this to the child ancestors)...
+        for( CompositeType ancestor : getAncestors())
+            childType.addAncestor(ancestor); // add at the end of the list.
+        childType.addAncestor(this);
+        // .. add at the end of the list, so.. this become the last ancestor of the child (the father).
+
     }
     public Set<FactType> getChildTypes() {
         return Collections.unmodifiableSet(_childTypes);
@@ -89,7 +102,7 @@ public class CompositeType extends FactType {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (_childTypes != null ? _childTypes.hashCode() : 0);
+        //result = 31 * result + (_childTypes != null ? _childTypes.hashCode() : 0); // REMOVED
         return result;
     }
 

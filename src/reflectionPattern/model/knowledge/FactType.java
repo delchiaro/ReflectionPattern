@@ -4,8 +4,12 @@
 package reflectionPattern.model.knowledge;
 
 import com.sun.istack.internal.NotNull;
+import reflectionPattern.model.operational.CompositeFact;
 
 import javax.persistence.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 @Entity
 
@@ -16,6 +20,19 @@ public abstract class FactType {
 //    void setFatherType(CompositeType fatherType){
 //        this.fatherType = fatherType;
 //    }
+
+    // ANCESTOR StRATEGY * * * * * * * * * * * * * * * * * * * *
+    @OneToMany(fetch=FetchType.LAZY )
+    private List<CompositeType> ancestors = new LinkedList<>();
+
+    public void addAncestor(CompositeType ancestorType) {
+        ancestors.add(ancestorType);
+    }
+    public List<CompositeType> getAncestors() {
+        return Collections.unmodifiableList(ancestors);
+    }
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
 
 
 
