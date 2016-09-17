@@ -80,9 +80,8 @@ public class CompositeFact extends Fact {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (_childFacts != null ? _childFacts.hashCode() : 0);
-        // TODO: check if it's correct to include compositionTypeCheck field in the hashCode, for now I think it's useless:
-            //result = 31 * result + (compositionTypeCheck.hashCode() != null ? ;compositionTypeCheck.hashCode() : 0 );
+        // result = 31 * result + (_childFacts != null ? _childFacts.hashCode() : 0); // REMOVED
+        //result = 31 * result + (compositionTypeCheck.hashCode() != null ? ;compositionTypeCheck.hashCode() : 0 );
         return result;
     }
 
