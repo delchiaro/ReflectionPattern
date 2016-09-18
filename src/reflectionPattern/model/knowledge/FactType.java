@@ -7,6 +7,7 @@ import com.sun.istack.internal.NotNull;
 import reflectionPattern.model.operational.CompositeFact;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,12 +22,20 @@ public abstract class FactType {
 //        this.fatherType = fatherType;
 //    }
 
-    // ANCESTOR StRATEGY * * * * * * * * * * * * * * * * * * * *
-    @OneToMany(fetch=FetchType.LAZY )
+    // ANCESTOR STRATEGY * * * * * * * * * * * * * * * * * * * *
+    @ManyToMany(fetch=FetchType.LAZY )
     private List<CompositeType> ancestors = new LinkedList<>();
 
-    public void addAncestor(CompositeType ancestorType) {
-        ancestors.add(ancestorType);
+
+    protected void appendAllAncestors(List<CompositeType> newAncestors) {
+        ancestors.addAll(newAncestors);
+    }
+    protected void addLastAncestor(CompositeType newAncestor) {
+        //if(! ancestors.contains(ancestor) )
+            ancestors.add(newAncestor);
+    }
+    protected void addFirstAncestor(CompositeType newAncestor) {
+        ancestors.add(0, newAncestor);
     }
     public List<CompositeType> getAncestors() {
         return Collections.unmodifiableList(ancestors);

@@ -80,7 +80,7 @@ public class ReflectionModelTest {
         CompositeType   compType4A = new CompositeType("CompTypeA");
         compType4A.addChild(qualType4);
         compType4A.addChild(quantType4);
-        compType4B.addChild(compType4B);
+        compType4B.addChild(compType4A);
         compType4B.addChild(textType4);
 
 

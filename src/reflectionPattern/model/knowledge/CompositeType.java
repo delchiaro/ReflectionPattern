@@ -4,13 +4,9 @@
 package reflectionPattern.model.knowledge;
 
 import com.sun.istack.internal.NotNull;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 
 
@@ -57,23 +53,60 @@ public class CompositeType extends FactType {
 
     }
 
+
+
     public void addChild(@NotNull FactType childType ){
         this._childTypes.add(childType);
         //childType.setFatherType(this);
-
-        // ANCESTOR STRATEGY
-        // The  LAST ELEMENT OF THE LIST is the direct ancestor of this (FATHER).
-        // The FIRST ELEMENT OF THE LIST is the most far ancestor of this (ROOT COMPOSITE).
-
-        // So, the most far ancestor of this CompositeType, become the most far ancestor of the childType, and so on..
-        // .. the most near ancestor of this (last element of the list, the father)
-        // became the most near ancestor of the child (..will be the grandfather after adding this to the child ancestors)...
-        for( CompositeType ancestor : getAncestors())
-            childType.addAncestor(ancestor); // add at the end of the list.
-        childType.addAncestor(this);
-        // .. add at the end of the list, so.. this become the last ancestor of the child (the father).
-
+        pushAncestorsToNewChild(childType);
     }
+
+
+    private void pushAncestorsToNewChild(@NotNull FactType child)
+    {
+        // When new Child is added to this composite, I add all my ancestors and myself to the Child ancestors.
+
+        // The FIRST ELEMENT OF THE LIST of is the direct ancestor of mySelf (my FATHER).
+        // The LAST ELEMENT OF THE LIST is the most far ancestor of mySelf (my family founder, ROOT COMPOSITE).
+
+        for( CompositeType ancestor : getAncestors())
+            child.addFirstAncestor(ancestor); // add at the beginning of the list
+        child.addFirstAncestor(this);
+
+
+
+        // If the new child is a CompositeType, there could be a problem:
+        // the compositeChild could have already added some child, so I have to tell to the child of the compositeChild
+        // that I am the father of his father (grandfather), and I have to tell them about all my ancestors.
+
+        // NB: a child can have only 1 father, so the child of the compChild didn't know anything about their grandfather
+        // because if I'm adding now the compChild to a composition, it means that compChild never had a father until now,
+        // and so the childs of the compChild never had idea of what was their's grandfather and other ancestors were.
+        // They only know who was their father...
+        // So I have simply to add to their ancestors all the ancestors of the father, which until now were unknown.
+        if(child instanceof CompositeType)
+        {
+            CompositeType compChild = (CompositeType) child;
+            if(compChild._childTypes.size() > 0) // (redundant check)
+                compChild.updateChildsAncestors(compChild.getAncestors());
+            // if the new child added is a composite, and if he has childs, I update these child about their ancestors
+            // (from grandfather to the root: this == grandfather of the childs of compChild)
+        }
+    }
+
+    private void updateChildsAncestors(List<CompositeType> newAncestors)
+    {
+        for(FactType child : _childTypes)
+        {
+            // Add the new anchestor at the end of the child's ancestors list:
+            child.appendAllAncestors( newAncestors );
+
+            if(child instanceof CompositeType)
+                ((CompositeType) child).updateChildsAncestors(newAncestors);
+        }
+    }
+
+
     public Set<FactType> getChildTypes() {
         return Collections.unmodifiableSet(_childTypes);
     }

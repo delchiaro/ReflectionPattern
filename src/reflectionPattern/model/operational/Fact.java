@@ -57,16 +57,25 @@ public abstract class Fact {
 
 
     // ANCESTOR STRATEGY * * * * * * * * * * * * * * * * * * * *
-    @OneToMany(fetch=FetchType.LAZY )
+    @ManyToMany(fetch=FetchType.LAZY )
     private List<CompositeFact> ancestors = new LinkedList<>();
 
-    public void addAncestor(CompositeFact ancestorFact) {
-         ancestors.add(ancestorFact);
+
+    protected void appendAllAncestors(List<CompositeFact> newAncestors) {
+        ancestors.addAll(newAncestors);
+    }
+    protected void addLastAncestor(CompositeFact newAncestor) {
+        //if(! ancestors.contains(ancestor) )
+        ancestors.add(newAncestor);
+    }
+    protected void addFirstAncestor(CompositeFact newAncestor) {
+        ancestors.add(0, newAncestor);
     }
     public List<CompositeFact> getAncestors() {
         return Collections.unmodifiableList(ancestors);
     }
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
 
 
 

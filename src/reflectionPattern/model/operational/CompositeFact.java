@@ -49,20 +49,58 @@ public class CompositeFact extends Fact {
             compositionTypeCheck.put(childFact.getType(), n+1);
             this._childFacts.add(childFact);
             //childFact.setFatherFact(this);
+            pushAncestorsToNewChild(childFact);
 
-            // ANCESTOR STRATEGY
-            // The  LAST ELEMENT OF THE LIST is the direct ancestor of this (FATHER).
-            // The FIRST ELEMENT OF THE LIST is the most far ancestor of this (ROOT COMPOSITE).
-
-            // So, the most far ancestor of this CompositeType, become the most far ancestor of the childType, and so on..
-            // .. the most near ancestor of this (last element of the list, the father)
-            // became the most near ancestor of the child (..will be the grandfather after adding this to the child ancestors)...
-            for( CompositeFact ancestor : getAncestors())
-                childFact.addAncestor(ancestor); // add at the end of the list.
-            childFact.addAncestor(this);
-            // .. add at the end of the list, so.. this become the last ancestor of the child (the father).
         }
     }
+
+
+    private void pushAncestorsToNewChild(@NotNull Fact child)
+    {
+        // When new Child is added to this composite, I add all my ancestors and myself to the Child ancestors.
+
+        // The FIRST ELEMENT OF THE LIST of is the direct ancestor of mySelf (my FATHER).
+        // The LAST ELEMENT OF THE LIST is the most far ancestor of mySelf (my family founder, ROOT COMPOSITE).
+
+        for( CompositeFact ancestor : getAncestors())
+            child.addFirstAncestor(ancestor); // add at the beginning of the list
+        child.addFirstAncestor(this);
+
+
+
+        // If the new child is a CompositeType, there could be a problem:
+        // the compositeChild could have already added some child, so I have to tell to the child of the compositeChild
+        // that I am the father of his father (grandfather), and I have to tell them about all my ancestors.
+
+        // NB: a child can have only 1 father, so the child of the compChild didn't know anything about their grandfather
+        // because if I'm adding now the compChild to a composition, it means that compChild never had a father until now,
+        // and so the childs of the compChild never had idea of what was their's grandfather and other ancestors were.
+        // They only know who was their father...
+        // So I have simply to add to their ancestors all the ancestors of the father, which until now were unknown.
+        if(child instanceof CompositeFact)
+        {
+            CompositeFact compChild = (CompositeFact) child;
+            if(compChild._childFacts.size() > 0) // (redundant check)
+                compChild.updateChildsAncestors(compChild.getAncestors());
+            // if the new child added is a composite, and if he has childs, I update these child about their ancestors
+            // (from grandfather to the root: this == grandfather of the childs of compChild)
+        }
+    }
+
+    private void updateChildsAncestors(List<CompositeFact> newAncestors)
+    {
+        for(Fact child : _childFacts)
+        {
+            // Add the new anchestor at the end of the child's ancestors list:
+            child.appendAllAncestors( newAncestors );
+
+            if(child instanceof CompositeFact)
+                ((CompositeFact) child).updateChildsAncestors(newAncestors);
+        }
+    }
+
+
+
     public Set<Fact> getChildFacts() {
         return Collections.unmodifiableSet(_childFacts);
     }

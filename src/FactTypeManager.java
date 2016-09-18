@@ -22,7 +22,7 @@ public class FactTypeManager {
 
 
     public static void main(String ... params) throws Range.MinimumValueException, Range.InfSupValueException {
-       PersistencyHelper.silenceGlobalHibernateLogs();
+        //PersistencyHelper.silenceGlobalHibernateLogs();
 
         PersistencyHelper ph = new PersistencyHelper().connect();
 
