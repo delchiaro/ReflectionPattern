@@ -2,8 +2,9 @@ package reflectionPattern.utility.compositeWithAncestors.compositeTestWithSuperc
 
 import org.junit.Test;
 import reflectionPattern.utility.composite.out.CompositeTree;
-import reflectionPattern.utility.compositeWithAncestors.compositeTest.MyComponent;
-import reflectionPattern.utility.compositeWithAncestors.compositeTest.MyComposite;
+import reflectionPattern.utility.compositeWithAncestors.compositeTest.MyComponentALS;
+import reflectionPattern.utility.compositeWithAncestors.compositeTest.MyCompositeALS;
+import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
 
 /**
  * Created by nagash on 17/09/16.
@@ -14,15 +15,15 @@ public class TestCompositeWithAncestorsAndSuperclass {
     public void test()
     {
 
-        MyComposite z = new MyComposite("z");
-        MyComposite y = new MyComposite("y");
-        MyComposite a = new MyComposite("a");
-        MyComposite b = new MyComposite("b");
-        MyComponent c = new MyComponent("c");
-        MyComposite d = new MyComposite("c");
-        MyComponent e = new MyComponent("e");
-        MyComponent f = new MyComponent("f");
-        MyComposite g = new MyComposite("d");
+        MyCompositeALS z = new MyCompositeALS("z");
+        MyCompositeALS y = new MyCompositeALS("y");
+        MyCompositeALS a = new MyCompositeALS("a");
+        MyCompositeALS b = new MyCompositeALS("b");
+        MyComponentALS c = new MyComponentALS("c");
+        MyCompositeALS d = new MyCompositeALS("c");
+        MyComponentALS e = new MyComponentALS("e");
+        MyComponentALS f = new MyComponentALS("f");
+        MyCompositeALS g = new MyCompositeALS("d");
 
         d.compManager.addChild(f);
         d.compManager.addChild(g);
@@ -54,7 +55,7 @@ public class TestCompositeWithAncestorsAndSuperclass {
          **/
 
 
-        CompositeTree.printTree(y);
+        CompositeTreeALS.printTree(y);
 
 
 

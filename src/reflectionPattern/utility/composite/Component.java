@@ -3,17 +3,26 @@ package reflectionPattern.utility.composite;
 /**
  * Created by nagash on 17/09/16.
  */
+
 public class Component<COMPOSITE extends IComposite> implements IComponent<COMPOSITE> {
 
-    private COMPOSITE father = null;
+
+    private COMPOSITE parent = null;
 
 
-    void setFather(COMPOSITE father) {
-        this.father = father;
+
+    public COMPOSITE getParent() {
+        return parent;
     }
 
     @Override
-    public COMPOSITE getFather() {
-        return father;
+    public void setParent(COMPOSITE parent, CompositeManager.CompositeManagerToken friendToken) {
+        this.parent = parent;
     }
+
+    public void setParent(COMPOSITE parent) {
+        this.parent = parent;
+    }
+
+
 }

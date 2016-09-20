@@ -14,42 +14,62 @@ import java.util.Map;
 @Table(name = "UNIT")
 public class Unit {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "id")
-    private Long id;
-
-
-    private String name;
-    private String symbol;
-
-    //for persistency
-    protected Unit() {
+    protected Unit ()  {
         name = symbol = null;
     }
-
-    public Unit(@NotNull String name, @NotNull String symbol){
+    public    Unit (@NotNull String name, @NotNull String symbol) {
         this.name=name;
         this.symbol=symbol;
     }
 
+
+    @Column(name = "id")
+    @Id @GeneratedValue
+    private Long id;
+
     @Column(name = "NAME")
+    private String name;
+
+    @Column(name = "SYMBOL")
+    private String symbol;
+
+
+
+
     public String getName(){
         return name;
     }
-
-    @Column(name = "SYMBOL")
     public String getSymbol(){
         return symbol;
     }
 
-    public void addConversionRatio(Unit toUnit, Number ratio) throws ImpossibleConversionException {
+
+
+
+
+ /* *******************************************************************************************************************
+    *******************************************************************************************************************
+    *******************************************************************************************************************/
+
+
+
+
+    public void addConversionRatio (Unit toUnit, Number ratio) throws ImpossibleConversionException {
         UnitConverter.converter().newConversionRatio(this, toUnit, ratio );
     }
     public Map<Unit, Number> getConversions() {
         return UnitConverter.converter().getConversions(this);
     }
 
+
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + name.hashCode();
+        result = 31 * result + symbol.hashCode();
+        return result;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -63,11 +83,4 @@ public class Unit {
         else return false;
     }
 
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + name.hashCode();
-        result = 31 * result + symbol.hashCode();
-        return result;
-    }
 }

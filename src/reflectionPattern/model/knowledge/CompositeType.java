@@ -4,11 +4,10 @@
 package reflectionPattern.model.knowledge;
 
 import com.sun.istack.internal.NotNull;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import reflectionPattern.utility.composite.CompositeManager;
+import reflectionPattern.utility.composite.IComposite;
 
 import javax.persistence.*;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,66 +39,69 @@ Corresponding annotations in EclipseLink are
 
 
  */
-
+@Access(AccessType.PROPERTY)
 @Entity
 @DiscriminatorValue("COMPOSITE")
-public class CompositeType extends FactType {
+public class CompositeType extends FactType implements IComposite<FactType> {
+
+
+    private CompositeManager<CompositeType, FactType> compositeManager = new CompositeManager<>(this);
+
+
+    protected CompositeType () {}
+    public    CompositeType (String typeName) { super(typeName); }
 
 
 
-    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL /* , mappedBy = "parent_type",*/ )//LAZY = non carico subito tutti i figli
-    @JoinColumn(name="parent_type")
-    private Set<FactType> _childTypes = new HashSet<>();
-
-    protected CompositeType() {}
-    public CompositeType(String typeName) {
-        super(typeName);
-
-    }
-
-    public void addChild(@NotNull FactType childType ){
-        this._childTypes.add(childType);
-        //childType.setFatherType(this);
-    }
-    public Set<FactType> getChildTypes() {
-        return Collections.unmodifiableSet(_childTypes);
-    }
 
 
+    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL  , mappedBy = "parent" )
     @Override
-    public boolean equals(Object obj) {
+    public    Set<FactType> getChilds ()                     { return compositeManager.getChilds(); }
+    protected void          setChilds (Set<FactType> childs) { compositeManager.setChilds(childs);  }
+    @Override public void   addChild (@NotNull FactType childType ){ this.compositeManager.addChild(childType); }
+
+
+
+
+
+ /* *******************************************************************************************************************
+    *******************************************************************************************************************
+    *******************************************************************************************************************/
+
+
+
+    @Override public boolean equals(Object obj) {
         if(this==obj) return true;
         if(super.equals(obj) == false) return false;
         if(!(obj instanceof  CompositeType)) return false;
         CompositeType head = (CompositeType)obj;
 
-        if( super.equals(head) && head._childTypes.size() == this._childTypes.size())
+        if( super.equals(head) && head.getChilds().size() == this.getChilds().size())
         {
-            for (FactType childType : head._childTypes)
+            for (FactType childType : head.getChilds())
             {
-                if(!(this._childTypes.contains(childType))) // Set.contains() usa equals() dell'oggetto per capire se sono uguali, abbiamo quindi una ricorsivita' nel caso di figli CompositeType.
+                if(!(this.getChilds().contains(childType))) // Set.contains() usa equals() dell'oggetto per capire se sono uguali, abbiamo quindi una ricorsivita' nel caso di figli CompositeType.
                     return false;
-
             }
             return true;
         }
         else return false;
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         int result = super.hashCode();
         //result = 31 * result + (_childTypes != null ? _childTypes.hashCode() : 0); // REMOVED
         return result;
     }
 
-    public static Set<FactType> explorer(@NotNull CompositeType head) {
+    public static Set<FactType> offsprings(@NotNull CompositeType head) {
         Set<FactType> list = new HashSet<>();
 
-        for (FactType childType : head._childTypes)
+        for (FactType childType : head.getChilds())
         {
             if(childType.getClass() == CompositeType.class)
-                list.addAll(explorer((CompositeType)childType));
+                list.addAll(offsprings((CompositeType)childType));
             else
                 list.add(childType);
         }

@@ -24,7 +24,7 @@ public class FactCompositeAdapter extends CompositeAdapter<Fact, String> {
     @Override
     protected Set<Fact> getChilds() {
         if(getAdapted() instanceof CompositeFact)
-            return ((CompositeFact)getAdapted()).getChildFacts();
+            return ((CompositeFact)getAdapted()).getChilds();
         else return null;
     }
 

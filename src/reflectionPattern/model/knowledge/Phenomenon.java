@@ -7,28 +7,47 @@ import javax.persistence.*;
 /**
  * Created by nagash on 02/09/16.
  */
+@Access(AccessType.FIELD)
 @Entity
 public class Phenomenon {
-    @Id
-    @GeneratedValue
-    @Column(name = "id")
-    private Long id = null;
 
-    @Column
-    private String value;
+
 
     protected Phenomenon() {}
     public Phenomenon(@NotNull String value){
         this.value = value;
     }
 
+
+
+
+    @Column(name = "id")
+    @Id @GeneratedValue
+    private Long id = null;
+
+
+
+    @Column
+    private String value;
     public String getValue() {
         return value;
     }
 
 
-    @Override
-    public boolean equals(Object obj) {
+
+
+
+ /* *******************************************************************************************************************
+    *******************************************************************************************************************
+    *******************************************************************************************************************/
+
+
+
+    @Override public String toString() {
+        return value;
+    }
+
+    @Override public boolean equals(Object obj) {
         if(this==obj) return true;
         //if(super.equals(obj) == false) return false;
         if(obj == null) return false;
@@ -48,15 +67,10 @@ public class Phenomenon {
 
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + value.hashCode();
         return result;
     }
 
-    @Override
-    public String toString() {
-        return value;
-    }
 }

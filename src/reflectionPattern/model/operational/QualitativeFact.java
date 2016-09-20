@@ -10,15 +10,14 @@ import reflectionPattern.model.knowledge.QualitativeType;
 import javax.persistence.*;
 
 @Entity
-@Access(AccessType.FIELD)
+@Access(AccessType.PROPERTY)
 @DiscriminatorValue("QUALITATIVE")
 public class QualitativeFact extends Fact {
 
-    @ManyToOne (fetch=FetchType.LAZY)
     private Phenomenon phenomenon;
 
-    protected QualitativeFact(){}
-    public QualitativeFact(@NotNull QualitativeType factType, @NotNull  Phenomenon phen) throws IllegalQualitativePhenomenonException {
+    protected   QualitativeFact () {}
+    public      QualitativeFact (@NotNull QualitativeType factType, @NotNull  Phenomenon phen) throws IllegalQualitativePhenomenonException {
         super(factType);
         this.phenomenon = phen;
         if(factType.isPhenomenonLegal(phen) == false )
@@ -26,14 +25,31 @@ public class QualitativeFact extends Fact {
     }
 
 
-    public Phenomenon getPhenomenon() {
-        return phenomenon;
+
+    @ManyToOne (fetch=FetchType.LAZY)
+    public      Phenomenon  getPhenomenon ()                { return this.phenomenon; }
+    protected   void        setPhenomenon (Phenomenon phen) { this.phenomenon = phen; } // for hibernate, no check legal phen check!
+
+
+
+ /* *******************************************************************************************************************
+    *******************************************************************************************************************
+    *******************************************************************************************************************/
+
+
+
+    @Override
+    public String toString() {
+        return super.toString() + ": " + this.phenomenon.getValue();
     }
-//    protected void setPhenomenon(Phenomenon value) throws IllegalQualitativePhenomenonException {
-//        if( ((QualitativeType)(super.getType())).isPhenomenonLegal(value) == false )
-//            throw new IllegalQualitativePhenomenonException();
-//        phenomenon = value;
-//    }
+
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + phenomenon.hashCode();
+        return result;
+    }
 
 
     @Override
@@ -49,18 +65,8 @@ public class QualitativeFact extends Fact {
         else return this.phenomenon.equals(qf.phenomenon);
     }
 
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + phenomenon.hashCode();
-        return result;
-    }
 
     public class IllegalQualitativePhenomenonException extends IllegalValueException {}
 
 
-    @Override
-    public String toString() {
-        return super.toString() + ": " + this.phenomenon.getValue();
-    }
 }

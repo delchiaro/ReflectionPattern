@@ -11,6 +11,7 @@ import reflectionPattern.model.operational.CompositeFact;
 import reflectionPattern.model.operational.Fact;
 import reflectionPattern.persistency.FactDAO;
 import reflectionPattern.persistency.FactTypeDAO;
+import reflectionPattern.utility.composite.out.CompositeTree;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -88,10 +89,10 @@ public class UseCaseTest {
         ph.close();
 
         System.out.print("\n\n\nLoaded Fact Type: \n");
-        OutputManager.printFactTypeTree(rootType);
+        CompositeTree.printTree(rootType);
 
         System.out.print("\n\n\nSaved Fact: \n");
-        OutputManager.printFactTree(fRoot);
+        CompositeTree.printTree(fRoot);
 
 
         System.out.print("\nElapsed load time: \t" +  loadTime + "\n");
@@ -179,7 +180,7 @@ public class UseCaseTest {
             ph.close();
 
             System.out.print("\n\n\nLoaded Fact Type: \n");
-            OutputManager.printFactTypeTree(rootType);
+            CompositeTree.printTree(rootType);
 
             if(rootFact == null) {
                 System.out.print("\n\n\nFake test: can't find a corresponding fact in DB \n");
@@ -187,7 +188,7 @@ public class UseCaseTest {
             else
             {
                 System.out.print("\n\n\nLoaded Fact: \n");
-                OutputManager.printFactTree(rootFact);
+                CompositeTree.printTree(rootFact);
             }
 
 

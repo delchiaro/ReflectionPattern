@@ -43,7 +43,7 @@ public class FactDAO {
         List<Fact> facts = entityManager
                 .createQuery(   "select f " +
                                 "from Fact f " +
-                                "where f.parent_fact IS NULL")
+                                "where f.parent IS NULL")
                 .getResultList();
         if(eager)
             for( Fact f : facts )
@@ -56,7 +56,7 @@ public class FactDAO {
         List<CompositeFact> facts = entityManager
                                         .createQuery(   "select f " +
                                                 " from Fact f " +
-                                                " where TYPE(f)= :type AND f.parent_fact IS NULL")
+                                                " where TYPE(f)= :type AND f.parent IS NULL")
                                         .setParameter("type", CompositeType.class)
                                         .getResultList();
 
@@ -90,10 +90,10 @@ public class FactDAO {
     // TODO: test performance with annotation EAGER vs annotation LAZY + this function
     public void fetchCompositeEager(CompositeFact fact)
     {
-        if(fact.getChildFacts() != null && fact.getChildFacts().size() > 0)
+        if(fact.getChilds() != null && fact.getChilds().size() > 0)
         {
-            Hibernate.initialize((fact.getChildFacts()));
-            for( Fact child : fact.getChildFacts() )
+            Hibernate.initialize((fact.getChilds()));
+            for( Fact child : fact.getChilds() )
                 if(child instanceof  CompositeFact)
                     fetchCompositeEager((CompositeFact) child);
         }

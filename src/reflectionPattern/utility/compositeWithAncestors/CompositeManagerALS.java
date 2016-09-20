@@ -8,7 +8,9 @@ import java.util.*;
  * Created by nagash on 17/09/16.
  */
 
-public class CompositeManager<CONTAINER extends IComposite<COMPONENT>, COMPONENT extends Component>  extends Component implements IComposite<COMPONENT>
+public class CompositeManagerALS  <CONTAINER extends ICompositeALS<COMPONENT>,    COMPONENT extends IComponentALS>
+        extends ComponentALS
+        implements ICompositeALS<COMPONENT>
 
 {
     private CONTAINER container;
@@ -19,7 +21,7 @@ public class CompositeManager<CONTAINER extends IComposite<COMPONENT>, COMPONENT
     private Set<COMPONENT> childs = new HashSet<>();
 
 
-    public void addChild(COMPONENT child) {
+    @Override public void addChild(COMPONENT child) {
 
         this.childs.add(child);
         //childType.setFatherType(this);
@@ -27,19 +29,24 @@ public class CompositeManager<CONTAINER extends IComposite<COMPONENT>, COMPONENT
     }
 
 
-    public Set<COMPONENT> getChilds() {
+    @Override public Set<COMPONENT> getChilds() {
         return Collections.unmodifiableSet(childs);
     }
 
 
-    private void pushAncestorsToNewChild(@NotNull Component child)
+    public void setChilds(Set<COMPONENT> childs) {
+        this.childs = childs;
+    }
+
+
+    private void pushAncestorsToNewChild(@NotNull COMPONENT child)
     {
         // When new Child is added to this compositeWithAncestors, I add all my ancestors and myself to the Child ancestors.
 
         // The FIRST ELEMENT OF THE LIST of is the direct ancestor of mySelf (my FATHER).
         // The LAST ELEMENT OF THE LIST is the most far ancestor of mySelf (my family founder, ROOT COMPOSITE).
 
-        Iterator<CompositeManager> iter = getAncestors().iterator();
+        Iterator<CompositeManagerALS> iter = getAncestors().iterator();
         while(iter.hasNext())
             child.addFirstAncestor(iter.next()); // add at the beginning of the list
         child.addFirstAncestor(this);
@@ -54,9 +61,9 @@ public class CompositeManager<CONTAINER extends IComposite<COMPONENT>, COMPONENT
         // and so the childs of the compChild never had idea of what was their's grandfather and other ancestors were.
         // They only know who was their father...
         // So I have simply to add to their ancestors all the ancestors of the father, which until now were unknown.
-        if(child instanceof CompositeManager)
+        if(child instanceof CompositeManagerALS)
         {
-            CompositeManager compChild = (CompositeManager) child;
+            CompositeManagerALS compChild = (CompositeManagerALS) child;
             if(compChild.getChilds().size() > 0) // (redundant check)
                 compChild.updateChildsAncestors(compChild.getAncestors());
             // if the new child added is a compositeWithAncestors, and if he has childs, I update these child about their ancestors
@@ -64,15 +71,15 @@ public class CompositeManager<CONTAINER extends IComposite<COMPONENT>, COMPONENT
         }
     }
 
-    private void updateChildsAncestors(List<CompositeManager> newAncestors)
+    private void updateChildsAncestors(List<CompositeManagerALS> newAncestors)
     {
         for(COMPONENT child : childs)
         {
             // Add the new anchestor at the end of the child's ancestors list:
             child.appendAllAncestors( newAncestors );
 
-            if(child instanceof CompositeManager)
-                ((CompositeManager) child).updateChildsAncestors(newAncestors);
+            if(child instanceof CompositeManagerALS)
+                ((CompositeManagerALS) child).updateChildsAncestors(newAncestors);
         }
     }
 

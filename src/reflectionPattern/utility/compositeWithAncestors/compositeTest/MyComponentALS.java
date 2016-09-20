@@ -1,13 +1,13 @@
 package reflectionPattern.utility.compositeWithAncestors.compositeTest;
-import reflectionPattern.utility.compositeWithAncestors.Component;
+import reflectionPattern.utility.compositeWithAncestors.ComponentALS;
 
 /**
  * Created by nagash on 17/09/16.
  */
-public class MyComponent extends Component<MyComposite> {
+public class MyComponentALS extends ComponentALS<MyCompositeALS> {
     String name;
 
-    public MyComponent(String name) {
+    public MyComponentALS(String name) {
         this.name = name;
     }
 

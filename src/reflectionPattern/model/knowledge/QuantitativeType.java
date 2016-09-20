@@ -12,43 +12,59 @@ import java.util.Set;
 
 
 @Entity
+@Access(AccessType.PROPERTY)
 @DiscriminatorValue("QUANTITATIVE")
 public class QuantitativeType extends FactType {
-    //private ImmutableSet<Unit> legalUnits;
 
-
-    @ManyToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Unit> legalUnits;
 
-    protected QuantitativeType() {}
 
-    public QuantitativeType(@NotNull String typeName) {
+
+    protected   QuantitativeType  () {}
+    public      QuantitativeType  (@NotNull String typeName) {
         super(typeName);
         this.legalUnits = new HashSet<>();
     }
-    public QuantitativeType(@NotNull String typeName, @NotNull Set<Unit> legalUnits) {
+    public      QuantitativeType  (@NotNull String typeName, @NotNull Set<Unit> legalUnits) {
         super(typeName);
         this.legalUnits = new HashSet<>(legalUnits);
     }
 
-    public boolean isUnitLegal(Unit unit) {
+
+
+
+    @ManyToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+    public Set<Unit>  getLegalUnits()                { return Collections.unmodifiableSet(legalUnits); }
+    public void       setLegalUnits(Set<Unit> units) { this.legalUnits = units; }
+
+
+
+
+
+ /* *******************************************************************************************************************
+    *******************************************************************************************************************
+    *******************************************************************************************************************/
+
+
+
+    public boolean isUnitLegal  (Unit unit) {
         if(legalUnits.contains(unit))
             return true;
         else return false;
     }
-
-    public void addLegalUnit(@NotNull Unit unit) {
+    public void    addLegalUnit (@NotNull Unit unit) {
         legalUnits.add(unit);
     }
-    public Set<Unit> getLegalUnits() {
-        return Collections.unmodifiableSet(legalUnits);
+
+
+
+    @Override public int hashCode() {
+        int result = super.hashCode();
+        //result = 31 * result + (legalUnits != null ? legalUnits.hashCode() : 0);
+        return result;
     }
 
-
-
-
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         if(this==obj) return true;
         if(super.equals(obj) == false) return false;
         if(! (obj instanceof  QuantitativeType)) return false;
@@ -65,10 +81,4 @@ public class QuantitativeType extends FactType {
         else return false;
     }
 
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        //result = 31 * result + (legalUnits != null ? legalUnits.hashCode() : 0);
-        return result;
-    }
 }

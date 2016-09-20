@@ -2,6 +2,7 @@ package reflectionPattern.utility.compositeWithAncestors.compositeTest;
 
 import org.junit.Test;
 import reflectionPattern.utility.composite.out.CompositeTree;
+import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
 
 /**
  * Created by nagash on 17/09/16.
@@ -12,15 +13,15 @@ public class TestCompositeWithAncestors {
     public void test()
     {
 
-        MyComposite z = new MyComposite("z");
-        MyComposite y = new MyComposite("y");
-        MyComposite a = new MyComposite("a");
-        MyComposite b = new MyComposite("b");
-        MyComponent c = new MyComponent("c");
-        MyComposite d = new MyComposite("d");
-        MyComponent e = new MyComponent("e");
-        MyComponent f = new MyComponent("f");
-        MyComposite g = new MyComposite("g");
+        MyCompositeALS z = new MyCompositeALS("z");
+        MyCompositeALS y = new MyCompositeALS("y");
+        MyCompositeALS a = new MyCompositeALS("a");
+        MyCompositeALS b = new MyCompositeALS("b");
+        MyComponentALS c = new MyComponentALS("c");
+        MyCompositeALS d = new MyCompositeALS("d");
+        MyComponentALS e = new MyComponentALS("e");
+        MyComponentALS f = new MyComponentALS("f");
+        MyCompositeALS g = new MyCompositeALS("g");
 
         d.compManager.addChild(f);
         d.compManager.addChild(g);
@@ -50,7 +51,7 @@ public class TestCompositeWithAncestors {
          *             |-- g
          *
          **/
-        CompositeTree.printTree(y);
+        CompositeTreeALS.printTree(y);
 
         // TODO: ancestors test
 

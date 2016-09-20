@@ -21,13 +21,9 @@ public class FactGenerator {
             CompositeFact compFact;
             fact = compFact = new CompositeFact((CompositeType) rootType);
 
-            for (FactType childType : ((CompositeType) rootType).getChildTypes())
+            for (FactType childType : ((CompositeType) rootType).getChilds())
             {
-                try
-                {
-                    compFact.addChild(randomFact(childType));
-                }
-                catch (CompositeFact.IllegalFactTypeException e) {e.printStackTrace();}
+                compFact.addChild(randomFact(childType));
             }
         }
 
