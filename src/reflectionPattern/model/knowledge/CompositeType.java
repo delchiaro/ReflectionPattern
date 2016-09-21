@@ -4,9 +4,15 @@
 package reflectionPattern.model.knowledge;
 
 import com.sun.istack.internal.NotNull;
+import reflectionPattern.utility.composite.CompositeManager;
+import reflectionPattern.utility.composite.IComposite;
+import reflectionPattern.utility.compositeWithAncestors.CompositeManagerALS;
+import reflectionPattern.utility.compositeWithAncestors.ICompositeALS;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 
@@ -36,121 +42,77 @@ Corresponding annotations in EclipseLink are
 
 
  */
-
+@Access(AccessType.PROPERTY)
 @Entity
 @DiscriminatorValue("COMPOSITE")
-public class CompositeType extends FactType {
+public class CompositeType extends FactType implements ICompositeALS<CompositeType, FactType> {
+
+
+    private CompositeManagerALS<CompositeType, FactType> compositeManager = new CompositeManagerALS<>(this);
+
+
+    protected CompositeType () {}
+    public    CompositeType (String typeName) { super(typeName); }
 
 
 
-    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL /* , mappedBy = "parent_type",*/ )//LAZY = non carico subito tutti i figli
-    @JoinColumn(name="parent_type")
-    private Set<FactType> _childTypes = new HashSet<>();
-
-    protected CompositeType() {}
-    public CompositeType(String typeName) {
-        super(typeName);
-
-    }
 
 
-
-    public void addChild(@NotNull FactType childType ){
-        this._childTypes.add(childType);
-        //childType.setFatherType(this);
-        pushAncestorsToNewChild(childType);
-    }
-
-
-    private void pushAncestorsToNewChild(@NotNull FactType child)
-    {
-        // When new Child is added to this composite, I add all my ancestors and myself to the Child ancestors.
-
-        // The FIRST ELEMENT OF THE LIST of is the direct ancestor of mySelf (my FATHER).
-        // The LAST ELEMENT OF THE LIST is the most far ancestor of mySelf (my family founder, ROOT COMPOSITE).
-
-        for( CompositeType ancestor : getAncestors())
-            child.addFirstAncestor(ancestor); // add at the beginning of the list
-        child.addFirstAncestor(this);
-
-
-
-        // If the new child is a CompositeType, there could be a problem:
-        // the compositeChild could have already added some child, so I have to tell to the child of the compositeChild
-        // that I am the father of his father (grandfather), and I have to tell them about all my ancestors.
-
-        // NB: a child can have only 1 father, so the child of the compChild didn't know anything about their grandfather
-        // because if I'm adding now the compChild to a composition, it means that compChild never had a father until now,
-        // and so the childs of the compChild never had idea of what was their's grandfather and other ancestors were.
-        // They only know who was their father...
-        // So I have simply to add to their ancestors all the ancestors of the father, which until now were unknown.
-        if(child instanceof CompositeType)
-        {
-            CompositeType compChild = (CompositeType) child;
-            if(compChild._childTypes.size() > 0) // (redundant check)
-                compChild.updateChildsAncestors(compChild.getAncestors());
-            // if the new child added is a composite, and if he has childs, I update these child about their ancestors
-            // (from grandfather to the root: this == grandfather of the childs of compChild)
-        }
-    }
-
-    private void updateChildsAncestors(List<CompositeType> newAncestors)
-    {
-        for(FactType child : _childTypes)
-        {
-            // Add the new anchestor at the end of the child's ancestors list:
-            child.appendAllAncestors( newAncestors );
-
-            if(child instanceof CompositeType)
-                ((CompositeType) child).updateChildsAncestors(newAncestors);
-        }
-    }
-
-
-    public Set<FactType> getChildTypes() {
-        return Collections.unmodifiableSet(_childTypes);
-    }
-
-
+    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL  , mappedBy = "parent" )
     @Override
-    public boolean equals(Object obj) {
+    public    Set<FactType> getChilds ()                     { return compositeManager.getChilds(); }
+    protected void          setChilds (Set<FactType> childs) { compositeManager.setChilds(childs);  }
+    @Override public void   addChild (@NotNull FactType childType ){ this.compositeManager.addChild(childType); }
+
+
+
+
+ /* *******************************************************************************************************************
+    *******************************************************************************************************************
+    *******************************************************************************************************************/
+
+
+
+    @Override public boolean equals(Object obj) {
         if(this==obj) return true;
         if(super.equals(obj) == false) return false;
         if(!(obj instanceof  CompositeType)) return false;
         CompositeType head = (CompositeType)obj;
 
-        if( super.equals(head) && head._childTypes.size() == this._childTypes.size())
+        if( super.equals(head) && head.getChilds().size() == this.getChilds().size())
         {
-            for (FactType childType : head._childTypes)
+            for (FactType childType : head.getChilds())
             {
-                if(!(this._childTypes.contains(childType))) // Set.contains() usa equals() dell'oggetto per capire se sono uguali, abbiamo quindi una ricorsivita' nel caso di figli CompositeType.
+                if(!(this.getChilds().contains(childType))) // Set.contains() usa equals() dell'oggetto per capire se sono uguali, abbiamo quindi una ricorsivita' nel caso di figli CompositeType.
                     return false;
-
             }
             return true;
         }
         else return false;
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         int result = super.hashCode();
         //result = 31 * result + (_childTypes != null ? _childTypes.hashCode() : 0); // REMOVED
         return result;
     }
 
-    public static Set<FactType> explorer(@NotNull CompositeType head) {
+    public static Set<FactType> offsprings(@NotNull CompositeType head) {
         Set<FactType> list = new HashSet<>();
 
-        for (FactType childType : head._childTypes)
+        for (FactType childType : head.getChilds())
         {
             if(childType.getClass() == CompositeType.class)
-                list.addAll(explorer((CompositeType)childType));
+                list.addAll(offsprings((CompositeType)childType));
             else
                 list.add(childType);
         }
         return list;
     }
+
+
+
+
 
 
 }

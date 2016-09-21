@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by nagash on 17/09/16.
  */
-public class Component<COMPOSITE extends IComposite> implements IComponent<COMPOSITE> {
+public class ComponentALS<COMPOSITE extends ICompositeALS> implements IComponentALS<COMPOSITE> {
 
     // ANCESTOR STRATEGY * * * * * * * * * * * * * * * * * * * *
 
@@ -31,10 +31,21 @@ public class Component<COMPOSITE extends IComposite> implements IComponent<COMPO
         return Collections.unmodifiableList(ancestors);
     }
 
-    public COMPOSITE getFather() {
+    public void setAncestors(List<COMPOSITE> ancestors) {
+        this.ancestors = ancestors;
+    }
+
+    public COMPOSITE getParent() {
         return ancestors.get(0);
     }
+
+
+    public void setParent(COMPOSITE parent) {
+        addFirstAncestor(parent);
+    }
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+
 
 
 }

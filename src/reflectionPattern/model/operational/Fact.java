@@ -6,134 +6,126 @@ package reflectionPattern.model.operational;
 import com.sun.istack.internal.NotNull;
 import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;
+import reflectionPattern.utility.composite.ComponentManager;
+import reflectionPattern.utility.composite.CompositeManager;
+import reflectionPattern.utility.composite.IComponent;
+import reflectionPattern.utility.compositeWithAncestors.ComponentManagerALS;
+import reflectionPattern.utility.compositeWithAncestors.IComponentALS;
 
 import javax.persistence.*;
 import java.util.*;
 
 
 
-/*  Per fare persistenza su generics, vedere: http://stackoverflow.com/questions/28695081/how-to-embed-generic-field-using-hibernate
-    Riporto qua:
-
-    Hibernate cannot persist generic fields due to Type Erasure.
-    However, I've managed to find a simple workaround:
-
-    1) Add @Access(AccessType.FIELD) annotation to the class.
-    2) Add @Transient annotation to field you want to persist.
-    3) Create a specific getter and setter which uses this field.
-    4) Add @Access(AccessType.PROPERTY) to the getter.
-    5) Make type of the field embeddable by adding @Embeddable property to the class.
-
-    In this way you will be able to have an embedded property of specific type.
-    Here is a modified code:
-
-        @Entity
-        @Access(AccessType.FIELD)
-        public class Element<T>
-        {
-           @Transient
-           private T value;
-
-           @Access(AccessType.PROPERTY)
-           private SpecificValue getValue() {
-               return (SpecificValue) value;
-           }
-
-           private void setValue(SpecificValue v) {
-               this.value = (T) v;
-           }
-        }
-        ...
-        @Embeddable
-        public class ValueType {
-        ...
- */
-
 @Entity
-@Access(AccessType.FIELD)
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-//@DiscriminatorColumn(name = "FACT_DISCRIM", discriminatorType = DiscriminatorType.STRING )
-public abstract class Fact {
+@Access(AccessType.PROPERTY)
+public abstract class Fact implements IComponentALS<CompositeFact> {
 
 
-    // ANCESTOR STRATEGY * * * * * * * * * * * * * * * * * * * *
+
+    ComponentManagerALS<Fact, CompositeFact> componentManager = new ComponentManagerALS<>(this);
+    private Long     id = null;
+    private FactType type;
+
+
+
+    protected  Fact (){}
+    public     Fact (@NotNull FactType factType){
+        this.type = factType;
+    }
+
+
+
     @ManyToMany(fetch=FetchType.LAZY )
-    private List<CompositeFact> ancestors = new LinkedList<>();
-
-
-    protected void appendAllAncestors(List<CompositeFact> newAncestors) {
-        ancestors.addAll(newAncestors);
-    }
-    protected void addLastAncestor(CompositeFact newAncestor) {
-        //if(! ancestors.contains(ancestor) )
-        ancestors.add(newAncestor);
-    }
-    protected void addFirstAncestor(CompositeFact newAncestor) {
-        ancestors.add(0, newAncestor);
-    }
-    public List<CompositeFact> getAncestors() {
-        return Collections.unmodifiableList(ancestors);
-    }
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    public List<CompositeFact> getAncestors() { return componentManager.getAncestors(); }
+    protected void setAncestors(List<CompositeFact> ancestors) { componentManager.setAncestors(ancestors);}
 
 
 
 
 
 
-//    @ManyToOne
-//    private Fact parent_fact;
-    @Column(name="parent_fact")
-    private Long parent_fact;
-    // this property (bidirectional access) is needed from the FactTypeDAO.. this field would be still created in the relactional model
-    // but JPA need the java property, otherwise the field can't be accessed from a SELECT query in JPQL (sure..?)
+
+
+
 
 
 
     @Id @GeneratedValue
     @Column(name = "id")
-    private Long id = null;
-    public Long getId() {
-        return id;
-    }
+    public     Long getId ()         { return id; }
+    protected  void setId (Long id)  { this.id = id; }
+
+
 
     @ManyToOne
-    private FactType type;
+    public     FactType   getType ()               { return type; }
+    protected  void       setType (FactType type)  { this.type = type; }
 
 
-    protected Fact(){}
-    public Fact(@NotNull FactType factType){
-        this.type = factType;
+
+    @ManyToOne
+    @Override
+    public CompositeFact getParent ()                      { return componentManager.getParent(); }
+    public void          setParent (CompositeFact parent)  { componentManager.setParent(parent); }
+
+
+
+
+ /* *******************************************************************************************************************
+    *******************************************************************************************************************
+    *******************************************************************************************************************/
+
+
+
+    // Should be protected/private, think about tocken-friend method in CompositeManagerALS-ICompositeALS
+    // or remove them from the interface if posssible (I don't think so, I can remove addLastAncestor only).
+    @Override public void addFirstAncestor(CompositeFact newAncestor) {
+        componentManager.addFirstAncestor(newAncestor);
     }
-    public FactType getType() {
-        return type;
+    @Override public void addLastAncestor(CompositeFact newAncestor) {
+        componentManager.addLastAncestor(newAncestor);
+    }
+    @Override public void appendAllAncestors(List<CompositeFact> newAncestors) {
+        componentManager.appendAllAncestors(newAncestors);
     }
 
 
 
 
-    public class IllegalValueException extends Exception {}
+    // needed by ComponentManager (IComponent interface)
+//    @Override public void setParent(CompositeFact parent, CompositeManager.CompositeManagerToken friendToken) {
+//        componentManager.setParent(parent, friendToken);
+//    }
+
+
+    @Override
+    public String toString() {
+        return this.getType().toString();
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + type.hashCode();
+        return result;
+    }
 
 
 
 
+    // Old equals:
+    //    @Override
+    //    public boolean equals(Object obj) {
+    //        if(!(obj instanceof Fact)) return false;
+    //        Fact fact = (Fact) obj;
+    //        if(this.id.equals(fact.id) && this.type.equals(fact.type))
+    //            return true;
+    //        else return false;
+    //    }
 
     private static final EqualCheck defaultEqualCheck = EqualCheck.pk_if_exists_and_deeep;
     //private static final EqualCheck defaultEqualCheck = EqualCheck.pk_if_exists;
-
-
-
-
-// Old equals:
-//    @Override
-//    public boolean equals(Object obj) {
-//        if(!(obj instanceof Fact)) return false;
-//        Fact fact = (Fact) obj;
-//        if(this.id.equals(fact.id) && this.type.equals(fact.type))
-//            return true;
-//        else return false;
-//    }
-
 
     @Override
     public boolean equals(Object obj) {
@@ -158,12 +150,10 @@ public abstract class Fact {
         }
     }
 
-
-
     public enum EqualCheck { pk_forced, pk_if_exists, deep, pk_if_exists_and_deeep, pk_forced_and_deeep}
 
 
- /* EQUALS
+     /* EQUALS
          TRUTH TABLE:        (where D is the result of the deep check)
 
                         |   pk            pk if   pkIfExists   deep      pk forced
@@ -232,16 +222,53 @@ public abstract class Fact {
     }
 
 
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + type.hashCode();
-        return result;
-    }
 
-    @Override
-    public String toString() {
-        return this.getType().toString();
-    }
+
+
+    public class IllegalValueException extends Exception {}
+
+
 }
 
+
+
+
+
+
+
+/*  Per fare persistenza su generics, vedere: http://stackoverflow.com/questions/28695081/how-to-embed-generic-field-using-hibernate
+    Riporto qua:
+
+    Hibernate cannot persist generic fields due to Type Erasure.
+    However, I've managed to find a simple workaround:
+
+    1) Add @Access(AccessType.FIELD) annotation to the class.
+    2) Add @Transient annotation to field you want to persist.
+    3) Create a specific getter and setter which uses this field.
+    4) Add @Access(AccessType.PROPERTY) to the getter.
+    5) Make type of the field embeddable by adding @Embeddable property to the class.
+
+    In this way you will be able to have an embedded property of specific type.
+    Here is a modified code:
+
+        @Entity
+        @Access(AccessType.FIELD)
+        public class Element<T>
+        {
+           @Transient
+           private T value;
+
+           @Access(AccessType.PROPERTY)
+           private SpecificValue getValue() {
+               return (SpecificValue) value;
+           }
+
+           private void setValue(SpecificValue v) {
+               this.value = (T) v;
+           }
+        }
+        ...
+        @Embeddable
+        public class ValueType {
+        ...
+ */

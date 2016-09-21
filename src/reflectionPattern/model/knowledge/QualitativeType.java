@@ -12,16 +12,33 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Access(AccessType.PROPERTY)
 @DiscriminatorValue("QUALITATIVE")
-public class QualitativeType extends FactType {
+public class QualitativeType extends FactType
+{
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     Set<Phenomenon> legalPhenomenons = new HashSet<>();
 
-    protected QualitativeType() {}
-    public QualitativeType(@NotNull  String typeName) {
-        super(typeName);
-    }
+
+    protected  QualitativeType () {}
+    public     QualitativeType (@NotNull  String typeName) { super(typeName); }
+
+
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    public    Set<Phenomenon>  getLegalPhenomenons ()                        { return Collections.unmodifiableSet(legalPhenomenons); }
+    protected void             setLegalPhenomenons (Set<Phenomenon> phenoms) { this.legalPhenomenons = phenoms; }
+
+
+
+
+
+
+ /* *******************************************************************************************************************
+    *******************************************************************************************************************
+    *******************************************************************************************************************/
+
+
 
     public void addLegalPhenomenon(@NotNull Phenomenon newLegalPhenomenon) {
         legalPhenomenons.add(newLegalPhenomenon);
@@ -32,12 +49,16 @@ public class QualitativeType extends FactType {
             return true;
         else return false;
     }
-    public Set<Phenomenon> getLegalPhenomenons() {
-        return Collections.unmodifiableSet(legalPhenomenons);
+
+
+
+    @Override public int hashCode() {
+        int result = super.hashCode();
+        //result = 31 * result + (legalPhenomenons != null ? legalPhenomenons.hashCode() : 0);
+        return result;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         if(this==obj) return true;
         if(super.equals(obj) == false) return false;
         if(! (obj instanceof  QualitativeType)) return false;
@@ -54,10 +75,5 @@ public class QualitativeType extends FactType {
         else return false;
     }
 
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        //result = 31 * result + (legalPhenomenons != null ? legalPhenomenons.hashCode() : 0);
-        return result;
-    }
+
 }

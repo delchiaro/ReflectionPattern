@@ -9,6 +9,8 @@ import reflectionPattern.model.knowledge.FactType;
 import reflectionPattern.model.operational.CompositeFact;
 import reflectionPattern.model.operational.Fact;
 import reflectionPattern.persistency.PersistencyHelper;
+import reflectionPattern.utility.composite.out.CompositeTree;
+import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
 
 import javax.persistence.EntityTransaction;
 import java.util.List;
@@ -91,11 +93,11 @@ public class PersistencyPerformanceTest {
 
 
         System.out.print("\n\n\nPersisted fixed FactType tree: \n\n" );
-            OutputManager.printFactTypeTree(rootType);
+            CompositeTreeALS.printTree(rootType);
 
         System.out.print("\n\n\nPersisted facts: \n\n" );
         for (int i = 0; i < N_ROOT_FACTS; i++)
-            OutputManager.printFactTree(rootFacts[i]);
+            CompositeTreeALS.printTree(rootFacts[i]);
 
 
         System.out.print("\n\n\nPrepared statements: " + count );

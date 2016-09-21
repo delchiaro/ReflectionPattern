@@ -12,21 +12,20 @@ import javax.persistence.*;
 
 
 @Entity
-@Access(AccessType.FIELD)
+@Access(AccessType.PROPERTY)
 @DiscriminatorValue("QUANTITATIVE")
 public class QuantitativeFact extends Fact {
 
-    // ONLY FOR HIBERNATE:
-    @Embedded
+
     private Quantity quantity;
 
-    protected QuantitativeFact(){}
 
-    public QuantitativeFact(@NotNull QuantitativeType factType, @NotNull Number value, @NotNull Unit measurementUnit) throws IllegalQuantitativeUnitException {
+    protected QuantitativeFact (){}
+    public    QuantitativeFact (@NotNull QuantitativeType factType, @NotNull Number value, @NotNull Unit measurementUnit) throws IllegalQuantitativeUnitException {
         this(factType, new Quantity(value, measurementUnit));
 
     }
-    public QuantitativeFact( @NotNull QuantitativeType factType, @NotNull Quantity quantity) throws IllegalQuantitativeUnitException {
+    public    QuantitativeFact ( @NotNull QuantitativeType factType, @NotNull Quantity quantity) throws IllegalQuantitativeUnitException {
         super(factType);
         if(factType.isUnitLegal(quantity.getUnit()) == false )
             throw new IllegalQuantitativeUnitException();
@@ -34,12 +33,33 @@ public class QuantitativeFact extends Fact {
 
     }
 
-    public Quantity getQuantity() {
-        return this.quantity;
+
+
+    @Embedded
+    public     Quantity  getQuantity ()               { return this.quantity; }
+    protected  void      setQuantity (Quantity quant) { this.quantity = quant; }
+
+
+
+
+ /* *******************************************************************************************************************
+    *******************************************************************************************************************
+    *******************************************************************************************************************/
+
+
+    @Override public String toString() {
+        return super.toString() + ": " + this.quantity.getValue();
     }
 
-    @Override
-    public boolean equals(Object obj) {
+
+    @Override public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + quantity.hashCode();
+        return result;
+    }
+
+
+    @Override public boolean equals(Object obj) {
         if(this==obj) return true;
         if(super.equals(obj) == false) return false;
         if(!(obj instanceof  QuantitativeFact)) return false;
@@ -56,15 +76,5 @@ public class QuantitativeFact extends Fact {
     public class IllegalQuantitativeUnitException extends IllegalValueException {}
 
 
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + quantity.hashCode();
-        return result;
-    }
 
-    @Override
-    public String toString() {
-        return super.toString() + ": " + this.quantity.getValue();
-    }
 }

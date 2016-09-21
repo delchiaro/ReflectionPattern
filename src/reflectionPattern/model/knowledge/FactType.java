@@ -4,67 +4,27 @@
 package reflectionPattern.model.knowledge;
 
 import com.sun.istack.internal.NotNull;
-import reflectionPattern.model.operational.CompositeFact;
+import org.hibernate.type.ComponentType;
+import reflectionPattern.utility.composite.ComponentManager;
+import reflectionPattern.utility.composite.CompositeManager;
+import reflectionPattern.utility.composite.IComponent;
+import reflectionPattern.utility.compositeWithAncestors.ComponentManagerALS;
+import reflectionPattern.utility.compositeWithAncestors.IComponentALS;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
+@Access(AccessType.PROPERTY)
 @Entity
-
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-//@DiscriminatorColumn(name = "FACT_TYPE_DISCRIM", discriminatorType = DiscriminatorType.STRING )
-public abstract class FactType {
-    //private CompositeType   fatherType = null; // serve avere la bidirezionalitá?
-//    void setFatherType(CompositeType fatherType){
-//        this.fatherType = fatherType;
-//    }
-
-    // ANCESTOR STRATEGY * * * * * * * * * * * * * * * * * * * *
-    @ManyToMany(fetch=FetchType.LAZY )
-    private List<CompositeType> ancestors = new LinkedList<>();
-
-
-    protected void appendAllAncestors(List<CompositeType> newAncestors) {
-        ancestors.addAll(newAncestors);
-    }
-    protected void addLastAncestor(CompositeType newAncestor) {
-        //if(! ancestors.contains(ancestor) )
-            ancestors.add(newAncestor);
-    }
-    protected void addFirstAncestor(CompositeType newAncestor) {
-        ancestors.add(0, newAncestor);
-    }
-    public List<CompositeType> getAncestors() {
-        return Collections.unmodifiableList(ancestors);
-    }
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+public abstract class FactType implements IComponentALS<CompositeType> {
 
 
 
-
-    // In this way it doesn't works with the current FactTypeDAO: in java whe have parent_type always null :(
-    // it would be cool to have a bidirectional java link.. but I think we would make a JOIN in the "findAllRoots" query method.
-    //    @ManyToOne
-    //    private FactType parent_type;
-
-    @Column(name="parent_type")
-    private Long parent_type;
-    // this property (bidirectional access) is needed from the FactTypeDAO.. this field would be still created in the relactional model
-    // but JPA need the java property, otherwise the field can't be accessed from a SELECT query in JPQL (sure..?)
-
-
-
-    @Id @GeneratedValue
-    @Column(name = "id")
-    private Long id = null;
-    public Long getId() {
-        return id;
-    }
-
+    @Transient
+    private ComponentManagerALS<FactType, CompositeType> componentManager = new ComponentManagerALS<>(this);
+    protected Long id;
     private String typeName;
+
 
 
     protected FactType() {
@@ -75,9 +35,80 @@ public abstract class FactType {
     }
 
 
+
+    @ManyToOne @JoinColumn(name="parent_fk")
+    @Override
+    public CompositeType    getParent()                     { return componentManager.getParent(); }
+    protected void          setParent(CompositeType parent) { componentManager.setParent(parent);  }
+
+
+
+    @Column(name = "id")
+    @Id @GeneratedValue
+    public    Long  getId()         { return id; }
+    protected void  setId(Long id)  { this.id = id; }
+
+
+
+
     @Column(name = "NAME")
-    public String getTypeName(){
-        return typeName;
+    public    String getTypeName()             { return typeName; }
+    protected void   setTypeName(String name ) { this.typeName = name; }
+
+
+
+
+    @ManyToMany(fetch=FetchType.LAZY)
+    @Override
+    public List<CompositeType> getAncestors() {
+        return null;
+    }
+    protected void  setAncestors(List<CompositeType> ancestors) { componentManager.setAncestors(ancestors);}
+
+    // Should be protected/private, think about tocken-friend method in CompositeManagerALS-ICompositeALS
+    // or remove them from the interface if posssible (I don't think so, I can remove addLastAncestor only).
+    @Override public void addFirstAncestor(CompositeType newAncestor) {
+        componentManager.addFirstAncestor(newAncestor);
+    }
+    @Override public void addLastAncestor(CompositeType newAncestor) {
+        componentManager.addLastAncestor(newAncestor);
+    }
+    @Override public void appendAllAncestors(List<CompositeType> newAncestors) {
+        componentManager.appendAllAncestors(newAncestors);
+    }
+
+
+
+
+ /* *******************************************************************************************************************
+    *******************************************************************************************************************
+    *******************************************************************************************************************/
+
+
+
+
+//    // needed by ComponentManager (IComponent interface)
+//    @Override public void   setParent(CompositeType parent, CompositeManager.CompositeManagerToken friendToken) {
+//        componentManager.setParent(parent, friendToken);
+//    }
+//
+
+
+
+
+
+
+
+    @Override public String toString() {
+        return this.getTypeName();
+    }
+
+
+    @Override public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + typeName.hashCode();
+        // TODO: include parentType in the hashcode? I don't think it's good.. that properties is there only for hibernate mapping (for the DAO.. see comments)
+        return result;
     }
 
 
@@ -107,7 +138,6 @@ public abstract class FactType {
             default: return false;
         }
     }
-
 
 
     public enum EqualCheck { pk_forced, pk_if_exists, deep, pk_if_exists_and_deeep, pk_forced_and_deeep}
@@ -181,16 +211,5 @@ public abstract class FactType {
         return equals_pkForcedCheck(fType) && equals_deepCheck(fType);
     }
 
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + typeName.hashCode();
-        // TODO: include parentType in the hashcode? I don't think it's good.. that properties is there only for hibernate mapping (for the DAO.. see comments)
-        return result;
-    }
 
-    @Override
-    public String toString() {
-        return this.getTypeName();
-    }
 }

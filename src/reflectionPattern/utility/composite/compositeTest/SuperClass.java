@@ -1,4 +1,4 @@
-package reflectionPattern.utility.compositeWithAncestors.compositeTestWithSuperclass;
+package reflectionPattern.utility.composite.compositeTest;
 
 /**
  * Created by nagash on 18/09/16.

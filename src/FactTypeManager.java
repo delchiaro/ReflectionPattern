@@ -6,6 +6,8 @@ import reflectionPattern.dataGeneration.*;
 import reflectionPattern.model.knowledge.FactType;
 import reflectionPattern.persistency.FactTypeDAO;
 import reflectionPattern.persistency.PersistencyHelper;
+import reflectionPattern.utility.composite.out.CompositeTree;
+import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -70,7 +72,7 @@ public class FactTypeManager {
                 case "s":if(pieces.length < 2) { break; }
                     index = Integer.parseInt(pieces[1]); index--;
                     if(index != null && index>=0 && index<ids.length)
-                        OutputManager.printFactTypeTree( ph.factTypeDAO().findById(ids[index]));
+                        CompositeTreeALS.printTree( ph.factTypeDAO().findById(ids[index]));
                     break;
 
                 default: break;
@@ -142,7 +144,7 @@ public class FactTypeManager {
     private static boolean persistFactType(FactType factType) {
         Scanner keyboard = new Scanner(System.in);
 
-        OutputManager.printFactTypeTree(factType);
+        CompositeTreeALS.printTree(factType);
         if(  answerNy("\n\nPersist this FactType?")  )
         {
             PersistencyHelper help = new PersistencyHelper(false).connect();

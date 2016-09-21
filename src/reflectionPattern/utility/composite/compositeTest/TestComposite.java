@@ -1,14 +1,13 @@
-package reflectionPattern.utility.compositeWithAncestors.compositeTestWithSuperclass;
+package reflectionPattern.utility.composite.compositeTest;
 
 import org.junit.Test;
+import reflectionPattern.utility.composite.CompositeManager;
 import reflectionPattern.utility.composite.out.CompositeTree;
-import reflectionPattern.utility.compositeWithAncestors.compositeTest.MyComponent;
-import reflectionPattern.utility.compositeWithAncestors.compositeTest.MyComposite;
 
 /**
  * Created by nagash on 17/09/16.
  */
-public class TestCompositeWithAncestorsAndSuperclass {
+public class TestComposite {
 
     @Test
     public void test()
@@ -24,17 +23,18 @@ public class TestCompositeWithAncestorsAndSuperclass {
         MyComponent f = new MyComponent("f");
         MyComposite g = new MyComposite("d");
 
-        d.compManager.addChild(f);
-        d.compManager.addChild(g);
+        d.compositeManager.addChild(f);
+        d.compositeManager.addChild(g);
 
-        a.compManager.addChild(c);
-        a.compManager.addChild(b);
+        a.compositeManager.addChild(c);
+        a.compositeManager.addChild(b);
 
-        b.compManager.addChild(e);
-        b.compManager.addChild(d);
+        b.compositeManager.addChild(e);
+        b.compositeManager.addChild(d);
 
-        z.compManager.addChild(a);
-        y.compManager.addChild(z);
+        z.compositeManager.addChild(a);
+        y.compositeManager.addChild(z);
+
 
         /**
          *

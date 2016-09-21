@@ -1,21 +1,22 @@
 package reflectionPattern.utility.compositeWithAncestors;
 
+import reflectionPattern.utility.composite.IComponent;
+
 import java.util.List;
 
 /**
  * Created by nagash on 18/09/16.
  */
-public interface IComponent<COMPOSITE extends IComposite> extends reflectionPattern.utility.composite.IComponent<COMPOSITE> {
+public interface IComponentALS<COMPOSITE extends ICompositeALS>  {
 
     public void addFirstAncestor(COMPOSITE newAncestor);
-
     public void addLastAncestor(COMPOSITE newAncestor);
-
     public void appendAllAncestors(List<COMPOSITE> newAncestors);
 
 
     public List<COMPOSITE> getAncestors();
+    //public void setAncestors(List<COMPOSITE> ancestors);
 
-    @Override
-    public COMPOSITE getFather();
+    public COMPOSITE getParent();
+    // public void setParent(COMPOSITE parent);
 }

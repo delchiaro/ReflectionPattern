@@ -23,7 +23,7 @@ public class FactTypeCompositeAdapter extends CompositeAdapter<FactType,String> 
     @Override
     protected Set<FactType> getChilds() {
         if(getAdapted() instanceof CompositeType)
-            return ((CompositeType) getAdapted() ).getChildTypes();
+            return ((CompositeType) getAdapted() ).getChilds();
         else return null;
     }
 

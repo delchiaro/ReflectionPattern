@@ -40,7 +40,7 @@ public class FactTypeDAO {
         List<FactType> types =  entityManager
                 .createQuery(   "select ft " +
                                 "from FactType ft " +
-                                "where ft.parent_type IS NULL")
+                                "where ft.parent IS NULL")
                 .getResultList();
 
         if(eager && types != null)
@@ -55,7 +55,7 @@ public class FactTypeDAO {
         List<CompositeType> types = entityManager
                                         .createQuery(   "select ft " +
                                                 " from FactType ft " +
-                                                " where TYPE(ft)= :type AND ft.parent_type IS NULL")
+                                                " where TYPE(ft)= :type AND ft.parent IS NULL")
                                         .setParameter("type", CompositeType.class)
                                         .getResultList();
 
@@ -75,11 +75,11 @@ public class FactTypeDAO {
 //        EntityTransaction loadTransact = entityManager.getTransaction();
 //        loadTransact.begin();
 
-        if(comp.getChildTypes() != null && comp.getChildTypes().size() > 0)
+        if(comp.getChilds() != null && comp.getChilds().size() > 0)
         {
-            Hibernate.initialize((comp.getChildTypes()));
+            Hibernate.initialize((comp.getChilds()));
 
-            for( FactType child : comp.getChildTypes() )
+            for( FactType child : comp.getChilds() )
                 if(child instanceof  CompositeType)
                     fetchCompositeEager((CompositeType) child);
         }

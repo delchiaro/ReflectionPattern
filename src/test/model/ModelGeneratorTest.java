@@ -6,6 +6,8 @@ import reflectionPattern.dataGeneration.*;
 import reflectionPattern.model.knowledge.FactType;
 import reflectionPattern.model.operational.CompositeFact;
 import reflectionPattern.model.operational.Fact;
+import reflectionPattern.utility.composite.out.CompositeTree;
+import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
 
 /**
  * Created by nagash on 09/09/16.
@@ -35,7 +37,8 @@ public class ModelGeneratorTest {
         FactType rootType   = typeGenerator.randomFactType();
         Fact rootFact       = FactGenerator.randomFact(rootType);
 
-        System.out.print(OutputManager.adapterExplorer(new FactCompositeAdapter(rootFact)));
+        CompositeTreeALS.printTree(rootFact);
+
 
     }
 }
