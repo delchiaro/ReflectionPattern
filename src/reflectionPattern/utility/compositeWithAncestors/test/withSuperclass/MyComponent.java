@@ -1,6 +1,5 @@
-package reflectionPattern.utility.compositeWithAncestors.compositeTestWithSuperclass;
+package reflectionPattern.utility.compositeWithAncestors.test.withSuperclass;
 
-import reflectionPattern.utility.composite.CompositeManager;
 import reflectionPattern.utility.compositeWithAncestors.ComponentManagerALS;
 import reflectionPattern.utility.compositeWithAncestors.IComponentALS;
 

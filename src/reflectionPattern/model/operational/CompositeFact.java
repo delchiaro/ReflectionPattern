@@ -8,6 +8,8 @@ import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;
 import reflectionPattern.utility.composite.CompositeManager;
 import reflectionPattern.utility.composite.IComposite;
+import reflectionPattern.utility.compositeWithAncestors.CompositeManagerALS;
+import reflectionPattern.utility.compositeWithAncestors.ICompositeALS;
 
 import javax.persistence.*;
 import java.util.*;
@@ -16,12 +18,12 @@ import java.util.*;
 @Entity
 @Access(AccessType.PROPERTY)
 @DiscriminatorValue("COMPOSITE")
-public class CompositeFact extends Fact implements IComposite<Fact> {
+public class CompositeFact extends Fact implements ICompositeALS<CompositeFact, Fact> {
 
     private static final  boolean child_limit = true;
     //if true, impose that this compositeFact must have max 1 fact of each FactType contained in the associated CompositeType.
 
-    CompositeManager<CompositeFact, Fact> compositeManager = new CompositeManager<>(this);
+    CompositeManagerALS<CompositeFact, Fact> compositeManager = new CompositeManagerALS<>(this);
 
 
 

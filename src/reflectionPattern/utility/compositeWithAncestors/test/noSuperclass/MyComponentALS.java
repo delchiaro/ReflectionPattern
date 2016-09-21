@@ -1,4 +1,4 @@
-package reflectionPattern.utility.compositeWithAncestors.compositeTest;
+package reflectionPattern.utility.compositeWithAncestors.test.noSuperclass;
 import reflectionPattern.utility.compositeWithAncestors.ComponentALS;
 
 /**

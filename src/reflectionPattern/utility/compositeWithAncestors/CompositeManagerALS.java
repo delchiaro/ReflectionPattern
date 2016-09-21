@@ -8,20 +8,21 @@ import java.util.*;
  * Created by nagash on 17/09/16.
  */
 
-public class CompositeManagerALS  <CONTAINER extends ICompositeALS<COMPONENT>,    COMPONENT extends IComponentALS>
-        extends ComponentALS
-        implements ICompositeALS<COMPONENT>
-
+public class CompositeManagerALS  <CONTAINER extends ICompositeALS<CONTAINER, COMPONENT>,    COMPONENT extends IComponentALS<CONTAINER>>
 {
     private CONTAINER container;
     public CONTAINER getContainer(){
         return container;
     }
-
     private Set<COMPONENT> childs = new HashSet<>();
 
+    protected CompositeManagerALS() { }
+    public CompositeManagerALS(CONTAINER container) {
+        this.container = container;
+    }
 
-    @Override public void addChild(COMPONENT child) {
+
+    public void addChild(COMPONENT child) {
 
         this.childs.add(child);
         //childType.setFatherType(this);
@@ -29,7 +30,7 @@ public class CompositeManagerALS  <CONTAINER extends ICompositeALS<COMPONENT>,  
     }
 
 
-    @Override public Set<COMPONENT> getChilds() {
+    public Set<COMPONENT> getChilds() {
         return Collections.unmodifiableSet(childs);
     }
 
@@ -46,10 +47,10 @@ public class CompositeManagerALS  <CONTAINER extends ICompositeALS<COMPONENT>,  
         // The FIRST ELEMENT OF THE LIST of is the direct ancestor of mySelf (my FATHER).
         // The LAST ELEMENT OF THE LIST is the most far ancestor of mySelf (my family founder, ROOT COMPOSITE).
 
-        Iterator<CompositeManagerALS> iter = getAncestors().iterator();
+        Iterator<CONTAINER> iter = getContainer().getAncestors().iterator();
         while(iter.hasNext())
             child.addFirstAncestor(iter.next()); // add at the beginning of the list
-        child.addFirstAncestor(this);
+        child.addFirstAncestor(this.getContainer());
 
 
         // If the new child is a CompositeType, there could be a problem:
@@ -61,26 +62,46 @@ public class CompositeManagerALS  <CONTAINER extends ICompositeALS<COMPONENT>,  
         // and so the childs of the compChild never had idea of what was their's grandfather and other ancestors were.
         // They only know who was their father...
         // So I have simply to add to their ancestors all the ancestors of the father, which until now were unknown.
-        if(child instanceof CompositeManagerALS)
+        if(child instanceof ICompositeALS)
         {
-            CompositeManagerALS compChild = (CompositeManagerALS) child;
-            if(compChild.getChilds().size() > 0) // (redundant check)
-                compChild.updateChildsAncestors(compChild.getAncestors());
+            ICompositeALS compositeChild = (ICompositeALS) child;
+            if(compositeChild.getChilds().size() > 0) // (redundant check)
+                updateChildsAncestors(compositeChild, compositeChild.getAncestors());
             // if the new child added is a compositeWithAncestors, and if he has childs, I update these child about their ancestors
             // (from grandfather to the root: this == grandfather of the childs of compChild)
         }
     }
 
-    private void updateChildsAncestors(List<CompositeManagerALS> newAncestors)
+    private static <CONTAINER extends ICompositeALS, COMPONENT extends IComponentALS> void
+                updateChildsAncestors (ICompositeALS<CONTAINER, COMPONENT> childsFather, List<CONTAINER> newAncestors)
     {
-        for(COMPONENT child : childs)
+        for(COMPONENT child : childsFather.getChilds())
         {
             // Add the new anchestor at the end of the child's ancestors list:
             child.appendAllAncestors( newAncestors );
 
-            if(child instanceof CompositeManagerALS)
-                ((CompositeManagerALS) child).updateChildsAncestors(newAncestors);
+            if(child instanceof ICompositeALS)
+                updateChildsAncestors((ICompositeALS) child, newAncestors);
         }
+    }
+
+
+    public List<? extends IComponentALS> offsprings() {
+        return offsprings(this.getContainer());
+    }
+
+    private static List<? extends IComponentALS> offsprings(ICompositeALS<?,?> head)
+    {
+        List<IComponentALS> list = new LinkedList<>();
+
+        for (IComponentALS child : head.getChilds())
+        {
+            if(child instanceof ICompositeALS)
+                list.addAll( offsprings( (ICompositeALS<?,?>)child ) );
+            else
+                list.add(child);
+        }
+        return list;
     }
 
 

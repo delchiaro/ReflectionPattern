@@ -1,19 +1,16 @@
-package reflectionPattern.utility.composite.compositeTest;
+package reflectionPattern.utility.composite.testWithSuperclass;
 
 import reflectionPattern.utility.composite.ComponentManager;
 import reflectionPattern.utility.composite.CompositeManager;
 import reflectionPattern.utility.composite.IComponent;
-import reflectionPattern.utility.compositeWithAncestors.ComponentManagerALS;
-import reflectionPattern.utility.compositeWithAncestors.IComponentALS;
-
-import java.util.List;
 
 /**
  * Created by nagash on 18/09/16.
  */
 public class MyComponent
         extends SuperClass
-        implements IComponent<MyComposite> {
+        implements IComponent<MyComposite>
+{
 
 
     ComponentManager<MyComponent, MyComposite> componentManager = new ComponentManager<>(this);

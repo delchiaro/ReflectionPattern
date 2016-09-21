@@ -6,9 +6,12 @@ package reflectionPattern.model.knowledge;
 import com.sun.istack.internal.NotNull;
 import reflectionPattern.utility.composite.CompositeManager;
 import reflectionPattern.utility.composite.IComposite;
+import reflectionPattern.utility.compositeWithAncestors.CompositeManagerALS;
+import reflectionPattern.utility.compositeWithAncestors.ICompositeALS;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -42,10 +45,10 @@ Corresponding annotations in EclipseLink are
 @Access(AccessType.PROPERTY)
 @Entity
 @DiscriminatorValue("COMPOSITE")
-public class CompositeType extends FactType implements IComposite<FactType> {
+public class CompositeType extends FactType implements ICompositeALS<CompositeType, FactType> {
 
 
-    private CompositeManager<CompositeType, FactType> compositeManager = new CompositeManager<>(this);
+    private CompositeManagerALS<CompositeType, FactType> compositeManager = new CompositeManagerALS<>(this);
 
 
     protected CompositeType () {}
@@ -60,7 +63,6 @@ public class CompositeType extends FactType implements IComposite<FactType> {
     public    Set<FactType> getChilds ()                     { return compositeManager.getChilds(); }
     protected void          setChilds (Set<FactType> childs) { compositeManager.setChilds(childs);  }
     @Override public void   addChild (@NotNull FactType childType ){ this.compositeManager.addChild(childType); }
-
 
 
 
@@ -107,6 +109,10 @@ public class CompositeType extends FactType implements IComposite<FactType> {
         }
         return list;
     }
+
+
+
+
 
 
 }

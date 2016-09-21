@@ -1,4 +1,4 @@
-package reflectionPattern.utility.compositeWithAncestors.compositeTest;
+package reflectionPattern.utility.compositeWithAncestors.test.noSuperclass;
 
 
 import reflectionPattern.utility.compositeWithAncestors.CompositeManagerALS;
@@ -9,9 +9,9 @@ import java.util.Set;
 /**
  * Created by nagash on 17/09/16.
  */
-public class MyCompositeALS extends MyComponentALS implements ICompositeALS<MyComponentALS> {
+public class MyCompositeALS extends MyComponentALS implements ICompositeALS<MyCompositeALS, MyComponentALS> {
 
-    public final CompositeManagerALS<MyCompositeALS, MyComponentALS> compManager = new CompositeManagerALS<>();
+    public final CompositeManagerALS<MyCompositeALS, MyComponentALS> compManager = new CompositeManagerALS<>(this);
 
 
     public MyCompositeALS(String name) {

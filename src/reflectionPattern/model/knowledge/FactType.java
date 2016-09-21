@@ -8,17 +8,20 @@ import org.hibernate.type.ComponentType;
 import reflectionPattern.utility.composite.ComponentManager;
 import reflectionPattern.utility.composite.CompositeManager;
 import reflectionPattern.utility.composite.IComponent;
+import reflectionPattern.utility.compositeWithAncestors.ComponentManagerALS;
+import reflectionPattern.utility.compositeWithAncestors.IComponentALS;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Access(AccessType.PROPERTY)
 @Entity
-public abstract class FactType implements IComponent<CompositeType> {
+public abstract class FactType implements IComponentALS<CompositeType> {
 
 
 
     @Transient
-    private ComponentManager<FactType, CompositeType> componentManager = new ComponentManager<>(this);
+    private ComponentManagerALS<FactType, CompositeType> componentManager = new ComponentManagerALS<>(this);
     protected Long id;
     private String typeName;
 
@@ -55,8 +58,24 @@ public abstract class FactType implements IComponent<CompositeType> {
 
 
 
+    @ManyToMany(fetch=FetchType.LAZY)
+    @Override
+    public List<CompositeType> getAncestors() {
+        return null;
+    }
+    protected void  setAncestors(List<CompositeType> ancestors) { componentManager.setAncestors(ancestors);}
 
-
+    // Should be protected/private, think about tocken-friend method in CompositeManagerALS-ICompositeALS
+    // or remove them from the interface if posssible (I don't think so, I can remove addLastAncestor only).
+    @Override public void addFirstAncestor(CompositeType newAncestor) {
+        componentManager.addFirstAncestor(newAncestor);
+    }
+    @Override public void addLastAncestor(CompositeType newAncestor) {
+        componentManager.addLastAncestor(newAncestor);
+    }
+    @Override public void appendAllAncestors(List<CompositeType> newAncestors) {
+        componentManager.appendAllAncestors(newAncestors);
+    }
 
 
 
@@ -68,11 +87,11 @@ public abstract class FactType implements IComponent<CompositeType> {
 
 
 
-    // needed by ComponentManager (IComponent interface)
-    @Override public void   setParent(CompositeType parent, CompositeManager.CompositeManagerToken friendToken) {
-        componentManager.setParent(parent, friendToken);
-    }
-
+//    // needed by ComponentManager (IComponent interface)
+//    @Override public void   setParent(CompositeType parent, CompositeManager.CompositeManagerToken friendToken) {
+//        componentManager.setParent(parent, friendToken);
+//    }
+//
 
 
 

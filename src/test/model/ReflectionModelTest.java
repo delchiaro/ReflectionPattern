@@ -11,6 +11,7 @@ import reflectionPattern.model.operational.QualitativeFact;
 import reflectionPattern.model.operational.QuantitativeFact;
 import reflectionPattern.model.operational.TextualFact;
 import reflectionPattern.utility.composite.out.CompositeTree;
+import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
 
 import static org.junit.Assert.*;
 
@@ -81,7 +82,7 @@ public class ReflectionModelTest {
         CompositeType   compType4A = new CompositeType("CompTypeA");
         compType4A.addChild(qualType4);
         compType4A.addChild(quantType4);
-        compType4B.addChild(compType4B);
+        compType4B.addChild(compType4A);
         compType4B.addChild(textType4);
 
 
@@ -536,7 +537,7 @@ public class ReflectionModelTest {
 
 
 
-        CompositeTree.printTree(analisiMedicoSportiva);
+        CompositeTreeALS.printTree(analisiMedicoSportiva);
 
 
 

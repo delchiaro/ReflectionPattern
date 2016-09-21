@@ -4,22 +4,26 @@
 package reflectionPattern.model.operational;
 
 import com.sun.istack.internal.NotNull;
+import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;
 import reflectionPattern.utility.composite.ComponentManager;
 import reflectionPattern.utility.composite.CompositeManager;
 import reflectionPattern.utility.composite.IComponent;
+import reflectionPattern.utility.compositeWithAncestors.ComponentManagerALS;
+import reflectionPattern.utility.compositeWithAncestors.IComponentALS;
 
 import javax.persistence.*;
+import java.util.*;
 
 
 
 @Entity
 @Access(AccessType.PROPERTY)
-public abstract class Fact implements IComponent<CompositeFact> {
+public abstract class Fact implements IComponentALS<CompositeFact> {
 
 
 
-    ComponentManager<Fact, CompositeFact> componentManager = new ComponentManager<>(this);
+    ComponentManagerALS<Fact, CompositeFact> componentManager = new ComponentManagerALS<>(this);
     private Long     id = null;
     private FactType type;
 
@@ -29,6 +33,19 @@ public abstract class Fact implements IComponent<CompositeFact> {
     public     Fact (@NotNull FactType factType){
         this.type = factType;
     }
+
+
+
+    @ManyToMany(fetch=FetchType.LAZY )
+    public List<CompositeFact> getAncestors() { return componentManager.getAncestors(); }
+    protected void setAncestors(List<CompositeFact> ancestors) { componentManager.setAncestors(ancestors);}
+
+
+
+
+
+
+
 
 
 
@@ -61,11 +78,25 @@ public abstract class Fact implements IComponent<CompositeFact> {
 
 
 
+    // Should be protected/private, think about tocken-friend method in CompositeManagerALS-ICompositeALS
+    // or remove them from the interface if posssible (I don't think so, I can remove addLastAncestor only).
+    @Override public void addFirstAncestor(CompositeFact newAncestor) {
+        componentManager.addFirstAncestor(newAncestor);
+    }
+    @Override public void addLastAncestor(CompositeFact newAncestor) {
+        componentManager.addLastAncestor(newAncestor);
+    }
+    @Override public void appendAllAncestors(List<CompositeFact> newAncestors) {
+        componentManager.appendAllAncestors(newAncestors);
+    }
+
+
+
 
     // needed by ComponentManager (IComponent interface)
-    @Override public void setParent(CompositeFact parent, CompositeManager.CompositeManagerToken friendToken) {
-        componentManager.setParent(parent, friendToken);
-    }
+//    @Override public void setParent(CompositeFact parent, CompositeManager.CompositeManagerToken friendToken) {
+//        componentManager.setParent(parent, friendToken);
+//    }
 
 
     @Override
