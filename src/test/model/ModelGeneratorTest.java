@@ -37,7 +37,7 @@ public class ModelGeneratorTest {
         FactType rootType   = typeGenerator.randomFactType();
         Fact rootFact       = FactGenerator.randomFact(rootType);
 
-        CompositeTreeALS.printTree(rootFact);
+        CompositeTree.printTree(rootFact);
 
 
     }

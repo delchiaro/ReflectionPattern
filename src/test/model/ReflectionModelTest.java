@@ -11,7 +11,6 @@ import reflectionPattern.model.operational.QualitativeFact;
 import reflectionPattern.model.operational.QuantitativeFact;
 import reflectionPattern.model.operational.TextualFact;
 import reflectionPattern.utility.composite.out.CompositeTree;
-import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
 
 import static org.junit.Assert.*;
 
@@ -537,7 +536,7 @@ public class ReflectionModelTest {
 
 
 
-        CompositeTreeALS.printTree(analisiMedicoSportiva);
+        CompositeTree.printTree(analisiMedicoSportiva);
 
 
 

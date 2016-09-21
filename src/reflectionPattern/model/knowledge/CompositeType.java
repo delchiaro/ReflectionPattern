@@ -6,8 +6,7 @@ package reflectionPattern.model.knowledge;
 import com.sun.istack.internal.NotNull;
 import reflectionPattern.utility.composite.CompositeManager;
 import reflectionPattern.utility.composite.IComposite;
-import reflectionPattern.utility.compositeWithAncestors.CompositeManagerALS;
-import reflectionPattern.utility.compositeWithAncestors.ICompositeALS;
+
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -45,10 +44,10 @@ Corresponding annotations in EclipseLink are
 @Access(AccessType.PROPERTY)
 @Entity
 @DiscriminatorValue("COMPOSITE")
-public class CompositeType extends FactType implements ICompositeALS<CompositeType, FactType> {
+public class CompositeType extends FactType implements IComposite<CompositeType, FactType> {
 
 
-    private CompositeManagerALS<CompositeType, FactType> compositeManager = new CompositeManagerALS<>(this);
+    private CompositeManager<CompositeType, FactType> compositeManager = new CompositeManager<>(this);
 
 
     protected CompositeType () {}

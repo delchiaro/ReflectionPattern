@@ -12,7 +12,6 @@ import reflectionPattern.model.knowledge.quantity.Unit;
 import reflectionPattern.model.operational.*;
 import reflectionPattern.persistency.PersistencyHelper;
 import reflectionPattern.utility.composite.out.CompositeTree;
-import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
 
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
@@ -211,9 +210,9 @@ public class SimplePersistencyTest {
         ph.close();
 
         System.out.print("Original (saved) Fact Type:\n");
-        CompositeTreeALS.printTree(rootFactTypes);
+        CompositeTree.printTree(rootFactTypes);
         System.out.print("\n\nPersisted (loaded) Fact Type:\n");
-        CompositeTreeALS.printTree(persistedRootFactTypes);
+        CompositeTree.printTree(persistedRootFactTypes);
 
 
 
@@ -224,7 +223,7 @@ public class SimplePersistencyTest {
 
 
         System.out.print("\n\n\n\nOriginal (saved) Fact 2:\n");
-        CompositeTreeALS.printTree(rootPaziente2);
+        CompositeTree.printTree(rootPaziente2);
         System.out.print("\n\nPersisted (loaded) Fact 2:\n");
         System.out.print(OutputManager.adapterExplorer(new FactCompositeAdapter(persistedRootPaziente2)));
 
