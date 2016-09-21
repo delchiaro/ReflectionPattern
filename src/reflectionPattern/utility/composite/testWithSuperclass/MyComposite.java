@@ -1,10 +1,8 @@
-package reflectionPattern.utility.composite.compositeTest;
+package reflectionPattern.utility.composite.testWithSuperclass;
 
 
 import reflectionPattern.utility.composite.CompositeManager;
 import reflectionPattern.utility.composite.IComposite;
-import reflectionPattern.utility.compositeWithAncestors.CompositeManagerALS;
-import reflectionPattern.utility.compositeWithAncestors.ICompositeALS;
 
 import java.util.Set;
 
@@ -13,7 +11,8 @@ import java.util.Set;
  */
 public class MyComposite
         extends MyComponent
-        implements IComposite<MyComponent>
+        implements IComposite<MyComposite,MyComponent>
+
 {
 
     public final CompositeManager<MyComposite, MyComponent> compositeManager = new CompositeManager<>(this);

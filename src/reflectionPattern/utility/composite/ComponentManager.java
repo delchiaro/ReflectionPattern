@@ -5,9 +5,8 @@ package reflectionPattern.utility.composite;
  */
 
 
-public class ComponentManager<CONTAINER extends IComponent<COMPOSITE>, COMPOSITE extends IComposite>
+public class ComponentManager<CONTAINER extends IComponent<COMPOSITE>, COMPOSITE extends IComposite<COMPOSITE, CONTAINER>>
         extends Component<COMPOSITE>
-        implements IComponent<COMPOSITE>
 {
     private CONTAINER container;
 

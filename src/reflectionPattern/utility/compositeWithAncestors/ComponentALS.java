@@ -36,7 +36,8 @@ public class ComponentALS<COMPOSITE extends ICompositeALS> implements IComponent
     }
 
     public COMPOSITE getParent() {
-        return ancestors.get(0);
+        try { return ancestors.get(0);  }
+        catch (IndexOutOfBoundsException e){ return null; }
     }
 
 

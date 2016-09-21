@@ -10,7 +10,9 @@ import java.util.Set;
  * Created by nagash on 17/09/16.
  */
 public class MyComposite
-        extends MyComponent implements ICompositeALS<MyComposite, MyComponent> {
+        extends MyComponent
+        implements ICompositeALS<MyComposite,MyComponent>
+{
 
     public final CompositeManagerALS<MyComposite, MyComponent> compositeManager = new CompositeManagerALS<>(this);
 

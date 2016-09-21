@@ -6,7 +6,7 @@ import java.util.Set;
 /**
  * Created by nagash on 18/09/16.
  */
-public interface IComposite<COMPONENT extends IComponent>  {
+public interface IComposite<COMPOSITE extends IComposite, COMPONENT extends IComponent> extends IComponent<COMPOSITE>  {
 
 
     public void addChild(COMPONENT child);

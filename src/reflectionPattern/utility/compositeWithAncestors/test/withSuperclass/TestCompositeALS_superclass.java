@@ -64,35 +64,60 @@ public class TestCompositeALS_superclass {
 
 
 
-        assertFalse( assertAncestors(g, new ICompositeALS[] {b, d, a, z, y } ) );
-        assertFalse( assertAncestors(g, new ICompositeALS[] {d, b, a, z } ) );
-        assertFalse( assertAncestors(g, new ICompositeALS[] {d, b, a, y, z } ) );
-        assertFalse( assertAncestors(g, new ICompositeALS[] {d, b, a, a, y } ) );
-        assertFalse( assertAncestors(g, new ICompositeALS[] {d, b, z, a, y } ) );
+        assertFalse( testAncestors(g, new ICompositeALS[] {b, d, a, z, y } ) );
+        assertFalse( testAncestors(g, new ICompositeALS[] {d, b, a, z } ) );
+        assertFalse( testAncestors(g, new ICompositeALS[] {d, b, a, y, z } ) );
+        assertFalse( testAncestors(g, new ICompositeALS[] {d, b, a, a, y } ) );
+        assertFalse( testAncestors(g, new ICompositeALS[] {d, b, z, a, y } ) );
 
 
-        assertTrue ( assertAncestors(g, new ICompositeALS[] {d, b, a, z, y } ) );
-        assertTrue ( assertAncestors(f, new ICompositeALS[] {d, b, a, z, y } ) );
+        assertTrue ( testAncestors(g, new ICompositeALS[] {d, b, a, z, y } ) );
+        assertTrue ( testAncestors(f, new ICompositeALS[] {d, b, a, z, y } ) );
 
-        assertTrue ( assertAncestors(d, new ICompositeALS[] { b, a, z, y } ) );
-        assertTrue ( assertAncestors(e, new ICompositeALS[] { b, a, z, y } ) );
+        assertTrue ( testAncestors(d, new ICompositeALS[] { b, a, z, y } ) );
+        assertTrue ( testAncestors(e, new ICompositeALS[] { b, a, z, y } ) );
 
-        assertTrue ( assertAncestors(b, new ICompositeALS[] { a, z, y } ) );
-        assertTrue ( assertAncestors(c, new ICompositeALS[] { a, z, y } ) );
+        assertTrue ( testAncestors(b, new ICompositeALS[] { a, z, y } ) );
+        assertTrue ( testAncestors(c, new ICompositeALS[] { a, z, y } ) );
 
-        assertTrue ( assertAncestors(a, new ICompositeALS[] { z, y } ) );
-        assertTrue ( assertAncestors(z, new ICompositeALS[] { y } ) );
-        assertTrue ( assertAncestors(y, new ICompositeALS[] { } ) );
+        assertTrue ( testAncestors(a, new ICompositeALS[] { z, y } ) );
+        assertTrue ( testAncestors(z, new ICompositeALS[] { y } ) );
+        assertTrue ( testAncestors(y, new ICompositeALS[] { } ) );
 
-        assertFalse ( assertAncestors(y, new ICompositeALS[] { z } ) );
-        assertFalse ( assertAncestors(y, new ICompositeALS[] { null } ) );
-        assertFalse ( assertAncestors(y, new ICompositeALS[] { y } ) );
+        assertFalse ( testAncestors(y, new ICompositeALS[] { z } ) );
+        assertFalse ( testAncestors(y, new ICompositeALS[] { null } ) );
+        assertFalse ( testAncestors(y, new ICompositeALS[] { y } ) );
 
+
+
+
+        assertTrue(testParent(g, d));
+        assertTrue(testParent(f, d));
+
+        assertTrue(testParent(d, b));
+        assertTrue(testParent(e, b));
+
+        assertTrue(testParent(c, a));
+        assertTrue(testParent(b, a));
+
+        assertTrue(testParent(a, z));
+        assertTrue(testParent(z, y));
+        assertTrue(testParent(y, null));
+
+
+        assertFalse(testParent(g, g));
+        assertFalse(testParent(g, null));
+        assertFalse(testParent(g, z));
+        assertFalse(testParent(g, y));
+        assertFalse(testParent(g, b));
+
+        assertFalse(testParent(a, null));
+        assertFalse(testParent(a, b));
 
 
     }
 
-    private boolean assertAncestors(IComponentALS child, ICompositeALS[] equalList)
+    private boolean testAncestors(IComponentALS child, ICompositeALS[] equalList)
     {
         List<? extends ICompositeALS> ancestors = child.getAncestors();
 
@@ -108,5 +133,15 @@ public class TestCompositeALS_superclass {
         }
 
         return true;
+    }
+
+
+
+    private boolean testParent(IComponentALS child, ICompositeALS testParent)
+    {
+        if(child.getParent() == testParent)
+            return true;
+
+        else return false;
     }
 }

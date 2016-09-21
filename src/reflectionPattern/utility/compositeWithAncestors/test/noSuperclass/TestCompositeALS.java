@@ -89,6 +89,29 @@ public class TestCompositeALS {
         assertFalse ( assertAncestors(y, new ICompositeALS[] { y } ) );
 
 
+        assertTrue(testParent(g, d));
+        assertTrue(testParent(f, d));
+
+        assertTrue(testParent(d, b));
+        assertTrue(testParent(e, b));
+
+        assertTrue(testParent(c, a));
+        assertTrue(testParent(b, a));
+
+        assertTrue(testParent(a, z));
+        assertTrue(testParent(z, y));
+        assertTrue(testParent(y, null));
+
+
+
+        assertFalse(testParent(g, g));
+        assertFalse(testParent(g, null));
+        assertFalse(testParent(g, z));
+        assertFalse(testParent(g, y));
+        assertFalse(testParent(g, b));
+
+        assertFalse(testParent(a, null));
+        assertFalse(testParent(a, b));
 
     }
 
@@ -108,6 +131,15 @@ public class TestCompositeALS {
         }
 
         return true;
+    }
+
+
+    private boolean testParent(IComponentALS child, ICompositeALS testParent)
+    {
+        if(child.getParent() == testParent)
+            return true;
+
+        else return false;
     }
 
 

@@ -8,7 +8,7 @@ import java.util.*;
  * Created by nagash on 17/09/16.
  */
 
-public class CompositeManagerALS  <CONTAINER extends ICompositeALS,    COMPONENT extends IComponentALS>
+public class CompositeManagerALS  <CONTAINER extends ICompositeALS<CONTAINER, COMPONENT>,    COMPONENT extends IComponentALS<CONTAINER>>
 {
     private CONTAINER container;
     public CONTAINER getContainer(){

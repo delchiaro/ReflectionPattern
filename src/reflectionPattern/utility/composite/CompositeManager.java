@@ -7,9 +7,8 @@ import java.util.*;
  */
 
 
-public class CompositeManager<CONTAINER extends IComposite<COMPONENT>,  COMPONENT extends IComponent>
+public class CompositeManager<CONTAINER extends IComposite<CONTAINER, COMPONENT>,  COMPONENT extends IComponent<CONTAINER>>
         extends Component
-        implements IComposite<COMPONENT>
 
 {
 
@@ -26,12 +25,12 @@ public class CompositeManager<CONTAINER extends IComposite<COMPONENT>,  COMPONEN
     private Set<COMPONENT> childs = new HashSet<>();
 
 
-    @Override public void addChild(COMPONENT child) {
+    public void addChild(COMPONENT child) {
         child.setParent(this.getContainer(), new CompositeManagerToken());
         this.childs.add(child);
     }
 
-    @Override public Set<COMPONENT> getChilds() {
+    public Set<COMPONENT> getChilds() {
         return Collections.unmodifiableSet(childs);
     }
 

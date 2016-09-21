@@ -1,8 +1,14 @@
-package reflectionPattern.utility.composite.compositeTest;
+package reflectionPattern.utility.composite.testWithSuperclass;
 
 import org.junit.Test;
-import reflectionPattern.utility.composite.CompositeManager;
+import reflectionPattern.utility.composite.IComponent;
+import reflectionPattern.utility.composite.IComposite;
 import reflectionPattern.utility.composite.out.CompositeTree;
+
+import java.util.List;
+
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.TestCase.assertTrue;
 
 /**
  * Created by nagash on 17/09/16.
@@ -57,6 +63,36 @@ public class TestComposite {
         CompositeTree.printTree(y);
 
 
+        assertTrue(testParent(g, d));
+        assertTrue(testParent(f, d));
 
+        assertTrue(testParent(d, b));
+        assertTrue(testParent(e, b));
+
+        assertTrue(testParent(c, a));
+        assertTrue(testParent(b, a));
+
+        assertTrue(testParent(a, z));
+        assertTrue(testParent(z, y));
+        assertTrue(testParent(y, null));
+
+
+
+        assertFalse(testParent(g, g));
+        assertFalse(testParent(g, null));
+        assertFalse(testParent(g, z));
+        assertFalse(testParent(g, y));
+        assertFalse(testParent(g, b));
+
+        assertFalse(testParent(a, null));
+        assertFalse(testParent(a, b));
+    }
+
+    private boolean testParent(IComponent child, IComposite testParent)
+    {
+       if(child.getParent() == testParent)
+           return true;
+
+       else return false;
     }
 }
