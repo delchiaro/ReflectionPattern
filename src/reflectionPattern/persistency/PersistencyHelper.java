@@ -19,8 +19,8 @@ public class PersistencyHelper
     private final static String SINGLE_TABLE_UNIT = "single-table";
     private final static String JOIN_TABLE_UNIT = "join-table";
 
-    public final static String DEFAULT_UNIT = SINGLE_TABLE_UNIT;  // <<< CHANGE THIS to change default DB globally
-    //public final static String DEFAULT_UNIT = JOIN_TABLE_UNIT;
+     public final static String DEFAULT_UNIT = SINGLE_TABLE_UNIT;  // <<< CHANGE THIS to change default DB globally
+     //public final static String DEFAULT_UNIT = JOIN_TABLE_UNIT;
 
 
     public enum Unit { singleTabl , joinTable; }

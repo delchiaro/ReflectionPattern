@@ -2,6 +2,7 @@ package reflectionPattern.utility.compositeWithAncestors;
 
 import reflectionPattern.utility.composite.IComponent;
 
+import javax.persistence.Embeddable;
 import java.util.List;
 
 /**
@@ -18,5 +19,5 @@ public interface IComponentALS<COMPOSITE extends ICompositeALS>  {
     //public void setAncestors(List<COMPOSITE> ancestors);
 
     public COMPOSITE getParent();
-    // public void setParent(COMPOSITE parent);
+    public void setParent(COMPOSITE parent);
 }

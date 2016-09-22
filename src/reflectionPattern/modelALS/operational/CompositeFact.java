@@ -41,8 +41,7 @@ public class CompositeFact extends Fact implements ICompositeALS<CompositeFact, 
 
 
     //EAGER = carico tutti i figli subito!
-    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.PERSIST /* , mappedBy = "parent_fact",*/ )
-    @JoinColumn(name="parent_fact")
+    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "parent")
     @Override
     public      Set<Fact>  getChilds()                 { return compositeManager.getChilds(); }
     protected   void       setChilds(Set<Fact> childs) { this.compositeManager.setChilds(childs);}

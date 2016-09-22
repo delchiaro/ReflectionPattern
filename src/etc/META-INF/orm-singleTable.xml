@@ -8,16 +8,20 @@
     <!--<package>reflectionPattern.model</package>-->
 
 
-    <entity class="reflectionPattern.model.knowledge.FactType" name="FactType">
+    <entity class="reflectionPattern.modelALS.knowledge.FactType" name="FactType">
         <!--<table name="  "/>-->
         <inheritance strategy="SINGLE_TABLE"/>
+        <discriminator-column name="FACT_DISCRIM" discriminator-type="STRING"/>
     </entity>
 
-    <entity class="reflectionPattern.model.operational.Fact" name="Fact">
+    <entity class="reflectionPattern.modelALS.operational.Fact" name="Fact">
         <!--<table name="  "/>-->
         <inheritance strategy="SINGLE_TABLE"/>
         <discriminator-column name="FACT_TYPE_DISCRIM" discriminator-type="STRING"/>
     </entity>
+
+
+
 
 
 </entity-mappings>

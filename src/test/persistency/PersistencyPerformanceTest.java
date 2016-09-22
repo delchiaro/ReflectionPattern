@@ -1,13 +1,12 @@
 package test.persistency;
 
 
-import reflectionPattern.IO.OutputManager;
 import reflectionPattern.dataGeneration.FactGenerator;
 import reflectionPattern.dataGeneration.FactTypeGenerator;
-import reflectionPattern.model.knowledge.CompositeType;
-import reflectionPattern.model.knowledge.FactType;
-import reflectionPattern.model.operational.CompositeFact;
-import reflectionPattern.model.operational.Fact;
+import reflectionPattern.modelALS.knowledge.CompositeType;
+import reflectionPattern.modelALS.knowledge.FactType;
+import reflectionPattern.modelALS.operational.CompositeFact;
+import reflectionPattern.modelALS.operational.Fact;
 import reflectionPattern.persistency.PersistencyHelper;
 import reflectionPattern.utility.composite.out.CompositeTree;
 import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
@@ -45,7 +44,7 @@ public class PersistencyPerformanceTest {
         System.out.print("\n\n\nLoaded FactType trees: \n\n" );
 
         for (FactType ft : factTypes) {
-            OutputManager.printFactTypeTree(ft);
+            CompositeTreeALS.printTree(ft);
         }
 
         System.out.print("\n\n\n Prepared Statements: " + count);

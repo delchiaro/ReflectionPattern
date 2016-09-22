@@ -1,11 +1,9 @@
 package test.model;
 
-import reflectionPattern.IO.OutputManager;
-import reflectionPattern.IO.compositeAdapter.FactCompositeAdapter;
 import reflectionPattern.dataGeneration.*;
-import reflectionPattern.model.knowledge.FactType;
-import reflectionPattern.model.operational.CompositeFact;
-import reflectionPattern.model.operational.Fact;
+import reflectionPattern.modelALS.knowledge.FactType;
+import reflectionPattern.modelALS.operational.CompositeFact;
+import reflectionPattern.modelALS.operational.Fact;
 import reflectionPattern.utility.composite.out.CompositeTree;
 import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
 

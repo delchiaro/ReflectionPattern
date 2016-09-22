@@ -1,15 +1,13 @@
 package test.model;
 
-import reflectionPattern.IO.compositeAdapter.FactTypeCompositeAdapter;
-import reflectionPattern.IO.OutputManager;
-import reflectionPattern.model.knowledge.*;
-import reflectionPattern.model.knowledge.quantity.ImpossibleConversionException;
-import reflectionPattern.model.knowledge.quantity.Quantity;
-import reflectionPattern.model.knowledge.quantity.Unit;
-import reflectionPattern.model.operational.CompositeFact;
-import reflectionPattern.model.operational.QualitativeFact;
-import reflectionPattern.model.operational.QuantitativeFact;
-import reflectionPattern.model.operational.TextualFact;
+import reflectionPattern.modelALS.knowledge.*;
+import reflectionPattern.modelALS.knowledge.quantity.ImpossibleConversionException;
+import reflectionPattern.modelALS.knowledge.quantity.Quantity;
+import reflectionPattern.modelALS.knowledge.quantity.Unit;
+import reflectionPattern.modelALS.operational.CompositeFact;
+import reflectionPattern.modelALS.operational.QualitativeFact;
+import reflectionPattern.modelALS.operational.QuantitativeFact;
+import reflectionPattern.modelALS.operational.TextualFact;
 import reflectionPattern.utility.composite.out.CompositeTree;
 import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
 

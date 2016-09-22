@@ -27,6 +27,7 @@ public class QualitativeFact extends Fact {
 
 
     @ManyToOne (fetch=FetchType.LAZY)
+    @JoinColumn(name="phenomenon_id")
     public Phenomenon getPhenomenon ()                { return this.phenomenon; }
     protected   void        setPhenomenon (Phenomenon phen) { this.phenomenon = phen; } // for hibernate, no check legal phen check!
 

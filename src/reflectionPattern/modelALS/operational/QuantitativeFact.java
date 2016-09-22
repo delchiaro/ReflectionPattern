@@ -36,7 +36,7 @@ public class QuantitativeFact extends Fact {
 
 
     @Embedded
-    public Quantity getQuantity ()               { return this.quantity; }
+    public Quantity      getQuantity ()               { return this.quantity; }
     protected  void      setQuantity (Quantity quant) { this.quantity = quant; }
 
 

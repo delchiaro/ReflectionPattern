@@ -1,8 +1,8 @@
 package reflectionPattern.persistency;
 
 import org.hibernate.Hibernate;
-import reflectionPattern.model.knowledge.CompositeType;
-import reflectionPattern.model.knowledge.FactType;
+import reflectionPattern.modelALS.knowledge.CompositeType;
+import reflectionPattern.modelALS.knowledge.FactType;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -66,6 +66,17 @@ public class FactTypeDAO {
         return types;
     }
 
+
+    public  List<FactType> findAllOffsprings(CompositeType ancestor) {
+        List<FactType> facts = entityManager
+                .createQuery(   "select t " +
+                                "from FactType t " +
+                                "where :ancestor member of t.ancestors")
+                .setParameter("ancestor", ancestor)
+                .getResultList();
+
+        return facts;
+    }
 
 
     // Enforce EAGER fetch

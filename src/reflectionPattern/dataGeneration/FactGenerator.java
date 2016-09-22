@@ -1,8 +1,8 @@
 package reflectionPattern.dataGeneration;
 
-import reflectionPattern.model.knowledge.*;
-import reflectionPattern.model.knowledge.quantity.Unit;
-import reflectionPattern.model.operational.*;
+import reflectionPattern.modelALS.knowledge.*;
+import reflectionPattern.modelALS.knowledge.quantity.Unit;
+import reflectionPattern.modelALS.operational.*;
 import java.util.Set;
 
 import static reflectionPattern.dataGeneration.RandomUtils.randInt;

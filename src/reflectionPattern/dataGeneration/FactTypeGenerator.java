@@ -1,7 +1,7 @@
 package reflectionPattern.dataGeneration;
 
-import reflectionPattern.model.knowledge.*;
-import reflectionPattern.model.knowledge.quantity.Unit;
+import reflectionPattern.modelALS.knowledge.*;
+import reflectionPattern.modelALS.knowledge.quantity.Unit;
 
 import static reflectionPattern.dataGeneration.RandomUtils.randInt;
 import static reflectionPattern.dataGeneration.RandomUtils.randomString;

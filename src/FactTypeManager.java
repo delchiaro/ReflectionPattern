@@ -1,9 +1,7 @@
 import org.apache.log4j.Logger;
 import org.apache.log4j.varia.NullAppender;
-import reflectionPattern.IO.OutputManager;
-import reflectionPattern.IO.compositeAdapter.FactTypeCompositeAdapter;
 import reflectionPattern.dataGeneration.*;
-import reflectionPattern.model.knowledge.FactType;
+import reflectionPattern.modelALS.knowledge.FactType;
 import reflectionPattern.persistency.FactTypeDAO;
 import reflectionPattern.persistency.PersistencyHelper;
 import reflectionPattern.utility.composite.out.CompositeTree;

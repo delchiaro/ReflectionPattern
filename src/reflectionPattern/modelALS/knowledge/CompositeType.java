@@ -53,7 +53,8 @@ public class CompositeType extends FactType implements ICompositeALS<CompositeTy
 
 
 
-    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL  , mappedBy = "parent" )
+    // use mappedBy ="---" with the same column name of @joinColumn specified in the @ManyToOne side
+    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "parent")
     @Override
     public    Set<FactType> getChilds ()                     { return compositeManager.getChilds(); }
     protected void          setChilds (Set<FactType> childs) { compositeManager.setChilds(childs);  }
@@ -104,10 +105,5 @@ public class CompositeType extends FactType implements ICompositeALS<CompositeTy
         }
         return list;
     }
-
-
-
-
-
 
 }

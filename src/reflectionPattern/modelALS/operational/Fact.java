@@ -32,6 +32,7 @@ public abstract class Fact implements IComponentALS<CompositeFact> {
 
 
     @ManyToMany(fetch=FetchType.LAZY )
+    @JoinTable(name="Fact_AncestorsTable")
     public List<CompositeFact> getAncestors() { return componentManager.getAncestors(); }
     protected void setAncestors(List<CompositeFact> ancestors) { componentManager.setAncestors(ancestors);}
 
@@ -54,12 +55,14 @@ public abstract class Fact implements IComponentALS<CompositeFact> {
 
 
     @ManyToOne
+    @JoinTable(name="Fact_FactTye")
     public FactType getType ()               { return type; }
     protected  void       setType (FactType type)  { this.type = type; }
 
 
 
     @ManyToOne
+    @JoinColumn(name="parent_fact")
     @Override
     public CompositeFact getParent ()                      { return componentManager.getParent(); }
     public void          setParent (CompositeFact parent)  { componentManager.setParent(parent); }

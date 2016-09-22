@@ -39,7 +39,7 @@ public class MyComponent
     @Override public MyComposite getParent() { return componentManager.getParent(); }
 
 
-//    protected void setParent(MyComposite parent) {
-//        componentManager.setParent(parent);
-//    }
+    public void setParent(MyComposite parent) {
+        componentManager.setParent(parent);
+    }
 }
