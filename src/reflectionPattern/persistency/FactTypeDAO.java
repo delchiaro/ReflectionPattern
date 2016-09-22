@@ -67,6 +67,17 @@ public class FactTypeDAO {
     }
 
 
+    public  List<FactType> findAllOffsprings(CompositeType ancestor) {
+        List<FactType> facts = entityManager
+                .createQuery(   "select t " +
+                                "from FactType t " +
+                                "where :ancestor member of t.ancestors")
+                .setParameter("ancestor", ancestor)
+                .getResultList();
+
+        return facts;
+    }
+
 
     // Enforce EAGER fetch
     // TODO: test performance with annotation EAGER vs annotation LAZY + this function

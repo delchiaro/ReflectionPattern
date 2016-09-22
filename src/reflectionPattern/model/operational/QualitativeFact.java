@@ -17,7 +17,7 @@ public class QualitativeFact extends Fact {
     private Phenomenon phenomenon;
 
     protected   QualitativeFact () {}
-    public      QualitativeFact (@NotNull QualitativeType factType, @NotNull  Phenomenon phen) throws IllegalQualitativePhenomenonException {
+    public      QualitativeFact (@NotNull QualitativeType factType, @NotNull Phenomenon phen) throws IllegalQualitativePhenomenonException {
         super(factType);
         this.phenomenon = phen;
         if(factType.isPhenomenonLegal(phen) == false )
@@ -27,7 +27,8 @@ public class QualitativeFact extends Fact {
 
 
     @ManyToOne (fetch=FetchType.LAZY)
-    public      Phenomenon  getPhenomenon ()                { return this.phenomenon; }
+    @JoinColumn(name="phenomenon_id")
+    public Phenomenon getPhenomenon ()                { return this.phenomenon; }
     protected   void        setPhenomenon (Phenomenon phen) { this.phenomenon = phen; } // for hibernate, no check legal phen check!
 
 
@@ -57,7 +58,7 @@ public class QualitativeFact extends Fact {
         if(this==obj) return true;
         if(super.equals(obj) == false) return false;
         if(this==obj) return true;
-        if(!(obj instanceof  QualitativeFact)) return false;
+        if(!(obj instanceof QualitativeFact)) return false;
 
         QualitativeFact qf = (QualitativeFact)obj;
         if(this.phenomenon == null)

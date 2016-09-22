@@ -26,6 +26,7 @@ public class QualitativeType extends FactType
 
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name="QualitativeType_LegalPhenomenons")
     public    Set<Phenomenon>  getLegalPhenomenons ()                        { return Collections.unmodifiableSet(legalPhenomenons); }
     protected void             setLegalPhenomenons (Set<Phenomenon> phenoms) { this.legalPhenomenons = phenoms; }
 
@@ -61,7 +62,7 @@ public class QualitativeType extends FactType
     @Override public boolean equals(Object obj) {
         if(this==obj) return true;
         if(super.equals(obj) == false) return false;
-        if(! (obj instanceof  QualitativeType)) return false;
+        if(! (obj instanceof QualitativeType)) return false;
         QualitativeType qlObj = (QualitativeType)obj;
         if( super.equals(qlObj) &&  qlObj.getLegalPhenomenons().size() == this.getLegalPhenomenons().size()  )
         {

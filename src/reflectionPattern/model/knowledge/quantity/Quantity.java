@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Embeddable
 @Access(AccessType.PROPERTY)
 public class Quantity {
-    private Unit    unit;
+    private Unit unit;
     private Number  value;
 
 
@@ -25,7 +25,7 @@ public class Quantity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "unit_id")
-    public     Unit  getUnit ()           { return unit; }
+    public Unit getUnit ()           { return unit; }
     protected  void  setUnit (Unit unit)  { this.unit = unit; }
 
 
@@ -61,7 +61,7 @@ public class Quantity {
     }
 
     @Override public boolean equals(Object obj) {
-        if(!(obj instanceof  Quantity)) return false;
+        if(!(obj instanceof Quantity)) return false;
         Quantity q = (Quantity) obj;
         if(this.getUnit().equals(q.getUnit()) && this.getValue().equals(q.getValue()))
             return true;

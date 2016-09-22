@@ -54,7 +54,7 @@ public class TextualFact extends Fact {
     @Override public boolean equals(Object obj) {
         if(this==obj) return true;
         if(super.equals(obj) == false) return false;
-        if(!(obj instanceof  TextualFact)) return false;
+        if(!(obj instanceof TextualFact)) return false;
         boolean superEquals = super.equals(obj) ;
 
         TextualFact tf = (TextualFact)obj;

@@ -11,6 +11,7 @@
     <entity class="reflectionPattern.model.knowledge.FactType" name="FactType">
         <!--<table name="  "/>-->
         <inheritance strategy="SINGLE_TABLE"/>
+        <discriminator-column name="FACT_DISCRIM" discriminator-type="STRING"/>
     </entity>
 
     <entity class="reflectionPattern.model.operational.Fact" name="Fact">
@@ -18,6 +19,9 @@
         <inheritance strategy="SINGLE_TABLE"/>
         <discriminator-column name="FACT_TYPE_DISCRIM" discriminator-type="STRING"/>
     </entity>
+
+
+
 
 
 </entity-mappings>

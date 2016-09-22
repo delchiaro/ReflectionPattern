@@ -25,13 +25,13 @@ public class CompositeManagerALS  <CONTAINER extends ICompositeALS<CONTAINER, CO
     public void addChild(COMPONENT child) {
 
         this.childs.add(child);
-        //childType.setFatherType(this);
+        //child.setParent(this.getContainer()); // set parent is FAKE, don't  use it. Use updatable = false in hibernate associations
         pushAncestorsToNewChild(child);
     }
 
 
     public Set<COMPONENT> getChilds() {
-        return Collections.unmodifiableSet(childs);
+        return (childs);
     }
 
 

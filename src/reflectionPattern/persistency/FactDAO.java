@@ -86,6 +86,16 @@ public class FactDAO {
     }
 
 
+    public  List<Fact> findAllOffsprings(CompositeFact ancestor) {
+        List<Fact> facts = entityManager
+                .createQuery(   "select t " +
+                                "from FactType t " +
+                                "where :ancestor member of t.ancestors")
+                .setParameter("ancestor", ancestor)
+                .getResultList();
+        return facts;
+    }
+
     // Enforce EAGER fetch
     // TODO: test performance with annotation EAGER vs annotation LAZY + this function
     public void fetchCompositeEager(CompositeFact fact)
@@ -105,6 +115,8 @@ public class FactDAO {
         Fact toRemove = findById(id);
         entityManager.remove(toRemove);
     }
+
+
 
 
 }

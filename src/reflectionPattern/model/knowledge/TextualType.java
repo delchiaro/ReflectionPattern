@@ -31,7 +31,7 @@ public class TextualType extends FactType {
 
     @Override public boolean equals(Object obj) {
         if(this==obj) return true;
-        if(! (obj instanceof  TextualType)) return false;
+        if(! (obj instanceof TextualType)) return false;
         return super.equals(obj);
     }
 

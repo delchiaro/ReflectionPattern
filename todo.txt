@@ -10,11 +10,12 @@ Done:
 - Implementare branch con modalitá JOIN TABLE (oltre che single table)
 
 
-TODO:
-
 - Fare un DB diverso per ogni modifica (ogni branch dovrá avere un diverso nome dello schema del db, semplicemente).
 
 - Implementare branch Riferimenti ai padri (ancestor) nei tipi composti, in modo da fare un DAO che con una semplice query trovi tutti i figli: (seleziona tutti i figli che hanno un riferimento a tale padre).
+
+
+TODO:
 
 - Implementa sublcass di Phenomenon così da avere una tabella che elenca certi tipi di phenomenon che appartengono a questo subtype (gestire con JOINTABLE nel mapping).
 - Rifare la stessa cosa sopra  ma con aggregazione dei fenomeni che sostituisce la ereditarietá.

@@ -25,7 +25,7 @@ public class QuantitativeFact extends Fact {
         this(factType, new Quantity(value, measurementUnit));
 
     }
-    public    QuantitativeFact ( @NotNull QuantitativeType factType, @NotNull Quantity quantity) throws IllegalQuantitativeUnitException {
+    public    QuantitativeFact (@NotNull QuantitativeType factType, @NotNull Quantity quantity) throws IllegalQuantitativeUnitException {
         super(factType);
         if(factType.isUnitLegal(quantity.getUnit()) == false )
             throw new IllegalQuantitativeUnitException();
@@ -36,7 +36,7 @@ public class QuantitativeFact extends Fact {
 
 
     @Embedded
-    public     Quantity  getQuantity ()               { return this.quantity; }
+    public Quantity      getQuantity ()               { return this.quantity; }
     protected  void      setQuantity (Quantity quant) { this.quantity = quant; }
 
 
@@ -62,7 +62,7 @@ public class QuantitativeFact extends Fact {
     @Override public boolean equals(Object obj) {
         if(this==obj) return true;
         if(super.equals(obj) == false) return false;
-        if(!(obj instanceof  QuantitativeFact)) return false;
+        if(!(obj instanceof QuantitativeFact)) return false;
         QuantitativeFact qFact = (QuantitativeFact) obj;
 
         // TODO: implementare una logica diversa senza richiamare super.equals(), in modo da considerare uguali

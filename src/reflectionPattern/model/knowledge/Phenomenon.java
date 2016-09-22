@@ -51,7 +51,7 @@ public class Phenomenon {
         if(this==obj) return true;
         //if(super.equals(obj) == false) return false;
         if(obj == null) return false;
-        if(! (obj instanceof  Phenomenon)) return false;
+        if(! (obj instanceof Phenomenon)) return false;
 
         Phenomenon phen = (Phenomenon) obj;
 

@@ -1,5 +1,6 @@
 package reflectionPattern.utility.compositeWithAncestors;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,11 +12,13 @@ public class ComponentALS<COMPOSITE extends ICompositeALS> implements IComponent
 
     // ANCESTOR STRATEGY * * * * * * * * * * * * * * * * * * * *
 
-    private List<COMPOSITE> ancestors = new LinkedList<>();
+
+    private List<COMPOSITE> ancestors = new LinkedList<COMPOSITE>();
 
 
     public void addFirstAncestor(COMPOSITE newAncestor) {
-        ancestors.add(0, newAncestor);
+        if(newAncestor!=null)
+            ancestors.add(0, newAncestor);
     }
 
     public void addLastAncestor(COMPOSITE newAncestor) {
@@ -27,8 +30,10 @@ public class ComponentALS<COMPOSITE extends ICompositeALS> implements IComponent
     }
 
 
+
     public List<COMPOSITE> getAncestors() {
-        return Collections.unmodifiableList(ancestors);
+        //return Collections.unmodifiableList(ancestors); // hibernate needs a modifiable collection
+        return ancestors;
     }
 
     public void setAncestors(List<COMPOSITE> ancestors) {
@@ -36,13 +41,19 @@ public class ComponentALS<COMPOSITE extends ICompositeALS> implements IComponent
     }
 
     public COMPOSITE getParent() {
-        try { return ancestors.get(0);  }
-        catch (IndexOutOfBoundsException e){ return null; }
+        if(ancestors.size() > 0)
+            return ancestors.get(0);
+        else return null;
     }
 
 
+    /**
+     * Parent is a ReadOnly FIELD!! Set the hibernate association as "updatable = false" for the Parent getter/setter!!
+     * This setter is fake, use addFirstAncestor(..) instead
+     * @param parent
+     */
     public void setParent(COMPOSITE parent) {
-        addFirstAncestor(parent);
+
     }
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 

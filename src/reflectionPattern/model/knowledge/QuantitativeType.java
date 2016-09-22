@@ -2,6 +2,7 @@
  * Created by nagash on 31/08/16.
  */
 package reflectionPattern.model.knowledge;
+
 import com.sun.istack.internal.NotNull;
 import reflectionPattern.model.knowledge.quantity.Unit;
 
@@ -34,6 +35,7 @@ public class QuantitativeType extends FactType {
 
 
     @ManyToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name="QuantitativeType_legalUnits")
     public Set<Unit>  getLegalUnits()                { return Collections.unmodifiableSet(legalUnits); }
     public void       setLegalUnits(Set<Unit> units) { this.legalUnits = units; }
 
@@ -67,7 +69,7 @@ public class QuantitativeType extends FactType {
     @Override public boolean equals(Object obj) {
         if(this==obj) return true;
         if(super.equals(obj) == false) return false;
-        if(! (obj instanceof  QuantitativeType)) return false;
+        if(! (obj instanceof QuantitativeType)) return false;
         QuantitativeType qtObj = (QuantitativeType)obj;
         if( qtObj.getLegalUnits().size() == this.getLegalUnits().size()  )
         {
