@@ -4,7 +4,6 @@ import org.junit.Test;
 import reflectionPattern.persistency.PersistencyHelper;
 import reflectionPattern.persistency.profiling.ProfilerHibernateJPA;
 import reflectionPattern.persistency.profiling.TimeProfiler;
-import reflectionPattern.IO.OutputManager;
 import reflectionPattern.dataGeneration.FactGenerator;
 import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.operational.CompositeFact;

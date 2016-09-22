@@ -1,7 +1,5 @@
 package test.model;
 
-import reflectionPattern.IO.OutputManager;
-import reflectionPattern.IO.compositeAdapter.FactCompositeAdapter;
 import reflectionPattern.dataGeneration.*;
 import reflectionPattern.model.knowledge.FactType;
 import reflectionPattern.model.operational.CompositeFact;

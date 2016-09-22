@@ -1,7 +1,5 @@
 package test.model;
 
-import reflectionPattern.IO.compositeAdapter.FactTypeCompositeAdapter;
-import reflectionPattern.IO.OutputManager;
 import reflectionPattern.model.knowledge.*;
 import reflectionPattern.model.knowledge.quantity.ImpossibleConversionException;
 import reflectionPattern.model.knowledge.quantity.Quantity;

@@ -4,9 +4,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.stat.QueryStatistics;
 import org.hibernate.stat.Statistics;
-import reflectionPattern.IO.OutputManager;
-import reflectionPattern.IO.compositeAdapter.FactCompositeAdapter;
-import reflectionPattern.IO.compositeAdapter.FactTypeCompositeAdapter;
 import reflectionPattern.model.knowledge.*;
 import reflectionPattern.model.knowledge.quantity.Unit;
 import reflectionPattern.model.operational.*;
@@ -217,15 +214,15 @@ public class SimplePersistencyTest {
 
 
         System.out.print("\n\n\n\nOriginal (saved) Fact 1:\n");
-        System.out.print(OutputManager.adapterExplorer(new FactCompositeAdapter(rootPaziente1)));
+        CompositeTree.printTree(rootPaziente1);
         System.out.print("\n\nPersisted (loaded) Fact 1:\n");
-        System.out.print(OutputManager.adapterExplorer(new FactCompositeAdapter(persistedRootPaziente1)));
+        CompositeTree.printTree(persistedRootPaziente1);
 
 
         System.out.print("\n\n\n\nOriginal (saved) Fact 2:\n");
         CompositeTree.printTree(rootPaziente2);
         System.out.print("\n\nPersisted (loaded) Fact 2:\n");
-        System.out.print(OutputManager.adapterExplorer(new FactCompositeAdapter(persistedRootPaziente2)));
+        CompositeTree.printTree(persistedRootPaziente2);
 
 
         System.out.print("\n\n\nExecuted queries: "  + nQueries +"\n\n");

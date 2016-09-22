@@ -1,7 +1,6 @@
 package test.persistency;
 
 
-import reflectionPattern.IO.OutputManager;
 import reflectionPattern.dataGeneration.FactGenerator;
 import reflectionPattern.dataGeneration.FactTypeGenerator;
 import reflectionPattern.model.knowledge.CompositeType;
@@ -44,7 +43,7 @@ public class PersistencyPerformanceTest {
         System.out.print("\n\n\nLoaded FactType trees: \n\n" );
 
         for (FactType ft : factTypes) {
-            OutputManager.printFactTypeTree(ft);
+            CompositeTree.printTree(ft);
         }
 
         System.out.print("\n\n\n Prepared Statements: " + count);
