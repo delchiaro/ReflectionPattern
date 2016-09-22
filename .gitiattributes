@@ -1,14 +1,14 @@
 # See here: https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#Merge-Strategies
 # git config --global merge.ours.driver true
 
-./src/reflectionPattern/model/*.*                       merge=ours
-./src/reflectionPattern/model/operational/*.*           merge=ours
-./src/reflectionPattern/model/knowledge/*.*             merge=ours
-./src/reflectionPattern/model/knowledge/quantity*.*     merge=ours
+./src/reflectionPattern/model/*                       merge=ours
+./src/reflectionPattern/model/operational/*           merge=ours
+./src/reflectionPattern/model/knowledge/*             merge=ours
+./src/reflectionPattern/model/knowledge/quantity*     merge=ours
 
 
 ./src/reflectionPattern/persistency/FactDAO.java       merge=ours
 ./src/reflectionPattern/persistency/FactTypeDAO.java   merge=ours
 
 
-./src/etc/META-INF/persistence.xml       merge=ours
+./src/etc/META-INF/persistence.xml                      merge=ours

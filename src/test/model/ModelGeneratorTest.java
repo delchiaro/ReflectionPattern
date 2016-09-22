@@ -4,6 +4,7 @@ import reflectionPattern.dataGeneration.*;
 import reflectionPattern.model.knowledge.FactType;
 import reflectionPattern.model.operational.CompositeFact;
 import reflectionPattern.model.operational.Fact;
+import reflectionPattern.utility.composite.out.CompositeTree;
 import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
 
 /**
