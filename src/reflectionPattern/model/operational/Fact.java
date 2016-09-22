@@ -1,10 +1,10 @@
 /**
  * Created by nagash on 31/08/16.
  */
-package reflectionPattern.modelALS.operational;
+package reflectionPattern.model.operational;
 
 import com.sun.istack.internal.NotNull;
-import reflectionPattern.modelALS.knowledge.FactType;
+import reflectionPattern.model.knowledge.FactType;
 import reflectionPattern.utility.compositeWithAncestors.ComponentManagerALS;
 import reflectionPattern.utility.compositeWithAncestors.IComponentALS;
 

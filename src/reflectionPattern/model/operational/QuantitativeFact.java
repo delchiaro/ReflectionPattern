@@ -1,12 +1,12 @@
 /**
  * Created by nagash on 31/08/16.
  */
-package reflectionPattern.modelALS.operational;
+package reflectionPattern.model.operational;
 
 import com.sun.istack.internal.NotNull;
-import reflectionPattern.modelALS.knowledge.QuantitativeType;
-import reflectionPattern.modelALS.knowledge.quantity.Quantity;
-import reflectionPattern.modelALS.knowledge.quantity.Unit;
+import reflectionPattern.model.knowledge.QuantitativeType;
+import reflectionPattern.model.knowledge.quantity.Quantity;
+import reflectionPattern.model.knowledge.quantity.Unit;
 
 import javax.persistence.*;
 

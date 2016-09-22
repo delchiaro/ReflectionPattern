@@ -1,11 +1,11 @@
 /**
  * Created by nagash on 31/08/16.
  */
-package reflectionPattern.modelALS.operational;
+package reflectionPattern.model.operational;
 
 import com.sun.istack.internal.NotNull;
-import reflectionPattern.modelALS.knowledge.Phenomenon;
-import reflectionPattern.modelALS.knowledge.QualitativeType;
+import reflectionPattern.model.knowledge.Phenomenon;
+import reflectionPattern.model.knowledge.QualitativeType;
 
 import javax.persistence.*;
 

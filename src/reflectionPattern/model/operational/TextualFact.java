@@ -1,10 +1,10 @@
 /**
  * Created by nagash on 31/08/16.
  */
-package reflectionPattern.modelALS.operational;
+package reflectionPattern.model.operational;
 
 import com.sun.istack.internal.NotNull;
-import reflectionPattern.modelALS.knowledge.TextualType;
+import reflectionPattern.model.knowledge.TextualType;
 
 import javax.persistence.*;
 

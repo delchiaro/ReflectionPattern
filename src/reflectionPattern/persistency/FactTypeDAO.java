@@ -1,8 +1,8 @@
 package reflectionPattern.persistency;
 
 import org.hibernate.Hibernate;
-import reflectionPattern.modelALS.knowledge.CompositeType;
-import reflectionPattern.modelALS.knowledge.FactType;
+import reflectionPattern.model.knowledge.CompositeType;
+import reflectionPattern.model.knowledge.FactType;
 
 import javax.persistence.EntityManager;
 import java.util.List;

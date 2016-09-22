@@ -1,4 +1,4 @@
-package reflectionPattern.modelALS.knowledge.quantity;
+package reflectionPattern.model.knowledge.quantity;
 
 import com.sun.istack.internal.NotNull;
 

@@ -3,12 +3,11 @@ package test.persistency;
 
 import reflectionPattern.dataGeneration.FactGenerator;
 import reflectionPattern.dataGeneration.FactTypeGenerator;
-import reflectionPattern.modelALS.knowledge.CompositeType;
-import reflectionPattern.modelALS.knowledge.FactType;
-import reflectionPattern.modelALS.operational.CompositeFact;
-import reflectionPattern.modelALS.operational.Fact;
+import reflectionPattern.model.knowledge.CompositeType;
+import reflectionPattern.model.knowledge.FactType;
+import reflectionPattern.model.operational.CompositeFact;
+import reflectionPattern.model.operational.Fact;
 import reflectionPattern.persistency.PersistencyHelper;
-import reflectionPattern.utility.composite.out.CompositeTree;
 import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
 
 import javax.persistence.EntityTransaction;

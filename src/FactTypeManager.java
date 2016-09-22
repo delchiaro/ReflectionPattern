@@ -1,19 +1,11 @@
-import org.apache.log4j.Logger;
-import org.apache.log4j.varia.NullAppender;
 import reflectionPattern.dataGeneration.*;
-import reflectionPattern.modelALS.knowledge.FactType;
-import reflectionPattern.persistency.FactTypeDAO;
+import reflectionPattern.model.knowledge.FactType;
 import reflectionPattern.persistency.PersistencyHelper;
-import reflectionPattern.utility.composite.out.CompositeTree;
 import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
 
 /**
  * Created by nagash on 12/09/16.

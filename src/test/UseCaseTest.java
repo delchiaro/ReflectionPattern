@@ -2,21 +2,13 @@ package test;
 
 import org.junit.Test;
 import reflectionPattern.persistency.PersistencyHelper;
-import reflectionPattern.persistency.profiling.ProfilerHibernateJPA;
-import reflectionPattern.persistency.profiling.TimeProfiler;
 import reflectionPattern.dataGeneration.FactGenerator;
-import reflectionPattern.modelALS.knowledge.CompositeType;
-import reflectionPattern.modelALS.operational.CompositeFact;
-import reflectionPattern.modelALS.operational.Fact;
-import reflectionPattern.persistency.FactDAO;
-import reflectionPattern.persistency.FactTypeDAO;
-import reflectionPattern.utility.composite.out.CompositeTree;
+import reflectionPattern.model.knowledge.CompositeType;
+import reflectionPattern.model.operational.CompositeFact;
+import reflectionPattern.model.operational.Fact;
 import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import java.util.List;
 
 /**

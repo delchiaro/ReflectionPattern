@@ -8,12 +8,12 @@
     <!--<package>reflectionPattern.model</package>-->
 
 
-    <entity class="reflectionPattern.modelALS.knowledge.FactType" name="FactType">
+    <entity class="reflectionPattern.model.knowledge.FactType" name="FactType">
         <!--<table name="  "/>-->
         <inheritance strategy="JOINED"/>
     </entity>
 
-    <entity class="reflectionPattern.modelALS.operational.Fact" name="Fact">
+    <entity class="reflectionPattern.model.operational.Fact" name="Fact">
         <!--<table name="  "/>-->
         <inheritance strategy="JOINED"/>
     </entity>

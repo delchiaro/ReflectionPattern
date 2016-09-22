@@ -1,10 +1,10 @@
 /**
  * Created by nagash on 31/08/16.
  */
-package reflectionPattern.modelALS.knowledge;
+package reflectionPattern.model.knowledge;
 
 import com.sun.istack.internal.NotNull;
-import reflectionPattern.modelALS.knowledge.quantity.Unit;
+import reflectionPattern.model.knowledge.quantity.Unit;
 
 import javax.persistence.*;
 import java.util.Collections;

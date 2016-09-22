@@ -1,21 +1,13 @@
 package test.persistency;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.stat.QueryStatistics;
-import org.hibernate.stat.Statistics;
-import reflectionPattern.modelALS.knowledge.*;
-import reflectionPattern.modelALS.knowledge.quantity.Unit;
-import reflectionPattern.modelALS.operational.*;
+import reflectionPattern.model.knowledge.*;
+import reflectionPattern.model.knowledge.quantity.Unit;
+import reflectionPattern.model.operational.*;
 import reflectionPattern.persistency.PersistencyHelper;
-import reflectionPattern.utility.composite.out.CompositeTree;
 import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
 
 import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 
 import java.util.HashSet;
 import java.util.Set;

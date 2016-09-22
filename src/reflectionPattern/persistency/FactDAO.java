@@ -1,10 +1,10 @@
 package reflectionPattern.persistency;
 
 import org.hibernate.Hibernate;
-import reflectionPattern.modelALS.knowledge.CompositeType;
-import reflectionPattern.modelALS.knowledge.FactType;
-import reflectionPattern.modelALS.operational.CompositeFact;
-import reflectionPattern.modelALS.operational.Fact;
+import reflectionPattern.model.knowledge.CompositeType;
+import reflectionPattern.model.knowledge.FactType;
+import reflectionPattern.model.operational.CompositeFact;
+import reflectionPattern.model.operational.Fact;
 
 import javax.persistence.EntityManager;
 import java.util.List;
