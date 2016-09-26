@@ -64,14 +64,6 @@ public abstract class Fact implements IComponent<CompositeFact> {
 
 
 
-    // needed by ComponentManager (IComponent interface)
-
-
-    @Override
-    public void setParent(CompositeFact parent, CompositeManager.CompositeManagerToken friendToken) {
-        componentManager.setParent(parent, friendToken);
-    }
-
     @Override
     public String toString() {
         return this.getType().toString();

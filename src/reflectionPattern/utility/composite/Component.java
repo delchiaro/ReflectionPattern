@@ -15,10 +15,6 @@ public class Component<COMPOSITE extends IComposite> implements IComponent<COMPO
         return parent;
     }
 
-    @Override
-    public void setParent(COMPOSITE parent, CompositeManager.CompositeManagerToken friendToken) {
-        this.parent = parent;
-    }
 
     public void setParent(COMPOSITE parent) {
         this.parent = parent;

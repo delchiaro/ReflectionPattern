@@ -37,7 +37,7 @@ public abstract class FactType implements IComponent<CompositeType> {
     @ManyToOne @JoinColumn(name="parent_fk")
     @Override
     public CompositeType    getParent()                     { return componentManager.getParent(); }
-    protected void          setParent(CompositeType parent) { componentManager.setParent(parent);  }
+    public void          setParent(CompositeType parent) { componentManager.setParent(parent);  }
 
 
 
@@ -60,19 +60,6 @@ public abstract class FactType implements IComponent<CompositeType> {
 /* *******************************************************************************************************************
     *******************************************************************************************************************
     *******************************************************************************************************************/
-
-
-
-
-    // needed by ComponentManager (IComponent interface)
-    @Override
-    public void setParent(CompositeType parent, CompositeManager.CompositeManagerToken friendToken) {
-        componentManager.setParent(parent);
-    }
-
-
-
-
 
 
 
