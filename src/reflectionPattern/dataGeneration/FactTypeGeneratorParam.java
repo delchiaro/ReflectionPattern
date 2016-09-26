@@ -1,5 +1,7 @@
 package reflectionPattern.dataGeneration;
 
+import reflectionPattern.model.knowledge.Phenomenon;
+
 public class FactTypeGeneratorParam {
     public class IllegalValueException extends Exception {}
     private final static int DEFAULT_MAX = 5;
@@ -18,6 +20,8 @@ public class FactTypeGeneratorParam {
     private Range phenoms     = new Range(1,        DEFAULT_MAX);
     private Range units       = new Range(1,        DEFAULT_MAX);
 
+    private Class subPhenomenon = Phenomenon.class;
+
     private boolean leafOnlyAtLowerLevel = false;
 
 
@@ -29,7 +33,12 @@ public class FactTypeGeneratorParam {
     public Range depthRange()      { return depth; }
     public Range phenomsRange()    { return phenoms; }
     public Range unitsRange()      { return units; }
+    public Class getSubPhenomenon(){ return subPhenomenon; }
 
+
+    public void setSubPhenomenon(Class<Phenomenon> SubPhenClass ) {
+        this.subPhenomenon = SubPhenClass;
+    }
     public void setLeafOnlyAtLowerLevel(boolean value) {
         this.leafOnlyAtLowerLevel = value;
     }

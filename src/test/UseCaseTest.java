@@ -2,11 +2,11 @@ package test;
 
 import org.junit.Test;
 import reflectionPattern.persistency.PersistencyHelper;
-import reflectionPattern.dataGeneration.FactGenerator;
+import reflectionPattern._deprecated.dataGenerator.RandomFactGenerator;
 import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.operational.CompositeFact;
 import reflectionPattern.model.operational.Fact;
-import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
+import reflectionPattern.utility.composite.out.CompositeTree;
 
 import javax.persistence.EntityTransaction;
 import java.util.List;
@@ -59,7 +59,7 @@ public class UseCaseTest {
         // U.C.2: il salvataggio di una visita medica compilata
 
         System.out.print("\n\n\n...Generating Fact with some random value...\n");
-        Fact fRoot = FactGenerator.randomFact(rootType);
+        Fact fRoot = RandomFactGenerator.randomFact(rootType);
 
 
         System.out.print("...Persisting the generated Fact...\n");
@@ -81,10 +81,10 @@ public class UseCaseTest {
         ph.close();
 
         System.out.print("\n\n\nLoaded Fact Type: \n");
-        CompositeTreeALS.printTree(rootType);
+        CompositeTree.printTree(rootType);
 
         System.out.print("\n\n\nSaved Fact: \n");
-        CompositeTreeALS.printTree(fRoot);
+        CompositeTree.printTree(fRoot);
 
 
         System.out.print("\nElapsed load time: \t" +  loadTime + "\n");
@@ -172,7 +172,7 @@ public class UseCaseTest {
             ph.close();
 
             System.out.print("\n\n\nLoaded Fact Type: \n");
-            CompositeTreeALS.printTree(rootType);
+            CompositeTree.printTree(rootType);
 
             if(rootFact == null) {
                 System.out.print("\n\n\nFake test: can't find a corresponding fact in DB \n");
@@ -180,7 +180,7 @@ public class UseCaseTest {
             else
             {
                 System.out.print("\n\n\nLoaded Fact: \n");
-                CompositeTreeALS.printTree(rootFact);
+                CompositeTree.printTree(rootFact);
             }
 
 

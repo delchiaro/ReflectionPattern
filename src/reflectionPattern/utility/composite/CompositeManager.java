@@ -26,7 +26,7 @@ public class CompositeManager<CONTAINER extends IComposite<CONTAINER, COMPONENT>
 
 
     public void addChild(COMPONENT child) {
-        child.setParent(this.getContainer(), new CompositeManagerToken());
+        child.setParent(this.getContainer());
         this.childs.add(child);
     }
 
@@ -40,16 +40,6 @@ public class CompositeManager<CONTAINER extends IComposite<CONTAINER, COMPONENT>
 
 
 
-
-
-
-    public static class CompositeManagerToken {
-        /**
-         *  Only the CompositeManager can create this token and call methods
-         *  that require an instance of this token (Friend Methods with Java)
-         */
-        private CompositeManagerToken() {}
-    }
 
 
 }

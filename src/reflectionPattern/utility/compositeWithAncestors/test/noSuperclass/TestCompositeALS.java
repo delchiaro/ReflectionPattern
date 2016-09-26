@@ -1,9 +1,9 @@
 package reflectionPattern.utility.compositeWithAncestors.test.noSuperclass;
 
 import org.junit.Test;
+import reflectionPattern.utility.composite.out.CompositeTree;
 import reflectionPattern.utility.compositeWithAncestors.IComponentALS;
 import reflectionPattern.utility.compositeWithAncestors.ICompositeALS;
-import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
 
 import java.util.List;
 
@@ -61,7 +61,7 @@ public class TestCompositeALS {
          *             |-- g
          *
          **/
-        CompositeTreeALS.printTree(y);
+        CompositeTree.printTree(y);
 
 
         assertFalse( assertAncestors(g, new ICompositeALS[] {b, d, a, z, y } ) );

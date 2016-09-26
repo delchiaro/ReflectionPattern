@@ -8,6 +8,7 @@ import javax.persistence.*;
  * Created by nagash on 02/09/16.
  */
 @Access(AccessType.FIELD)
+@Inheritance( strategy = InheritanceType.JOINED )
 @Entity
 public class Phenomenon {
 

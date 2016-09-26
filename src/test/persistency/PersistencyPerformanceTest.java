@@ -1,14 +1,14 @@
 package test.persistency;
 
 
-import reflectionPattern.dataGeneration.FactGenerator;
+import reflectionPattern._deprecated.dataGenerator.RandomFactGenerator;
 import reflectionPattern.dataGeneration.FactTypeGenerator;
 import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;
 import reflectionPattern.model.operational.CompositeFact;
 import reflectionPattern.model.operational.Fact;
 import reflectionPattern.persistency.PersistencyHelper;
-import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
+import reflectionPattern.utility.composite.out.CompositeTree;
 
 import javax.persistence.EntityTransaction;
 import java.util.List;
@@ -43,7 +43,7 @@ public class PersistencyPerformanceTest {
         System.out.print("\n\n\nLoaded FactType trees: \n\n" );
 
         for (FactType ft : factTypes) {
-            CompositeTreeALS.printTree(ft);
+            CompositeTree.printTree(ft);
         }
 
         System.out.print("\n\n\n Prepared Statements: " + count);
@@ -66,7 +66,7 @@ public class PersistencyPerformanceTest {
 
         Fact rootFacts[] = new Fact[N_ROOT_FACTS];
         for (int i = 0; i < N_ROOT_FACTS; i++)
-            rootFacts[i] = FactGenerator.randomFact(rootType);
+            rootFacts[i] = RandomFactGenerator.randomFact(rootType);
 
 
 
@@ -91,11 +91,11 @@ public class PersistencyPerformanceTest {
 
 
         System.out.print("\n\n\nPersisted fixed FactType tree: \n\n" );
-            CompositeTreeALS.printTree(rootType);
+            CompositeTree.printTree(rootType);
 
         System.out.print("\n\n\nPersisted facts: \n\n" );
         for (int i = 0; i < N_ROOT_FACTS; i++)
-            CompositeTreeALS.printTree(rootFacts[i]);
+            CompositeTree.printTree(rootFacts[i]);
 
 
         System.out.print("\n\n\nPrepared statements: " + count );

@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by nagash on 18/09/16.
  */
-public interface IComponentALS<COMPOSITE extends ICompositeALS>  {
+public interface IComponentALS<COMPOSITE extends ICompositeALS> extends IComponent<COMPOSITE>  {
 
     public void addFirstAncestor(COMPOSITE newAncestor);
     public void addLastAncestor(COMPOSITE newAncestor);

@@ -25,7 +25,8 @@ public class QualitativeType extends FactType
 
 
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name="QualitativeType_LegalPhenomenons")
     public    Set<Phenomenon>  getLegalPhenomenons ()                        { return Collections.unmodifiableSet(legalPhenomenons); }
     protected void             setLegalPhenomenons (Set<Phenomenon> phenoms) { this.legalPhenomenons = phenoms; }

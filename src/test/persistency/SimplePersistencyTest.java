@@ -1,13 +1,20 @@
 package test.persistency;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.stat.QueryStatistics;
+import org.hibernate.stat.Statistics;
 import reflectionPattern.model.knowledge.*;
 import reflectionPattern.model.knowledge.quantity.Unit;
 import reflectionPattern.model.operational.*;
 import reflectionPattern.persistency.PersistencyHelper;
-import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
+import reflectionPattern.utility.composite.out.CompositeTree;
 
 import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -173,15 +180,14 @@ public class SimplePersistencyTest {
 
         EntityTransaction saveTransact = ph.newTransaction();
 
-        saveTransact.begin();
+            saveTransact.begin();
                 ph.persist(rootFactTypes);
                 ph.persist(rootPaziente1);
                 ph.persist(rootPaziente2);
                 idPaziente1 = rootPaziente1.getId();
                 idPaziente2 = rootPaziente2.getId();
                 idFactType=rootFactTypes.getId();
-//
-           saveTransact.commit();
+            saveTransact.commit();
 
         long nQueries = ph.statistics().getPrepareStatementCount() ;//- startQueries;
 
@@ -201,22 +207,22 @@ public class SimplePersistencyTest {
         ph.close();
 
         System.out.print("Original (saved) Fact Type:\n");
-        CompositeTreeALS.printTree(rootFactTypes);
+        CompositeTree.printTree(rootFactTypes);
         System.out.print("\n\nPersisted (loaded) Fact Type:\n");
-        CompositeTreeALS.printTree(persistedRootFactTypes);
+        CompositeTree.printTree(persistedRootFactTypes);
 
 
 
         System.out.print("\n\n\n\nOriginal (saved) Fact 1:\n");
-        CompositeTreeALS.printTree(rootPaziente1);
+        CompositeTree.printTree(rootPaziente1);
         System.out.print("\n\nPersisted (loaded) Fact 1:\n");
-        CompositeTreeALS.printTree(persistedRootPaziente1);
+        CompositeTree.printTree(persistedRootPaziente1);
 
 
         System.out.print("\n\n\n\nOriginal (saved) Fact 2:\n");
-        CompositeTreeALS.printTree(rootPaziente2);
+        CompositeTree.printTree(rootPaziente2);
         System.out.print("\n\nPersisted (loaded) Fact 2:\n");
-        CompositeTreeALS.printTree(persistedRootPaziente2);
+        CompositeTree.printTree(persistedRootPaziente2);
 
 
         System.out.print("\n\n\nExecuted queries: "  + nQueries +"\n\n");
@@ -249,3 +255,664 @@ public class SimplePersistencyTest {
 }
 
 
+
+
+
+
+/* (9/9/2016)
+NB: Executed SQL (save queries, insert and update): 96
+
+
+Hibernate:
+    insert
+    into
+        FactType
+        (typeName, FACT_TYPE_DISCRIM, id)
+    values
+        (?, 'COMPOSITE', ?)
+Hibernate:
+    insert
+    into
+        FactType
+        (typeName, FACT_TYPE_DISCRIM, id)
+    values
+        (?, 'COMPOSITE', ?)
+Hibernate:
+    insert
+    into
+        FactType
+        (typeName, FACT_TYPE_DISCRIM, id)
+    values
+        (?, 'QUALITATIVE', ?)
+Hibernate:
+    insert
+    into
+        Phenomenon
+        (value, id)
+    values
+        (?, ?)
+Hibernate:
+    insert
+    into
+        Phenomenon
+        (value, id)
+    values
+        (?, ?)
+Hibernate:
+    insert
+    into
+        Phenomenon
+        (value, id)
+    values
+        (?, ?)
+Hibernate:
+    insert
+    into
+        Phenomenon
+        (value, id)
+    values
+        (?, ?)
+Hibernate:
+    insert
+    into
+        FactType
+        (typeName, FACT_TYPE_DISCRIM, id)
+    values
+        (?, 'QUANTITATIVE', ?)
+Hibernate:
+    insert
+    into
+        UNIT
+        (name, symbol, id)
+    values
+        (?, ?, ?)
+Hibernate:
+    insert
+    into
+        FactType
+        (typeName, FACT_TYPE_DISCRIM, id)
+    values
+        (?, 'COMPOSITE', ?)
+Hibernate:
+    insert
+    into
+        FactType
+        (typeName, FACT_TYPE_DISCRIM, id)
+    values
+        (?, 'TEXTUAL', ?)
+Hibernate:
+    insert
+    into
+        FactType
+        (typeName, FACT_TYPE_DISCRIM, id)
+    values
+        (?, 'QUANTITATIVE', ?)
+Hibernate:
+    insert
+    into
+        UNIT
+        (name, symbol, id)
+    values
+        (?, ?, ?)
+Hibernate:
+    insert
+    into
+        UNIT
+        (name, symbol, id)
+    values
+        (?, ?, ?)
+Hibernate:
+    insert
+    into
+        FactType
+        (typeName, FACT_TYPE_DISCRIM, id)
+    values
+        (?, 'COMPOSITE', ?)
+Hibernate:
+    insert
+    into
+        FactType
+        (typeName, FACT_TYPE_DISCRIM, id)
+    values
+        (?, 'QUANTITATIVE', ?)
+Hibernate:
+    insert
+    into
+        UNIT
+        (name, symbol, id)
+    values
+        (?, ?, ?)
+Hibernate:
+    insert
+    into
+        FactType
+        (typeName, FACT_TYPE_DISCRIM, id)
+    values
+        (?, 'QUANTITATIVE', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, FACT_DISCRIM, id)
+    values
+        (?, 'COMPOSITE', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, FACT_DISCRIM, id)
+    values
+        (?, 'COMPOSITE', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, textual_value, FACT_DISCRIM, id)
+    values
+        (?, ?, 'TEXTUAL', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, unit_id, quantity_value, FACT_DISCRIM, id)
+    values
+        (?, ?, ?, 'QUANTITATIVE', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, FACT_DISCRIM, id)
+    values
+        (?, 'COMPOSITE', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, phenomenon_id, FACT_DISCRIM, id)
+    values
+        (?, ?, 'QUALITATIVE', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, unit_id, quantity_value, FACT_DISCRIM, id)
+    values
+        (?, ?, ?, 'QUANTITATIVE', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, FACT_DISCRIM, id)
+    values
+        (?, 'COMPOSITE', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, unit_id, quantity_value, FACT_DISCRIM, id)
+    values
+        (?, ?, ?, 'QUANTITATIVE', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, unit_id, quantity_value, FACT_DISCRIM, id)
+    values
+        (?, ?, ?, 'QUANTITATIVE', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, FACT_DISCRIM, id)
+    values
+        (?, 'COMPOSITE', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, FACT_DISCRIM, id)
+    values
+        (?, 'COMPOSITE', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, unit_id, quantity_value, FACT_DISCRIM, id)
+    values
+        (?, ?, ?, 'QUANTITATIVE', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, textual_value, FACT_DISCRIM, id)
+    values
+        (?, ?, 'TEXTUAL', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, FACT_DISCRIM, id)
+    values
+        (?, 'COMPOSITE', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, unit_id, quantity_value, FACT_DISCRIM, id)
+    values
+        (?, ?, ?, 'QUANTITATIVE', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, unit_id, quantity_value, FACT_DISCRIM, id)
+    values
+        (?, ?, ?, 'QUANTITATIVE', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, FACT_DISCRIM, id)
+    values
+        (?, 'COMPOSITE', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, phenomenon_id, FACT_DISCRIM, id)
+    values
+        (?, ?, 'QUALITATIVE', ?)
+Hibernate:
+    insert
+    into
+        Fact
+        (type_id, unit_id, quantity_value, FACT_DISCRIM, id)
+    values
+        (?, ?, ?, 'QUANTITATIVE', ?)
+Hibernate:
+    update
+        FactType
+    set
+        parent_type=?
+    where
+        id=?
+Hibernate:
+    update
+        FactType
+    set
+        parent_type=?
+    where
+        id=?
+Hibernate:
+    update
+        FactType
+    set
+        parent_type=?
+    where
+        id=?
+Hibernate:
+    update
+        FactType
+    set
+        parent_type=?
+    where
+        id=?
+Hibernate:
+    update
+        FactType
+    set
+        parent_type=?
+    where
+        id=?
+Hibernate:
+    insert
+    into
+        FactType_Phenomenon
+        (QualitativeType_id, legalPhenomenons_id)
+    values
+        (?, ?)
+Hibernate:
+    insert
+    into
+        FactType_Phenomenon
+        (QualitativeType_id, legalPhenomenons_id)
+    values
+        (?, ?)
+Hibernate:
+    insert
+    into
+        FactType_Phenomenon
+        (QualitativeType_id, legalPhenomenons_id)
+    values
+        (?, ?)
+Hibernate:
+    insert
+    into
+        FactType_Phenomenon
+        (QualitativeType_id, legalPhenomenons_id)
+    values
+        (?, ?)
+Hibernate:
+    insert
+    into
+        FactType_UNIT
+        (QuantitativeType_id, legalUnits_id)
+    values
+        (?, ?)
+Hibernate:
+    update
+        FactType
+    set
+        parent_type=?
+    where
+        id=?
+Hibernate:
+    update
+        FactType
+    set
+        parent_type=?
+    where
+        id=?
+Hibernate:
+    insert
+    into
+        FactType_UNIT
+        (QuantitativeType_id, legalUnits_id)
+    values
+        (?, ?)
+Hibernate:
+    insert
+    into
+        FactType_UNIT
+        (QuantitativeType_id, legalUnits_id)
+    values
+        (?, ?)
+Hibernate:
+    update
+        FactType
+    set
+        parent_type=?
+    where
+        id=?
+Hibernate:
+    update
+        FactType
+    set
+        parent_type=?
+    where
+        id=?
+Hibernate:
+    insert
+    into
+        FactType_UNIT
+        (QuantitativeType_id, legalUnits_id)
+    values
+        (?, ?)
+Hibernate:
+    insert
+    into
+        FactType_UNIT
+        (QuantitativeType_id, legalUnits_id)
+    values
+        (?, ?)
+Hibernate:
+    insert
+    into
+        FactType_UNIT
+        (QuantitativeType_id, legalUnits_id)
+    values
+        (?, ?)
+Hibernate:
+    update
+        Fact
+    set
+        parent_fact=?
+    where
+        id=?
+Hibernate:
+    update
+        Fact
+    set
+        parent_fact=?
+    where
+        id=?
+Hibernate:
+    update
+        Fact
+    set
+        parent_fact=?
+    where
+        id=?
+Hibernate:
+    insert
+    into
+        CompositeFact_compositionTypeCheck
+        (CompositeFact_id, compositionTypeCheck_KEY, typeCheckValue)
+    values
+        (?, ?, ?)
+Hibernate:
+    insert
+    into
+        CompositeFact_compositionTypeCheck
+        (CompositeFact_id, compositionTypeCheck_KEY, typeCheckValue)
+    values
+        (?, ?, ?)
+Hibernate:
+    insert
+    into
+        CompositeFact_compositionTypeCheck
+        (CompositeFact_id, compositionTypeCheck_KEY, typeCheckValue)
+    values
+        (?, ?, ?)
+Hibernate:
+    update
+        Fact
+    set
+        parent_fact=?
+    where
+        id=?
+Hibernate:
+    update
+        Fact
+    set
+        parent_fact=?
+    where
+        id=?
+Hibernate:
+    insert
+    into
+        CompositeFact_compositionTypeCheck
+        (CompositeFact_id, compositionTypeCheck_KEY, typeCheckValue)
+    values
+        (?, ?, ?)
+Hibernate:
+    insert
+    into
+        CompositeFact_compositionTypeCheck
+        (CompositeFact_id, compositionTypeCheck_KEY, typeCheckValue)
+    values
+        (?, ?, ?)
+Hibernate:
+    update
+        Fact
+    set
+        parent_fact=?
+    where
+        id=?
+Hibernate:
+    update
+        Fact
+    set
+        parent_fact=?
+    where
+        id=?
+Hibernate:
+    insert
+    into
+        CompositeFact_compositionTypeCheck
+        (CompositeFact_id, compositionTypeCheck_KEY, typeCheckValue)
+    values
+        (?, ?, ?)
+Hibernate:
+    insert
+    into
+        CompositeFact_compositionTypeCheck
+        (CompositeFact_id, compositionTypeCheck_KEY, typeCheckValue)
+    values
+        (?, ?, ?)
+Hibernate:
+    update
+        Fact
+    set
+        parent_fact=?
+    where
+        id=?
+Hibernate:
+    update
+        Fact
+    set
+        parent_fact=?
+    where
+        id=?
+Hibernate:
+    insert
+    into
+        CompositeFact_compositionTypeCheck
+        (CompositeFact_id, compositionTypeCheck_KEY, typeCheckValue)
+    values
+        (?, ?, ?)
+Hibernate:
+    insert
+    into
+        CompositeFact_compositionTypeCheck
+        (CompositeFact_id, compositionTypeCheck_KEY, typeCheckValue)
+    values
+        (?, ?, ?)
+Hibernate:
+    update
+        Fact
+    set
+        parent_fact=?
+    where
+        id=?
+Hibernate:
+    update
+        Fact
+    set
+        parent_fact=?
+    where
+        id=?
+Hibernate:
+    update
+        Fact
+    set
+        parent_fact=?
+    where
+        id=?
+Hibernate:
+    insert
+    into
+        CompositeFact_compositionTypeCheck
+        (CompositeFact_id, compositionTypeCheck_KEY, typeCheckValue)
+    values
+        (?, ?, ?)
+Hibernate:
+    insert
+    into
+        CompositeFact_compositionTypeCheck
+        (CompositeFact_id, compositionTypeCheck_KEY, typeCheckValue)
+    values
+        (?, ?, ?)
+Hibernate:
+    insert
+    into
+        CompositeFact_compositionTypeCheck
+        (CompositeFact_id, compositionTypeCheck_KEY, typeCheckValue)
+    values
+        (?, ?, ?)
+Hibernate:
+    update
+        Fact
+    set
+        parent_fact=?
+    where
+        id=?
+Hibernate:
+    update
+        Fact
+    set
+        parent_fact=?
+    where
+        id=?
+Hibernate:
+    insert
+    into
+        CompositeFact_compositionTypeCheck
+        (CompositeFact_id, compositionTypeCheck_KEY, typeCheckValue)
+    values
+        (?, ?, ?)
+Hibernate:
+    insert
+    into
+        CompositeFact_compositionTypeCheck
+        (CompositeFact_id, compositionTypeCheck_KEY, typeCheckValue)
+    values
+        (?, ?, ?)
+Hibernate:
+    update
+        Fact
+    set
+        parent_fact=?
+    where
+        id=?
+Hibernate:
+    update
+        Fact
+    set
+        parent_fact=?
+    where
+        id=?
+Hibernate:
+    insert
+    into
+        CompositeFact_compositionTypeCheck
+        (CompositeFact_id, compositionTypeCheck_KEY, typeCheckValue)
+    values
+        (?, ?, ?)
+Hibernate:
+    insert
+    into
+        CompositeFact_compositionTypeCheck
+        (CompositeFact_id, compositionTypeCheck_KEY, typeCheckValue)
+    values
+        (?, ?, ?)
+Hibernate:
+    update
+        Fact
+    set
+        parent_fact=?
+    where
+        id=?
+Hibernate:
+    update
+        Fact
+    set
+        parent_fact=?
+    where
+        id=?
+Hibernate:
+    insert
+    into
+        CompositeFact_compositionTypeCheck
+        (CompositeFact_id, compositionTypeCheck_KEY, typeCheckValue)
+    values
+        (?, ?, ?)
+Hibernate:
+    insert
+    into
+        CompositeFact_compositionTypeCheck
+        (CompositeFact_id, compositionTypeCheck_KEY, typeCheckValue)
+    values
+        (?, ?, ?)
+
+ */

@@ -34,7 +34,7 @@ public class QuantitativeType extends FactType {
 
 
 
-    @ManyToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name="QuantitativeType_legalUnits")
     public Set<Unit>  getLegalUnits()                { return Collections.unmodifiableSet(legalUnits); }
     public void       setLegalUnits(Set<Unit> units) { this.legalUnits = units; }

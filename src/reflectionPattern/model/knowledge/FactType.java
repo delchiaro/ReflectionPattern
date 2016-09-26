@@ -4,20 +4,22 @@
 package reflectionPattern.model.knowledge;
 
 import com.sun.istack.internal.NotNull;
-import reflectionPattern.utility.compositeWithAncestors.ComponentManagerALS;
-import reflectionPattern.utility.compositeWithAncestors.IComponentALS;
+import org.hibernate.type.ComponentType;
+import reflectionPattern.utility.composite.ComponentManager;
+import reflectionPattern.utility.composite.CompositeManager;
+import reflectionPattern.utility.composite.IComponent;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Access(AccessType.PROPERTY)
-@DiscriminatorValue("ABSTRACT")
 @Entity
-public abstract class FactType implements IComponentALS<CompositeType> {
+public abstract class FactType implements IComponent<CompositeType> {
 
 
 
-    private ComponentManagerALS<FactType, CompositeType> componentManager = new ComponentManagerALS<>(this);
+    @Transient
+    private ComponentManager<FactType, CompositeType> componentManager = new ComponentManager<>(this);
     protected Long id;
     private String typeName;
 
@@ -32,16 +34,14 @@ public abstract class FactType implements IComponentALS<CompositeType> {
 
 
 
-    @ManyToOne
-    @JoinColumn(name = "parent", updatable = false) // without specify the join column, JPA will create a join table!!
+    @ManyToOne @JoinColumn(name="parent_fk")
     @Override
     public CompositeType    getParent()                     { return componentManager.getParent(); }
-    public void             setParent(CompositeType parent) { componentManager.setParent(parent);  }
+    public void          setParent(CompositeType parent) { componentManager.setParent(parent);  }
 
 
 
     @Column(name = "id")
-    @NotNull
     @Id @GeneratedValue
     public    Long  getId()         { return id; }
     protected void  setId(Long id)  { this.id = id; }
@@ -49,55 +49,17 @@ public abstract class FactType implements IComponentALS<CompositeType> {
 
 
 
-    @Column(name = "name")
+    @Column(name = "NAME")
     public    String getTypeName()             { return typeName; }
     protected void   setTypeName(String name ) { this.typeName = name; }
 
 
 
 
-    @ManyToMany(fetch=FetchType.LAZY)
-    //@OrderColumn(name = "ancestor_index")
-    //@OrderBy("ancestor_index")
-    @JoinTable(name="FactType_AncestorsTable")
-    @Override
-    public List<CompositeType> getAncestors() {
-        return componentManager.getAncestors();
-    }
-    protected void  setAncestors(List<CompositeType> ancestors) { componentManager.setAncestors(ancestors);}
 
-
-    // Should be protected/private, think about tocken-friend method in CompositeManagerALS-ICompositeALS
-    // or remove them from the interface if posssible (I don't think so, I can remove addLastAncestor only).
-    @Override public void addFirstAncestor(CompositeType newAncestor) {
-        componentManager.addFirstAncestor(newAncestor);
-    }
-    @Override public void addLastAncestor(CompositeType newAncestor) {
-        componentManager.addLastAncestor(newAncestor);
-    }
-    @Override public void appendAllAncestors(List<CompositeType> newAncestors) {
-        componentManager.appendAllAncestors(newAncestors);
-    }
-
-
-
-
- /* *******************************************************************************************************************
+/* *******************************************************************************************************************
     *******************************************************************************************************************
     *******************************************************************************************************************/
-
-
-
-
-//    // needed by ComponentManager (IComponent interface)
-//    @Override public void   setParent(CompositeType parent, CompositeManager.CompositeManagerToken friendToken) {
-//        componentManager.setParent(parent, friendToken);
-//    }
-//
-
-
-
-
 
 
 
@@ -145,7 +107,7 @@ public abstract class FactType implements IComponentALS<CompositeType> {
     public enum EqualCheck { pk_forced, pk_if_exists, deep, pk_if_exists_and_deeep, pk_forced_and_deeep}
 
 
- /* EQUALS
+ /* EQU
          TRUTH TABLE:        (where D is the result of the deep check)
 
                         |   pk            pk if   pkIfExists   deep      pk forced

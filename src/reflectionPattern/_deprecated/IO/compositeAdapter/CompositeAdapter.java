@@ -1,4 +1,4 @@
-package reflectionPattern.IO.compositeAdapter;
+package reflectionPattern._deprecated.IO.compositeAdapter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -6,6 +6,7 @@ import java.util.Set;
 /**
  * Created by nagash on 06/09/16.
  */
+@Deprecated
 public abstract class CompositeAdapter<ADAPTED, T> {
 
     private ADAPTED adapted;

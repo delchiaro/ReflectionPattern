@@ -1,9 +1,11 @@
-//package reflectionPattern.IO;
+//package reflectionPattern.deprecated.IO;
 //
 //import org.hibernate.Hibernate;
-//import reflectionPattern.IO.compositeAdapter.CompositeAdapter;
-//import reflectionPattern.IO.compositeAdapter.FactCompositeAdapter;
-//import reflectionPattern.IO.compositeAdapter.FactTypeCompositeAdapter;
+//import CompositeAdapter;
+//import reflectionPattern._deprecated.IO.compositeAdapter.FactCompositeAdapter;
+//import reflectionPattern._deprecated.IO.compositeAdapter.FactTypeCompositeAdapter;
+//import reflectionPattern.model.knowledge.FactType;
+//import reflectionPattern.model.operational.Fact;
 //
 //import java.util.ArrayList;
 //

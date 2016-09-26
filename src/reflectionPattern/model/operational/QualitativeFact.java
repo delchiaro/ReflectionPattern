@@ -14,9 +14,12 @@ import javax.persistence.*;
 @DiscriminatorValue("QUALITATIVE")
 public class QualitativeFact extends Fact {
 
-    private Phenomenon phenomenon;
+    private Phenomenon phenomenon = null;
 
     protected   QualitativeFact () {}
+    public      QualitativeFact(@NotNull QualitativeType factType) {
+        super(factType);
+    }
     public      QualitativeFact (@NotNull QualitativeType factType, @NotNull Phenomenon phen) throws IllegalQualitativePhenomenonException {
         super(factType);
         this.phenomenon = phen;
@@ -29,8 +32,8 @@ public class QualitativeFact extends Fact {
     @ManyToOne (fetch=FetchType.LAZY)
     @JoinColumn(name="phenomenon_id")
     public Phenomenon getPhenomenon ()                { return this.phenomenon; }
-    protected   void        setPhenomenon (Phenomenon phen) { this.phenomenon = phen; } // for hibernate, no check legal phen check!
-
+    public void       setPhenomenon (Phenomenon phen) { this.phenomenon = phen; } // for hibernate, no check legal phen check!
+    // TODO: setPhenomenon has to check for legal phenomenon? I don't think so.. (db performance)
 
 
  /* *******************************************************************************************************************

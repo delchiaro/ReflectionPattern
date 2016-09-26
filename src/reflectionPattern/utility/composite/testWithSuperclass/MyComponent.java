@@ -20,13 +20,11 @@ public class MyComponent
     }
 
 
-    @Override
-    public MyComposite getParent() {
+    @Override public MyComposite getParent() {
         return componentManager.getParent();
     }
 
-    @Override
-    public void setParent(MyComposite parent, CompositeManager.CompositeManagerToken friendToken) {
+    @Override public void setParent(MyComposite parent) {
         componentManager.setParent(parent);
     }
 

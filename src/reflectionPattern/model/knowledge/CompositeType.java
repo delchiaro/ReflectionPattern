@@ -4,12 +4,16 @@
 package reflectionPattern.model.knowledge;
 
 import com.sun.istack.internal.NotNull;
-import reflectionPattern.utility.compositeWithAncestors.CompositeManagerALS;
-import reflectionPattern.utility.compositeWithAncestors.ICompositeALS;
+import reflectionPattern.utility.composite.CompositeManager;
+import reflectionPattern.utility.composite.IComposite;
+
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+
 
 
 /* http://stackoverflow.com/questions/463349/jpa-eager-fetch-does-not-join
@@ -40,10 +44,10 @@ Corresponding annotations in EclipseLink are
 @Access(AccessType.PROPERTY)
 @Entity
 @DiscriminatorValue("COMPOSITE")
-public class CompositeType extends FactType implements ICompositeALS<CompositeType, FactType> {
+public class CompositeType extends FactType implements IComposite<CompositeType, FactType> {
 
 
-    private CompositeManagerALS<CompositeType, FactType> compositeManager = new CompositeManagerALS<>(this);
+    private CompositeManager<CompositeType, FactType> compositeManager = new CompositeManager<>(this);
 
 
     protected CompositeType () {}
@@ -53,8 +57,7 @@ public class CompositeType extends FactType implements ICompositeALS<CompositeTy
 
 
 
-    // use mappedBy ="---" with the same column name of @joinColumn specified in the @ManyToOne side
-    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "parent")
+    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL  , mappedBy = "parent" )
     @Override
     public    Set<FactType> getChilds ()                     { return compositeManager.getChilds(); }
     protected void          setChilds (Set<FactType> childs) { compositeManager.setChilds(childs);  }
@@ -72,7 +75,7 @@ public class CompositeType extends FactType implements ICompositeALS<CompositeTy
     @Override public boolean equals(Object obj) {
         if(this==obj) return true;
         if(super.equals(obj) == false) return false;
-        if(!(obj instanceof CompositeType)) return false;
+        if(!(obj instanceof  CompositeType)) return false;
         CompositeType head = (CompositeType)obj;
 
         if( super.equals(head) && head.getChilds().size() == this.getChilds().size())
@@ -105,5 +108,10 @@ public class CompositeType extends FactType implements ICompositeALS<CompositeTy
         }
         return list;
     }
+
+
+
+
+
 
 }

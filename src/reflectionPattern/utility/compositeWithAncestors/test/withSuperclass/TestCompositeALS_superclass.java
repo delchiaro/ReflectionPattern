@@ -1,10 +1,10 @@
 package reflectionPattern.utility.compositeWithAncestors.test.withSuperclass;
 
+import reflectionPattern.utility.composite.out.CompositeTree;
 import reflectionPattern.utility.compositeWithAncestors.IComponentALS;
 import reflectionPattern.utility.compositeWithAncestors.ICompositeALS;
 import reflectionPattern.utility.compositeWithAncestors.test.noSuperclass.MyComponentALS;
 import reflectionPattern.utility.compositeWithAncestors.test.noSuperclass.MyCompositeALS;
-import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
 
 import java.util.List;
 
@@ -60,7 +60,7 @@ public class TestCompositeALS_superclass {
          **/
 
 
-        CompositeTreeALS.printTree(y);
+        CompositeTree.printTree(y);
 
 
 

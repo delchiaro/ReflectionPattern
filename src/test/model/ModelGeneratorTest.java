@@ -1,10 +1,11 @@
 package test.model;
 
 import reflectionPattern.dataGeneration.*;
+import reflectionPattern._deprecated.dataGenerator.RandomFactGenerator;
 import reflectionPattern.model.knowledge.FactType;
 import reflectionPattern.model.operational.CompositeFact;
 import reflectionPattern.model.operational.Fact;
-import reflectionPattern.utility.compositeWithAncestors.out.CompositeTreeALS;
+import reflectionPattern.utility.composite.out.CompositeTree;
 
 /**
  * Created by nagash on 09/09/16.
@@ -32,9 +33,9 @@ public class ModelGeneratorTest {
 
 
         FactType rootType   = typeGenerator.randomFactType();
-        Fact rootFact       = FactGenerator.randomFact(rootType);
+        Fact rootFact       = RandomFactGenerator.randomFact(rootType);
 
-        CompositeTreeALS.printTree(rootFact);
+        CompositeTree.printTree(rootFact);
 
 
     }
