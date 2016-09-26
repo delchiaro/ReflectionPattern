@@ -13,12 +13,14 @@ public class ComponentALS<COMPOSITE extends ICompositeALS> implements IComponent
     // ANCESTOR STRATEGY * * * * * * * * * * * * * * * * * * * *
 
 
+    private COMPOSITE parent;
     private List<COMPOSITE> ancestors = new LinkedList<COMPOSITE>();
 
 
     public void addFirstAncestor(COMPOSITE newAncestor) {
         if(newAncestor!=null)
             ancestors.add(0, newAncestor);
+        // TODO: set newAncestor as father? Stop to think to the ancestors list as an ordered list? (merge addFirst/addLast?)
     }
 
     public void addLastAncestor(COMPOSITE newAncestor) {
@@ -41,19 +43,18 @@ public class ComponentALS<COMPOSITE extends ICompositeALS> implements IComponent
     }
 
     public COMPOSITE getParent() {
-        if(ancestors.size() > 0)
-            return ancestors.get(0);
-        else return null;
+        return parent;
     }
 
 
-    /**
+    /** TODO: change this comment?
      * Parent is a ReadOnly FIELD!! Set the hibernate association as "updatable = false" for the Parent getter/setter!!
      * This setter is fake, use addFirstAncestor(..) instead
      * @param parent
      */
     public void setParent(COMPOSITE parent) {
-
+        this.parent = parent; // added parent property
+        //TODO: check if parent is in the ancestors list or not? (hibernate performance?)
     }
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 

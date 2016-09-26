@@ -1,7 +1,7 @@
 package test.model;
 
 import reflectionPattern.dataGeneration.*;
-import reflectionPattern.dataGeneration.deprecated.RandomFactGenerator;
+import reflectionPattern._deprecated.dataGenerator.RandomFactGenerator;
 import reflectionPattern.model.knowledge.FactType;
 import reflectionPattern.model.operational.CompositeFact;
 import reflectionPattern.model.operational.Fact;

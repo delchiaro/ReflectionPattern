@@ -2,7 +2,7 @@ package test;
 
 import org.junit.Test;
 import reflectionPattern.persistency.PersistencyHelper;
-import reflectionPattern.dataGeneration.deprecated.RandomFactGenerator;
+import reflectionPattern._deprecated.dataGenerator.RandomFactGenerator;
 import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.operational.CompositeFact;
 import reflectionPattern.model.operational.Fact;

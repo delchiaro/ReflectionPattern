@@ -1,7 +1,7 @@
 package test.persistency;
 
 
-import reflectionPattern.dataGeneration.deprecated.RandomFactGenerator;
+import reflectionPattern._deprecated.dataGenerator.RandomFactGenerator;
 import reflectionPattern.dataGeneration.FactTypeGenerator;
 import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;

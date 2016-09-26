@@ -1,4 +1,4 @@
-package reflectionPattern.dataGeneration.deprecated;
+package reflectionPattern._deprecated.dataGenerator;
 
 import reflectionPattern.model.knowledge.*;
 import reflectionPattern.model.knowledge.quantity.Unit;

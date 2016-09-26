@@ -1,4 +1,4 @@
-//package reflectionPattern.IO.compositeAdapter;
+//package reflectionPattern.deprecated.IO.compositeAdapter;
 //
 //import reflectionPattern.model.operational.*;
 //

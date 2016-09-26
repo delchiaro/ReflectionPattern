@@ -29,8 +29,9 @@ public class CompositeFact extends Fact implements IComposite<CompositeFact, Fac
     protected   CompositeFact () {}
     public      CompositeFact (@NotNull  CompositeType compType) {
         super(compType);
-        for(FactType type : compType.getChilds())
-            compositionTypeCheck.put(type, 0);
+//  Check removed: we use the visitor (FactGenerator) to create a tree of empty facts that follows the FactType tree.
+//        for(FactType type : compType.getChilds())
+//            compositionTypeCheck.put(type, 0);
     }
 
 
@@ -38,7 +39,6 @@ public class CompositeFact extends Fact implements IComposite<CompositeFact, Fac
 
 
 
-    //EAGER = carico tutti i figli subito!
     @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.PERSIST /* , mappedBy = "parent_fact",*/ )
     @JoinColumn(name="parent_fact")
     @Override
@@ -47,12 +47,12 @@ public class CompositeFact extends Fact implements IComposite<CompositeFact, Fac
 
 
 
-    @ElementCollection
-    @MapKeyColumn(name="typeCheckKey")
-    @Column(name="typeCheckValue")
-    //@CollectionTable(name="example_attributes", joinColumns=@JoinColumn(name="example_id"))
-    private Map<FactType, Integer> compositionTypeCheck = new HashMap<>();
-    // TODO: levare il check (usare visitor per creare un albero di Facts vuoto, con struttura che ricalca il FactType
+//    @ElementCollection
+//    @MapKeyColumn(name="typeCheckKey")
+//    @Column(name="typeCheckValue")
+//    //@CollectionTable(name="example_attributes", joinColumns=@JoinColumn(name="example_id"))
+//    private Map<FactType, Integer> compositionTypeCheck = new HashMap<>();
+//    //  Check removed: we use the visitor (FactGenerator) to create a tree of empty facts that follows the FactType tree.
 
 
 
@@ -64,15 +64,17 @@ public class CompositeFact extends Fact implements IComposite<CompositeFact, Fac
 
 
     @Override public void addChild(Fact childFact ) {
-        Integer n = compositionTypeCheck.get(childFact.getType());
-        if( n == null || (child_limit && n>1)  ) {
-            // throw new IllegalFactTypeException(); // TODO: throw exception
-        }
-        else
-        {
-            compositionTypeCheck.put(childFact.getType(), n+1);
-            compositeManager.addChild(childFact);
-        }
+// Check removed: we use the visitor (FactGenerator) to create a tree of empty facts that follows the FactType tree.
+//        Integer n = compositionTypeCheck.get(childFact.getType());
+//        if( n == null || (child_limit && n>1)  ) {
+//            // throw new IllegalFactTypeException(); // TODO: throw exception
+//        }
+//        else
+//        {
+//            compositionTypeCheck.put(childFact.getType(), n+1);
+//            compositeManager.addChild(childFact);
+//        }
+        compositeManager.addChild(childFact);
     }
 
 

@@ -5,7 +5,7 @@ package reflectionPattern.utility.composite;
  */
 public interface IComponent<COMPOSITE extends IComposite> {
     public COMPOSITE getParent();
-    public void setParent(COMPOSITE parent, CompositeManager.CompositeManagerToken friendToken);
+    public void setParent(COMPOSITE parent);
 
 
 
