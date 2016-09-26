@@ -14,19 +14,22 @@ import javax.persistence.*;
 @DiscriminatorValue("TEXTUAL")
 public class TextualFact extends Fact {
 
-    private String value;
+    private String value = null;
 
 
     protected   TextualFact () {}
-    public      TextualFact (@NotNull TextualType type, @NotNull String value) {
+    public      TextualFact (@NotNull TextualType type){
+        super(type);
+    }
+    public      TextualFact (@NotNull TextualType type, String value) {
         super(type);
         this.value=value;
     }
 
 
     @Column(name="textual_value")
-    public     String  getValue ()             { return value; }
-    protected  void    setValue (String value) { this.value = value; }
+    public  String  getValue ()               { return value; }
+    public  void    setValue (String value)   { this.value = value; }
 
 
 

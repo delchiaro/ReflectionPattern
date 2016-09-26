@@ -52,7 +52,7 @@ public class CompositeFact extends Fact implements IComposite<CompositeFact, Fac
     @Column(name="typeCheckValue")
     //@CollectionTable(name="example_attributes", joinColumns=@JoinColumn(name="example_id"))
     private Map<FactType, Integer> compositionTypeCheck = new HashMap<>();
-
+    // TODO: levare il check (usare visitor per creare un albero di Facts vuoto, con struttura che ricalca il FactType
 
 
 

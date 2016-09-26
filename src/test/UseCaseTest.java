@@ -2,20 +2,13 @@ package test;
 
 import org.junit.Test;
 import reflectionPattern.persistency.PersistencyHelper;
-import reflectionPattern.persistency.profiling.ProfilerHibernateJPA;
-import reflectionPattern.persistency.profiling.TimeProfiler;
-import reflectionPattern.dataGeneration.FactGenerator;
+import reflectionPattern.dataGeneration.deprecated.RandomFactGenerator;
 import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.operational.CompositeFact;
 import reflectionPattern.model.operational.Fact;
-import reflectionPattern.persistency.FactDAO;
-import reflectionPattern.persistency.FactTypeDAO;
 import reflectionPattern.utility.composite.out.CompositeTree;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import java.util.List;
 
 /**
@@ -66,7 +59,7 @@ public class UseCaseTest {
         // U.C.2: il salvataggio di una visita medica compilata
 
         System.out.print("\n\n\n...Generating Fact with some random value...\n");
-        Fact fRoot = FactGenerator.randomFact(rootType);
+        Fact fRoot = RandomFactGenerator.randomFact(rootType);
 
 
         System.out.print("...Persisting the generated Fact...\n");

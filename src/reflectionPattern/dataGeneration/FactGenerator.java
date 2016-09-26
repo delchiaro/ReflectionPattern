@@ -1,70 +1,75 @@
 package reflectionPattern.dataGeneration;
 
 import reflectionPattern.model.knowledge.*;
+import reflectionPattern.model.knowledge.quantity.Quantity;
 import reflectionPattern.model.knowledge.quantity.Unit;
 import reflectionPattern.model.operational.*;
+
 import java.util.Set;
 
 import static reflectionPattern.dataGeneration.RandomUtils.randInt;
 import static reflectionPattern.dataGeneration.RandomUtils.randomString;
 
 /**
- * Created by nagash on 12/09/16.
+ * Created by nagash on 26/09/16.
  */
 public class FactGenerator {
+    private final static int RANDOM_STRING_LENGTH = 18;
 
-    public static Fact randomFact(FactType rootType)
-    {
-        Fact fact = null;
-        if(rootType instanceof CompositeType)
-        {
-            CompositeFact compFact;
-            fact = compFact = new CompositeFact((CompositeType) rootType);
-
-            for (FactType childType : ((CompositeType) rootType).getChilds())
-            {
-                compFact.addChild(randomFact(childType));
-            }
-        }
-
-        else
-        {
-            if(rootType instanceof QualitativeType)
-            {
-                QualitativeType qType = (QualitativeType) rootType;
-                Set<Phenomenon> phens = qType.getLegalPhenomenons();
-
-                Phenomenon myPhen = phens.toArray(new Phenomenon[]{})[randInt(0, phens.size()-1)];
-                try {
-                    fact = new QualitativeFact(qType, myPhen );
-                }
-                catch (QualitativeFact.IllegalQualitativePhenomenonException e) {
-                    e.printStackTrace();
-                }
-            }
-            else if(rootType instanceof QuantitativeType)
-            {
-                QuantitativeType qType = (QuantitativeType)rootType;
-                Set<Unit> units =  qType.getLegalUnits();
-
-                Unit myUnit = units.toArray(new Unit[]{})[randInt(0, units.size()-1)];
-                int myRandomValue = randInt(0, 1000);
-                try {
-                    fact = new QuantitativeFact(qType, myRandomValue, myUnit);
-                }
-                catch (QuantitativeFact.IllegalQuantitativeUnitException e) {
-                    e.printStackTrace();
-                }
-            }
-            else if(rootType instanceof TextualType )
-            {
-                TextualType tType = (TextualType) rootType;
-                int randomLen = randInt(0, 100);
-                fact = new TextualFact(tType, randomString(randomLen));
-            }
-            else return null; //TODO: throws exception? no..
-        }
+    public static Fact generate(FactType type) {
+        return null; // Fact is abstract!
+    }
+    public static CompositeFact generate(CompositeType type) {
+        CompositeFact fact = new CompositeFact(type);
+        for(FactType childType : type.getChilds() )
+            fact.addChild(generate(childType));
         return fact;
     }
+    public static QualitativeFact generate(QualitativeType type) {
+        QualitativeFact fact = new QualitativeFact(type);
+        return fact;
+    }
+    public static QuantitativeFact generate(QuantitativeType type) {
+        QuantitativeFact fact = new QuantitativeFact(type);
+        return fact;
+    }
+    public static TextualFact generate(TextualType type) {
+        TextualFact fact = new TextualFact(type);
+        return fact;
+    }
+
+
+
+
+
+    public static void randomFill(Fact fact) {
+        return;
+    }
+    public static void randomFill(CompositeFact fact) {
+        for(Fact child : fact.getChilds() )
+            randomFill(child);
+        return;
+    }
+    public static void randomFill(QualitativeFact fact) {
+        Set<Phenomenon> legalPhenomenons = ((QualitativeType)fact.getType()).getLegalPhenomenons();
+        Phenomenon phenomenon = legalPhenomenons.toArray(new Phenomenon[]{})[ randInt(0, legalPhenomenons.size()-1)];
+        fact.setPhenomenon(phenomenon);
+        return;
+    }
+    public static void randomFill(QuantitativeFact fact) {
+        Set<Unit> legalUnits = ((QuantitativeType)fact.getType()).getLegalUnits();
+        Unit unit = legalUnits.toArray(new Unit[]{})[ randInt(0, legalUnits.size()-1)];
+        fact.setQuantity(new Quantity(randInt(), unit));
+        return;
+    }
+    public static void randomFill(TextualFact fact) {
+        fact.setValue(RandomUtils.randomString(RANDOM_STRING_LENGTH));
+        return;
+    }
+
+
+
+
+
 
 }

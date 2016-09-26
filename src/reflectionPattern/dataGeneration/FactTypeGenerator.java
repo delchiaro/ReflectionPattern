@@ -2,6 +2,8 @@ package reflectionPattern.dataGeneration;
 
 import reflectionPattern.model.knowledge.*;
 import reflectionPattern.model.knowledge.quantity.Unit;
+import reflectionPattern.modelExtension.MyAggregatePhenomenon;
+import reflectionPattern.modelExtension.MySubPhenomeon;
 
 import static reflectionPattern.dataGeneration.RandomUtils.randInt;
 import static reflectionPattern.dataGeneration.RandomUtils.randomString;
@@ -36,6 +38,8 @@ public class FactTypeGenerator {
         metMinimumLevel = false;
         return randomFactType(0);
     }
+
+
     private FactType randomFactType(int depth) {
 
         int minWidth = 1;
@@ -95,7 +99,23 @@ public class FactTypeGenerator {
                 factType = new QualitativeType( "QUALITATIVE_" + timeMillis() + "_" + randomString(7) );
                 int nPhenom = randInt(param.unitsRange());
                 for(int i=0; i<nPhenom; i++)
-                    ((QualitativeType)factType).addLegalPhenomenon( new Phenomenon("PHENOMENON_" + timeMillis() + "_" + randomString(7) ));
+                {
+                    Phenomenon p;
+                    String value = "PHENOMENON_" + timeMillis() + "_" + randomString(7);
+                    String code = "CODE_" + timeMillis() + "_" + randomString(3);
+
+                    if(param.getSubPhenomenon() == MySubPhenomeon.class)
+                        p = new MySubPhenomeon( code, value);
+                    else if(param.getSubPhenomenon() == MyAggregatePhenomenon.class)
+                    {
+                        p = new Phenomenon(value);
+                        new MyAggregatePhenomenon(p,code, value);
+                    }
+                    else
+                        p = new Phenomenon(value);
+
+                    ((QualitativeType) factType).addLegalPhenomenon(p);
+                }
                 break;
 
             case 3:

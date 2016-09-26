@@ -1,7 +1,7 @@
 package test.persistency;
 
 
-import reflectionPattern.dataGeneration.FactGenerator;
+import reflectionPattern.dataGeneration.deprecated.RandomFactGenerator;
 import reflectionPattern.dataGeneration.FactTypeGenerator;
 import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;
@@ -66,7 +66,7 @@ public class PersistencyPerformanceTest {
 
         Fact rootFacts[] = new Fact[N_ROOT_FACTS];
         for (int i = 0; i < N_ROOT_FACTS; i++)
-            rootFacts[i] = FactGenerator.randomFact(rootType);
+            rootFacts[i] = RandomFactGenerator.randomFact(rootType);
 
 
 

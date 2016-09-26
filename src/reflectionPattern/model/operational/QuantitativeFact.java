@@ -17,10 +17,13 @@ import javax.persistence.*;
 public class QuantitativeFact extends Fact {
 
 
-    private Quantity quantity;
+    private Quantity quantity = null;
 
 
     protected QuantitativeFact (){}
+    public    QuantitativeFact (@NotNull QuantitativeType factType) {
+        super(factType);
+    }
     public    QuantitativeFact (@NotNull QuantitativeType factType, @NotNull Number value, @NotNull Unit measurementUnit) throws IllegalQuantitativeUnitException {
         this(factType, new Quantity(value, measurementUnit));
 
@@ -36,8 +39,8 @@ public class QuantitativeFact extends Fact {
 
 
     @Embedded
-    public Quantity      getQuantity ()               { return this.quantity; }
-    protected  void      setQuantity (Quantity quant) { this.quantity = quant; }
+    public Quantity getQuantity ()               { return this.quantity; }
+    public void     setQuantity (Quantity quant) { this.quantity = quant; } // NO  LEGAL UNIT CHECK!!
 
 
 

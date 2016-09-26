@@ -4,7 +4,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import reflectionPattern.model.knowledge.*;
 import reflectionPattern.model.knowledge.quantity.Unit;
-import reflectionPattern.modelExtension.MyCompositionPhenomenon;
+import reflectionPattern.modelExtension.MyAggregatePhenomenon;
 import reflectionPattern.modelExtension.MySubPhenomeon;
 import reflectionPattern.persistency.PersistencyHelper;
 
@@ -118,10 +118,10 @@ public class testPhenomenonExt {
         Phenomenon phBloodAB = new Phenomenon("AB");        typeBloodType.addLegalPhenomenon(phBloodAB);
         Phenomenon phBlood0  = new Phenomenon("0");         typeBloodType.addLegalPhenomenon(phBlood0);
 
-        MyCompositionPhenomenon subA = new MyCompositionPhenomenon(phBloodA, "1234", "A");
-        MyCompositionPhenomenon subB = new MyCompositionPhenomenon(phBloodA, "1245", "B");
-        MyCompositionPhenomenon subAB = new MyCompositionPhenomenon(phBloodA, "4254", "AB");
-        MyCompositionPhenomenon sub0 = new MyCompositionPhenomenon(phBloodA, "2543", "B");
+        MyAggregatePhenomenon subA = new MyAggregatePhenomenon(phBloodA, "1234", "A");
+        MyAggregatePhenomenon subB = new MyAggregatePhenomenon(phBloodA, "1245", "B");
+        MyAggregatePhenomenon subAB = new MyAggregatePhenomenon(phBloodA, "4254", "AB");
+        MyAggregatePhenomenon sub0 = new MyAggregatePhenomenon(phBloodA, "2543", "B");
 
 
         typeAnSangue.addChild(typeBloodType);

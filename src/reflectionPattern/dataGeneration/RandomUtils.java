@@ -34,6 +34,9 @@ public class RandomUtils {
         return sb.toString();
     }
 
+    public static int randInt() {
+        return ThreadLocalRandom.current().nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
     public static int randInt(int min, int max) {
         if(min==max) return min;
         return ThreadLocalRandom.current().nextInt(min, max + 1);

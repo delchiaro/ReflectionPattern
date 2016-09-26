@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Entity
 @Access(AccessType.FIELD)
-public class MyCompositionPhenomenon {
+public class MyAggregatePhenomenon {
 
 
     @Id  @GeneratedValue @Column(name="id")  private Long id;
@@ -21,10 +21,10 @@ public class MyCompositionPhenomenon {
 
 
 
-    protected   MyCompositionPhenomenon() {
+    protected MyAggregatePhenomenon() {
         this.phenomenon = null;
     }
-    public MyCompositionPhenomenon(Phenomenon phen, String code, String description) {
+    public MyAggregatePhenomenon(Phenomenon phen, String code, String description) {
         this.phenomenon = phen;
         this.code = code;
         this.description = description;
