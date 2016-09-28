@@ -4,13 +4,12 @@
 package reflectionPattern.model.knowledge;
 
 import com.sun.istack.internal.NotNull;
-import reflectionPattern.utility.composite.CompositeManager;
-import reflectionPattern.utility.composite.IComposite;
+import utility.composite.CompositeManager;
+import utility.composite.IComposite;
 
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -52,6 +51,14 @@ public class CompositeType extends FactType implements IComposite<CompositeType,
 
     protected CompositeType () {}
     public    CompositeType (String typeName) { super(typeName); }
+    public    CompositeType (CompositeType copy) {
+        super( copy );
+        for( FactType f : copy.compositeManager.getChilds() )
+            this.compositeManager.addChild( f.clone() );
+    }
+    @Override public FactType clone() {
+        return new CompositeType(this);
+    }
 
 
 
@@ -69,6 +76,10 @@ public class CompositeType extends FactType implements IComposite<CompositeType,
  /* *******************************************************************************************************************
     *******************************************************************************************************************
     *******************************************************************************************************************/
+     @Override
+     public void acceptVisitor(IFactTypeVisitor visitor) {
+         visitor.visit(this);
+     }
 
 
 

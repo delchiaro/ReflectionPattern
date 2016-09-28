@@ -6,11 +6,15 @@ package reflectionPattern.model.operational;
 import com.sun.istack.internal.NotNull;
 import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;
-import reflectionPattern.utility.composite.CompositeManager;
-import reflectionPattern.utility.composite.IComposite;
+import utility.composite.CompositeManager;
+import utility.composite.IComposite;
+import utility.compositeWithAncestors.CompositeManagerALS;
+import utility.compositeWithAncestors.ICompositeALS;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 
 @Entity
@@ -27,9 +31,8 @@ public class CompositeFact extends Fact implements IComposite<CompositeFact, Fac
 
 
     protected   CompositeFact () {}
-    public      CompositeFact (@NotNull  CompositeType compType) {
+    public      CompositeFact (@NotNull CompositeType compType) {
         super(compType);
-//  Check removed: we use the visitor (FactGenerator) to create a tree of empty facts that follows the FactType tree.
 //        for(FactType type : compType.getChilds())
 //            compositionTypeCheck.put(type, 0);
     }
@@ -39,8 +42,7 @@ public class CompositeFact extends Fact implements IComposite<CompositeFact, Fac
 
 
 
-    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.PERSIST /* , mappedBy = "parent_fact",*/ )
-    @JoinColumn(name="parent_fact")
+    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "parent")
     @Override
     public      Set<Fact>  getChilds()                 { return compositeManager.getChilds(); }
     protected   void       setChilds(Set<Fact> childs) { this.compositeManager.setChilds(childs);}
@@ -52,7 +54,7 @@ public class CompositeFact extends Fact implements IComposite<CompositeFact, Fac
 //    @Column(name="typeCheckValue")
 //    //@CollectionTable(name="example_attributes", joinColumns=@JoinColumn(name="example_id"))
 //    private Map<FactType, Integer> compositionTypeCheck = new HashMap<>();
-//    //  Check removed: we use the visitor (FactGenerator) to create a tree of empty facts that follows the FactType tree.
+
 
 
 
@@ -60,11 +62,14 @@ public class CompositeFact extends Fact implements IComposite<CompositeFact, Fac
  /* *******************************************************************************************************************
     *******************************************************************************************************************
     *******************************************************************************************************************/
+     @Override
+     public void acceptVisitor(IFactVisitor visitor) {
+         visitor.visit(this);
+     }
 
 
 
     @Override public void addChild(Fact childFact ) {
-// Check removed: we use the visitor (FactGenerator) to create a tree of empty facts that follows the FactType tree.
 //        Integer n = compositionTypeCheck.get(childFact.getType());
 //        if( n == null || (child_limit && n>1)  ) {
 //            // throw new IllegalFactTypeException(); // TODO: throw exception
@@ -97,7 +102,7 @@ public class CompositeFact extends Fact implements IComposite<CompositeFact, Fac
     public boolean equals(Object obj) {
         if(this==obj) return true;
         if(super.equals(obj) == false ) return false;
-        if(!(obj instanceof  CompositeFact)) return false;
+        if(!(obj instanceof CompositeFact)) return false;
         CompositeFact head = (CompositeFact)obj;
 
         // Don't call super.equals() with CompositeFact because generics T = Void, so super.value is null!

@@ -4,20 +4,20 @@
 package reflectionPattern.model.operational;
 
 import com.sun.istack.internal.NotNull;
-import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;
-import reflectionPattern.utility.composite.ComponentManager;
-import reflectionPattern.utility.composite.CompositeManager;
-import reflectionPattern.utility.composite.IComponent;
+import utility.composite.ComponentManager;
+import utility.composite.IComponent;
+import utility.compositeWithAncestors.ComponentManagerALS;
+import utility.compositeWithAncestors.IComponentALS;
+import utility.visitor.Visitable;
 
 import javax.persistence.*;
-import java.util.*;
-
+import java.util.List;
 
 
 @Entity
 @Access(AccessType.PROPERTY)
-public abstract class Fact implements IComponent<CompositeFact> {
+public abstract class Fact implements IComponent<CompositeFact>, Visitable<IFactVisitor> {
 
 
 
@@ -43,12 +43,14 @@ public abstract class Fact implements IComponent<CompositeFact> {
 
 
     @ManyToOne
-    public     FactType   getType ()               { return type; }
-    protected  void       setType (FactType type)  { this.type = type; }
+    @JoinTable(name="Fact_FactType")
+    public FactType   getType ()               { return type; }
+    protected  void   setType (FactType type)  { this.type = type; }
 
 
 
     @ManyToOne
+    @JoinColumn(name="parent_fact")
     @Override
     public CompositeFact getParent ()                      { return componentManager.getParent(); }
     public void          setParent (CompositeFact parent)  { componentManager.setParent(parent); }
@@ -118,7 +120,7 @@ public abstract class Fact implements IComponent<CompositeFact> {
     public enum EqualCheck { pk_forced, pk_if_exists, deep, pk_if_exists_and_deeep, pk_forced_and_deeep}
 
 
-     /* EQU
+     /* EQUALS
          TRUTH TABLE:        (where D is the result of the deep check)
 
                         |   pk            pk if   pkIfExists   deep      pk forced

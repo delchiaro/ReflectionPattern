@@ -21,6 +21,10 @@ public class Unit {
         this.name=name;
         this.symbol=symbol;
     }
+    public    Unit (@NotNull Unit copy) {
+        this.name = copy.name;
+        this.symbol = copy.symbol;
+    }
 
 
     @Column(name = "id")

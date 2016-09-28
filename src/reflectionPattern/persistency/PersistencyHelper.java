@@ -19,11 +19,12 @@ public class PersistencyHelper
     private final static String SINGLE_TABLE_UNIT = "single-table";
     private final static String JOIN_TABLE_UNIT = "join-table";
 
-     public final static String DEFAULT_UNIT = SINGLE_TABLE_UNIT;  // <<< CHANGE THIS to change default DB globally
-     //public final static String DEFAULT_UNIT = JOIN_TABLE_UNIT;
+    //private final static Strategy DEFAULT_STRATEGY = Strategy.singleTable;
+    private final static Strategy DEFAULT_STRATEGY = Strategy.joinTable;
 
+    Strategy strategy = DEFAULT_STRATEGY;
 
-    public enum Unit { singleTabl , joinTable; }
+    public enum Strategy { singleTabl , joinTable; }
 
 
 
@@ -32,28 +33,29 @@ public class PersistencyHelper
 
 
     public PersistencyHelper() {
-        unitName = DEFAULT_UNIT;
+        this(DEFAULT_STRATEGY);
     }
     public PersistencyHelper(boolean useStatistics) {
-        unitName = DEFAULT_UNIT;
-        this.useStatistics = useStatistics;
+       this(DEFAULT_STRATEGY, useStatistics);
     }
-    public PersistencyHelper(Unit unit) {
-        switch (unit)
+    public PersistencyHelper(Strategy strategy) {
+        this.strategy = strategy;
+        switch (strategy)
         {
             case singleTabl:    unitName = SINGLE_TABLE_UNIT; break;
             case joinTable:     unitName = JOIN_TABLE_UNIT;   break;
-            default:            unitName = DEFAULT_UNIT;      break;
+            default:            unitName = JOIN_TABLE_UNIT;   break;
         }
     }
-    public PersistencyHelper(Unit unit, boolean useStatistics) {
-        this(unit);
+    public PersistencyHelper(Strategy strategy, boolean useStatistics) {
+        this(strategy);
         this.useStatistics = useStatistics;
     }
 
 
 
 
+    public Strategy getStrategy() { return this.strategy; }
 
 
 
@@ -112,8 +114,12 @@ public class PersistencyHelper
 
 
     public void persist(Object object) {
-        if(!isClosed())
+        //if(!isClosed())
             em.persist(object);
+    }
+
+    public void remove(Object object) {
+        em.remove(object);
     }
 
     public <T> T find(Class<T> aClass, Object o) {
@@ -130,8 +136,13 @@ public class PersistencyHelper
     }
 
     public EntityManager entityManager() {
-        return entityManager();
+        return this.em;
     }
+
+    public EntityManagerFactory entityManagerFactory() {
+        return this.emf;
+    }
+
 
 
     public void close() {
@@ -160,6 +171,9 @@ public class PersistencyHelper
 
 
     public static void silenceGlobalHibernateLogs() {
+        //Configuration config = new Configuration();
+        //config.setProperty(org.hibernate.cfg.Environment.SHOW_SQL, "false");
+
         Logger.getRootLogger().removeAllAppenders();
         Logger.getRootLogger().addAppender(new NullAppender());
         java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);

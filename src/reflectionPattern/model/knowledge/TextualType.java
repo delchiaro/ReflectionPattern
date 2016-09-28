@@ -18,6 +18,13 @@ public class TextualType extends FactType {
 
     protected  TextualType()  {}
     public     TextualType(@NotNull String typeName)   { super(typeName); }
+    public     TextualType(@NotNull TextualType copy){
+        super(copy);
+    }
+    @Override
+    public FactType clone() {
+        return new TextualType(this);
+    }
 
 
 
@@ -27,6 +34,11 @@ public class TextualType extends FactType {
  /* *******************************************************************************************************************
     *******************************************************************************************************************
     *******************************************************************************************************************/
+
+    @Override
+    public void acceptVisitor(IFactTypeVisitor visitor) {
+        visitor.visit(this);
+    }
 
 
     @Override public boolean equals(Object obj) {

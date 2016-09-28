@@ -1,5 +1,5 @@
 Done:
-- Creare generatore di dati per DB per fare test di performance su un database grosso.
+- Creare generatore di dati per DB per fare reflectionPattern.test di performance su un database grosso.
 - Sistema per contare le query e tempi
 
 - Test Case:

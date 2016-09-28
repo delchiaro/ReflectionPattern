@@ -39,22 +39,25 @@ public class QualitativeFact extends Fact {
  /* *******************************************************************************************************************
     *******************************************************************************************************************
     *******************************************************************************************************************/
+     @Override
+     public void acceptVisitor(IFactVisitor visitor) {
+         visitor.visit(this);
+     }
 
 
 
     @Override
     public String toString() {
-        return super.toString() + ": " + this.phenomenon.getValue();
+        return super.toString() + ": " + (phenomenon != null ? phenomenon.getValue() : "");
     }
 
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + phenomenon.hashCode();
+        result = 31 * result + (phenomenon != null ? phenomenon.hashCode() : 0);
         return result;
     }
-
 
     @Override
     public boolean equals(Object obj) {
