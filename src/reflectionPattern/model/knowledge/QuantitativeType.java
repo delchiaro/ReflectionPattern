@@ -28,9 +28,20 @@ public class QuantitativeType extends FactType {
     }
     public      QuantitativeType  (@NotNull String typeName, @NotNull Set<Unit> legalUnits) {
         super(typeName);
-        this.legalUnits = new HashSet<>(legalUnits);
+        this.legalUnits = legalUnits;
     }
 
+    public QuantitativeType ( @NotNull QuantitativeType copy)
+    {
+        super(copy);
+        this.legalUnits = new HashSet<>();
+        for( Unit c : copy.legalUnits)
+            legalUnits.add( new Unit(c) );
+    }
+    @Override
+    public FactType clone() {
+        return new QuantitativeType(this);
+    }
 
 
 
@@ -42,11 +53,14 @@ public class QuantitativeType extends FactType {
 
 
 
-
  /* *******************************************************************************************************************
     *******************************************************************************************************************
     *******************************************************************************************************************/
 
+    @Override
+    public void acceptVisitor(IFactTypeVisitor visitor) {
+        visitor.visit(this);
+    }
 
 
     public boolean isUnitLegal  (Unit unit) {

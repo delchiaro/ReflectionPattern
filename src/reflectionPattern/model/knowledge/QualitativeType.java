@@ -22,6 +22,14 @@ public class QualitativeType extends FactType
 
     protected  QualitativeType () {}
     public     QualitativeType (@NotNull  String typeName) { super(typeName); }
+    public      QualitativeType(QualitativeType copy) {
+        super(copy);
+        for( Phenomenon l : copy.legalPhenomenons)
+            legalPhenomenons.add(new Phenomenon(l));
+    }
+    @Override public FactType clone() {
+        return new QualitativeType(this);
+    }
 
 
 
@@ -39,6 +47,10 @@ public class QualitativeType extends FactType
  /* *******************************************************************************************************************
     *******************************************************************************************************************
     *******************************************************************************************************************/
+     @Override
+     public void acceptVisitor(IFactTypeVisitor visitor) {
+         visitor.visit(this);
+     }
 
 
 

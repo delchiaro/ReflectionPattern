@@ -14,25 +14,38 @@ public class FactTypeGeneratorParam {
     // at least 1 child. This is impossible.
 
     //                      Range(min, inf, sup)
-    private Range rootChilds  = new Range(0,    0,  DEFAULT_MAX);
-    private Range compChilds  = new Range(1,    1,  DEFAULT_MAX); //every compositeType must have at least 1 child
-    private Range depth       = new Range(0,    1,  DEFAULT_MAX);
-    private Range phenoms     = new Range(1,        DEFAULT_MAX);
-    private Range units       = new Range(1,        DEFAULT_MAX);
+    private Range rootChilds;//  = new Range(0,    0,  DEFAULT_MAX);
+    private Range compChilds;//  = new Range(1,    1,  DEFAULT_MAX); //every compositeType must have at least 1 child
+    private Range depth;//       = new Range(0,    1,  DEFAULT_MAX);
+    private Range phenoms;//     = new Range(1,        DEFAULT_MAX);
+    private Range units;//       = new Range(1,        DEFAULT_MAX);
 
     private Class subPhenomenon = Phenomenon.class;
 
     private boolean leafOnlyAtLowerLevel = false;
 
 
-    public FactTypeGeneratorParam() throws Range.InfSupValueException, Range.MinimumValueException {}
+    public FactTypeGeneratorParam() {
+        try
+        {
+            rootChilds  = new Range(0,    0,  DEFAULT_MAX);
+            compChilds  = new Range(1,    1,  DEFAULT_MAX); //every compositeType must have at least 1 child
+            depth       = new Range(0,    1,  DEFAULT_MAX);
+            phenoms     = new Range(1,        DEFAULT_MAX);
+            units       = new Range(1,        DEFAULT_MAX);
+        } catch (Range.InfSupValueException e) {
+            e.printStackTrace();
+        } catch (Range.MinimumValueException e) {
+            e.printStackTrace();
+        }
+    }
 
 
-    public Range rootChildsRange() { return rootChilds; }
-    public Range compChildsRange() { return compChilds; }
-    public Range depthRange()      { return depth; }
-    public Range phenomsRange()    { return phenoms; }
-    public Range unitsRange()      { return units; }
+    public Range getRootChildsRange() { return rootChilds; }
+    public Range getCompChildsRange() { return compChilds; }
+    public Range getDepthRange()      { return depth; }
+    public Range getPhenomsRange()    { return phenoms; }
+    public Range getUnitsRange()      { return units; }
     public Class getSubPhenomenon(){ return subPhenomenon; }
 
 

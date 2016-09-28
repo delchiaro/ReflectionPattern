@@ -48,19 +48,22 @@ public class QuantitativeFact extends Fact {
  /* *******************************************************************************************************************
     *******************************************************************************************************************
     *******************************************************************************************************************/
+     @Override
+     public void acceptVisitor(IFactVisitor visitor) {
+         visitor.visit(this);
+     }
 
 
     @Override public String toString() {
-        return super.toString() + ": " + this.quantity.getValue();
+        return super.toString() + ": " + (quantity != null ? quantity.getValue().toString() : "");
     }
 
-
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + quantity.hashCode();
+        result = 31 * result + (quantity != null ? quantity.hashCode() : 0);
         return result;
     }
-
 
     @Override public boolean equals(Object obj) {
         if(this==obj) return true;

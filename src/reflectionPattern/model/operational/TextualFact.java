@@ -14,7 +14,7 @@ import javax.persistence.*;
 @DiscriminatorValue("TEXTUAL")
 public class TextualFact extends Fact {
 
-    private String value = null;
+    private String value = "";
 
 
     protected   TextualFact () {}
@@ -41,18 +41,21 @@ public class TextualFact extends Fact {
     *******************************************************************************************************************
     *******************************************************************************************************************/
 
+    @Override
+    public void acceptVisitor(IFactVisitor visitor) {
+        visitor.visit(this);
+    }
 
     @Override public String toString() {
-        return super.toString() + ": " + this.value;
+        return super.toString() + ": "  + (value != null ? value : "");
     }
 
-
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + value.hashCode();
+        result = 31 * result + (value != null ? value.hashCode() : 0);
         return result;
     }
-
 
     @Override public boolean equals(Object obj) {
         if(this==obj) return true;

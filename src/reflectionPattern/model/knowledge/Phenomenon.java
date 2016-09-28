@@ -18,7 +18,9 @@ public class Phenomenon {
     public Phenomenon(@NotNull String value){
         this.value = value;
     }
-
+    public Phenomenon(@NotNull Phenomenon copy) {
+        this.value = copy.value;
+    }
 
 
 

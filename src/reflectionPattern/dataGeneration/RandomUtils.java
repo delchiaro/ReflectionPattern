@@ -35,7 +35,7 @@ public class RandomUtils {
     }
 
     public static int randInt() {
-        return ThreadLocalRandom.current().nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
+        return ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
     }
     public static int randInt(int min, int max) {
         if(min==max) return min;

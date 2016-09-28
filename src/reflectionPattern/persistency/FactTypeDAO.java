@@ -5,6 +5,8 @@ import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.transaction.Transaction;
 import java.util.List;
 
 /**
@@ -69,7 +71,7 @@ public class FactTypeDAO {
 
 
     // Enforce EAGER fetch
-    // TODO: test performance with annotation EAGER vs annotation LAZY + this function
+    // TODO: reflectionPattern.test performance with annotation EAGER vs annotation LAZY + this function
     public void fetchCompositeEager(CompositeType comp)
     {
 //        EntityTransaction loadTransact = entityManager.getTransaction();
@@ -90,8 +92,11 @@ public class FactTypeDAO {
 
 
     public void delete(Long id) {
+        EntityTransaction t = entityManager.getTransaction();
+        t.begin();
         FactType toRemove = findById(id);
         entityManager.remove(toRemove);
+        t.commit();
     }
 
 

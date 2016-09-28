@@ -4,17 +4,15 @@
 package reflectionPattern.model.knowledge;
 
 import com.sun.istack.internal.NotNull;
-import org.hibernate.type.ComponentType;
-import reflectionPattern.utility.composite.ComponentManager;
-import reflectionPattern.utility.composite.CompositeManager;
-import reflectionPattern.utility.composite.IComponent;
+import utility.composite.ComponentManager;
+import utility.composite.IComponent;
+import utility.visitor.Visitable;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Access(AccessType.PROPERTY)
 @Entity
-public abstract class FactType implements IComponent<CompositeType> {
+public abstract class FactType implements IComponent<CompositeType>, Visitable<IFactTypeVisitor> {
 
 
 
@@ -31,12 +29,16 @@ public abstract class FactType implements IComponent<CompositeType> {
     public FactType(@NotNull  String typeName){
         this.typeName = typeName;
     }
+    public FactType(FactType copy) {
+        this.typeName = copy.getTypeName();
+    }
+    public abstract FactType clone();
 
 
 
     @ManyToOne @JoinColumn(name="parent_fk")
     @Override
-    public CompositeType    getParent()                     { return componentManager.getParent(); }
+    public CompositeType    getParent()                  { return componentManager.getParent(); }
     public void          setParent(CompositeType parent) { componentManager.setParent(parent);  }
 
 
@@ -50,8 +52,8 @@ public abstract class FactType implements IComponent<CompositeType> {
 
 
     @Column(name = "NAME")
-    public    String getTypeName()             { return typeName; }
-    protected void   setTypeName(String name ) { this.typeName = name; }
+    public  String getTypeName()             { return typeName; }
+    public  void   setTypeName(String name ) { this.typeName = name; }
 
 
 
@@ -60,8 +62,6 @@ public abstract class FactType implements IComponent<CompositeType> {
 /* *******************************************************************************************************************
     *******************************************************************************************************************
     *******************************************************************************************************************/
-
-
 
     @Override public String toString() {
         return this.getTypeName();

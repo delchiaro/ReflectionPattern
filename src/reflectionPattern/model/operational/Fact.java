@@ -5,8 +5,9 @@ package reflectionPattern.model.operational;
 
 import com.sun.istack.internal.NotNull;
 import reflectionPattern.model.knowledge.FactType;
-import reflectionPattern.utility.compositeWithAncestors.ComponentManagerALS;
-import reflectionPattern.utility.compositeWithAncestors.IComponentALS;
+import utility.compositeWithAncestors.ComponentManagerALS;
+import utility.compositeWithAncestors.IComponentALS;
+import utility.visitor.Visitable;
 
 import javax.persistence.*;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Entity
 @Access(AccessType.PROPERTY)
-public abstract class Fact implements IComponentALS<CompositeFact> {
+public abstract class Fact implements IComponentALS<CompositeFact>, Visitable<IFactVisitor> {
 
 
 
@@ -56,8 +57,8 @@ public abstract class Fact implements IComponentALS<CompositeFact> {
 
     @ManyToOne
     @JoinTable(name="Fact_FactTye")
-    public FactType getType ()               { return type; }
-    protected  void       setType (FactType type)  { this.type = type; }
+    public FactType   getType ()               { return type; }
+    protected  void   setType (FactType type)  { this.type = type; }
 
 
 
@@ -73,7 +74,6 @@ public abstract class Fact implements IComponentALS<CompositeFact> {
  /* *******************************************************************************************************************
     *******************************************************************************************************************
     *******************************************************************************************************************/
-
 
 
     // Should be protected/private, think about tocken-friend method in CompositeManagerALS-ICompositeALS

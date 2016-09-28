@@ -6,8 +6,8 @@ package reflectionPattern.model.operational;
 import com.sun.istack.internal.NotNull;
 import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;
-import reflectionPattern.utility.compositeWithAncestors.CompositeManagerALS;
-import reflectionPattern.utility.compositeWithAncestors.ICompositeALS;
+import utility.compositeWithAncestors.CompositeManagerALS;
+import utility.compositeWithAncestors.ICompositeALS;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -61,6 +61,10 @@ public class CompositeFact extends Fact implements ICompositeALS<CompositeFact, 
  /* *******************************************************************************************************************
     *******************************************************************************************************************
     *******************************************************************************************************************/
+     @Override
+     public void acceptVisitor(IFactVisitor visitor) {
+         visitor.visit(this);
+     }
 
 
 

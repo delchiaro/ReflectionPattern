@@ -71,6 +71,20 @@ public class FactDAO {
 //    public List<Fact> findAssociatedFacts(FactType type, boolean eager) {
 //        return findAssociatedFacts(type.getId(), eager);
 //    }
+public List<Fact> findAssociatedFacts(long idType, boolean eager) {
+    List<Fact> facts = entityManager
+            .createQuery("select f " +
+                    "from Fact f " +
+                    "where f.type.id = :factTypeID")
+            .setParameter("factTypeID", idType)
+            .getResultList();
+    if (eager && facts != null)
+        for (Fact f : facts)
+            if (f instanceof CompositeFact)
+                fetchCompositeEager((CompositeFact) f);
+    return facts;
+}
+
     public List<Fact> findAssociatedFacts(FactType type, boolean eager) {
         List<Fact> facts = entityManager
                 .createQuery(   "select f " +
@@ -86,7 +100,7 @@ public class FactDAO {
     }
 
     // Enforce EAGER fetch
-    // TODO: test performance with annotation EAGER vs annotation LAZY + this function
+    // TODO: reflectionPattern.test performance with annotation EAGER vs annotation LAZY + this function
     public void fetchCompositeEager(CompositeFact fact)
     {
         if(fact.getChilds() != null && fact.getChilds().size() > 0)
@@ -97,6 +111,31 @@ public class FactDAO {
                     fetchCompositeEager((CompositeFact) child);
         }
     }
+
+
+    public  List<Fact> findAllDescendants(CompositeFact ancestor) {
+        List<Fact> facts = entityManager
+                    .createQuery(   "select f " +
+                                    "from Fact f " +
+                                    "where :ancestor member of f.ancestors")
+                                    .setParameter("ancestor", ancestor)
+                                    .getResultList();
+        return facts;
+    }
+
+    // Enforce EAGER fetch
+    // TODO: reflectionPattern.test performance with annotation EAGER vs annotation LAZY + this function
+    public void fetchCompositeEagerALS(CompositeFact fact)
+    {
+        if(fact.getChilds() != null && fact.getChilds().size() > 0)
+        {
+            Hibernate.initialize((fact.getChilds()));
+            for( Fact child : fact.getChilds() )
+                if(child instanceof  CompositeFact)
+                    fetchCompositeEager((CompositeFact) child);
+        }
+    }
+
 
 
 
