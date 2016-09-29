@@ -1,5 +1,6 @@
 package reflectionPattern.dataGeneration;
 
+import com.sun.istack.internal.NotNull;
 import reflectionPattern.model.knowledge.*;
 import reflectionPattern.model.knowledge.quantity.Quantity;
 import reflectionPattern.model.knowledge.quantity.Unit;
@@ -21,7 +22,7 @@ public class FactGenerator {
     }
 
 
-    public static Fact generate(FactType type) {
+    public static Fact generate(@NotNull FactType type) {
         EmptyFactGenerator efg = new EmptyFactGenerator();
         type.acceptVisitor(efg);
         return efg.getGeneratedFact();
@@ -102,7 +103,7 @@ class RandomFactFiller implements IFactVisitor
     public void visit(QualitativeFact fact) {
         Set<Phenomenon> legalPhenomenons = ((QualitativeType)fact.getType()).getLegalPhenomenons();
         Phenomenon phenomenon = legalPhenomenons.toArray(new Phenomenon[]{})[ randInt(0, legalPhenomenons.size()-1)];
-        fact.setPhenomenon(phenomenon);
+        fact.assignPhenomenon(phenomenon);
         return;
     }
 
@@ -110,7 +111,7 @@ class RandomFactFiller implements IFactVisitor
     public void visit(QuantitativeFact fact) {
         Set<Unit> legalUnits = ((QuantitativeType)fact.getType()).getLegalUnits();
         Unit unit = legalUnits.toArray(new Unit[]{})[ randInt(0, legalUnits.size()-1)];
-        fact.setQuantity(new Quantity(randInt(), unit));
+        fact.assignQuantity(new Quantity(randInt(), unit));
         return;
     }
 

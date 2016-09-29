@@ -22,19 +22,20 @@ public class FactDAO {
 
 
     public Fact findById(Long id) {
-//        List<?> results = entityManager.createQuery(
-//                        "select distinct et " +
-//                        " from FactType ft " +
-//                        " where ft.id = :id")
-//                .setParameter("id", id )
-//                .getResultList();
-//
-//        if ( results.size() == 0 ) {
-//            return null;
-//        }
-//
+        List<Fact> results = entityManager.createQuery(
+                "select distinct f " +
+                        " from Fact f " +
+                        " where f.id = :id")
+                .setParameter("id", id )
+                .getResultList();
+        if ( results.size() == 0 ) {
+            return null;
+        }
+        else return results.get(0);
+
 //        return (FactType) results.get( 0 );
-        return entityManager.find(Fact.class, id);
+
+
 
     }
 
@@ -52,17 +53,24 @@ public class FactDAO {
         return facts;
     }
 
-    public List<CompositeFact> findAllCompositeRoots(boolean eager) {
+    public List<CompositeFact> findAllCompositeRoots() {
         List<CompositeFact> facts = entityManager
                                         .createQuery(   "select f " +
-                                                " from Fact f " +
-                                                " where TYPE(f)= :type AND f.parent IS NULL")
-                                        .setParameter("type", CompositeType.class)
+                                                " from CompositeFact f " +
+                                                " where f.parent IS NULL")
                                         .getResultList();
+        return facts;
+    }
 
-        if(eager && facts != null)
-            for( CompositeFact f : facts )
-                fetchCompositeEager(f);
+    public List<CompositeFact> findAllCompositeRootsEager() {
+        List<CompositeFact> facts = entityManager
+                .createQuery(   "select f " +
+                        " from CompositeFact f FETCH ALL PROPERTIES " +
+                        " where f.parent IS NULL")
+                .getResultList();
+
+        for(CompositeFact f : facts)
+            fetchCompositeEager(f);
 
         return facts;
     }
@@ -71,7 +79,7 @@ public class FactDAO {
 //    public List<Fact> findAssociatedFacts(FactType type, boolean eager) {
 //        return findAssociatedFacts(type.getId(), eager);
 //    }
-public List<Fact> findAssociatedFacts(long idType, boolean eager) {
+    public List<Fact> findAssociatedFacts(long idType, boolean eager) {
     List<Fact> facts = entityManager
             .createQuery("select f " +
                     "from Fact f " +
@@ -103,6 +111,7 @@ public List<Fact> findAssociatedFacts(long idType, boolean eager) {
     // TODO: reflectionPattern.test performance with annotation EAGER vs annotation LAZY + this function
     public void fetchCompositeEager(CompositeFact fact)
     {
+        Hibernate.initialize(fact);
         if(fact.getChilds() != null && fact.getChilds().size() > 0)
         {
             Hibernate.initialize((fact.getChilds()));
@@ -111,29 +120,9 @@ public List<Fact> findAssociatedFacts(long idType, boolean eager) {
                     fetchCompositeEager((CompositeFact) child);
         }
     }
-
-
-    public  List<Fact> findAllDescendants(CompositeFact ancestor) {
-        List<Fact> facts = entityManager
-                    .createQuery(   "select f " +
-                                    "from Fact f " +
-                                    "where :ancestor member of f.ancestors")
-                                    .setParameter("ancestor", ancestor)
-                                    .getResultList();
-        return facts;
-    }
-
-    // Enforce EAGER fetch
-    // TODO: reflectionPattern.test performance with annotation EAGER vs annotation LAZY + this function
-    public void fetchCompositeEagerALS(CompositeFact fact)
+    public void fetchFactType(Fact fact)
     {
-        if(fact.getChilds() != null && fact.getChilds().size() > 0)
-        {
-            Hibernate.initialize((fact.getChilds()));
-            for( Fact child : fact.getChilds() )
-                if(child instanceof  CompositeFact)
-                    fetchCompositeEager((CompositeFact) child);
-        }
+        Hibernate.initialize(fact.getType());
     }
 
 

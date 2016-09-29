@@ -4,6 +4,10 @@
 package reflectionPattern.model.knowledge;
 
 import com.sun.istack.internal.NotNull;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyCollection;
+import org.testng.annotations.Optional;
 import utility.composite.CompositeManager;
 import utility.composite.IComposite;
 
@@ -66,6 +70,8 @@ public class CompositeType extends FactType implements IComposite<CompositeType,
 
     @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL  , mappedBy = "parent" )
     @Override
+    @org.hibernate.annotations.LazyCollection(org.hibernate.annotations.LazyCollectionOption.EXTRA)
+    //@Fetch(FetchMode.)
     public    Set<FactType> getChilds ()                     { return compositeManager.getChilds(); }
     protected void          setChilds (Set<FactType> childs) { compositeManager.setChilds(childs);  }
     @Override public void   addChild (@NotNull FactType childType ){ this.compositeManager.addChild(childType); }

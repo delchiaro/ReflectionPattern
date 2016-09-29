@@ -2,6 +2,7 @@ package reflectionPattern.persistency;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.varia.NullAppender;
+import org.hibernate.CacheMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.stat.Statistics;
 import reflectionPattern.persistency.profiling.TimeProfiler;
@@ -24,7 +25,9 @@ public class PersistencyHelper
 
     Strategy strategy = DEFAULT_STRATEGY;
 
-    public enum Strategy { singleTabl , joinTable; }
+    private static final boolean DISABLE_CACHE = false;
+
+    public enum Strategy {singleTable, joinTable; }
 
 
 
@@ -42,7 +45,7 @@ public class PersistencyHelper
         this.strategy = strategy;
         switch (strategy)
         {
-            case singleTabl:    unitName = SINGLE_TABLE_UNIT; break;
+            case singleTable:    unitName = SINGLE_TABLE_UNIT; break;
             case joinTable:     unitName = JOIN_TABLE_UNIT;   break;
             default:            unitName = JOIN_TABLE_UNIT;   break;
         }
@@ -71,12 +74,20 @@ public class PersistencyHelper
         if(isClosed())
         {
             emf = Persistence.createEntityManagerFactory(this.unitName);
+            if(DISABLE_CACHE) emf.getCache().evictAll(); // disable cache
+
             em = emf.createEntityManager();
+
 
             if(useStatistics) {
                 SessionFactory sessionFactory = emf.unwrap(SessionFactory.class);
                 statistics = sessionFactory.getStatistics();
                 statistics.setStatisticsEnabled(true);
+            }
+
+            if(DISABLE_CACHE) {
+                org.hibernate.Session hibernateSession = (org.hibernate.Session) em.getDelegate();
+                hibernateSession.setCacheMode(CacheMode.IGNORE);
             }
 
             return this;
@@ -114,8 +125,12 @@ public class PersistencyHelper
 
 
     public void persist(Object object) {
-        if(!isClosed())
+        //if(!isClosed())
             em.persist(object);
+    }
+
+    public void remove(Object object) {
+        em.remove(object);
     }
 
     public <T> T find(Class<T> aClass, Object o) {
@@ -139,16 +154,22 @@ public class PersistencyHelper
         return this.emf;
     }
 
+    public SessionFactory getSessionFactory()
+    {
+        return emf.unwrap(SessionFactory.class);
+    }
 
 
     public void close() {
-        em.close();
-        emf.close();
-        em = null;
-        emf = null;
-        statistics = null;
-        factDAO = null;
-        factTypeDAO = null;
+        if(isClosed() == false) {
+            em.close();
+            emf.close();
+            em = null;
+            emf = null;
+            statistics = null;
+            factDAO = null;
+            factTypeDAO = null;
+        }
     }
 
     public boolean isClosed() {

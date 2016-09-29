@@ -1,14 +1,21 @@
 import com.sun.istack.internal.NotNull;
 import org.testng.internal.Nullable;
 import reflectionPattern.dataGeneration.*;
+import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;
 import reflectionPattern.model.knowledge.Phenomenon;
 import reflectionPattern.modelExtension.MyAggregatePhenomenon;
 import reflectionPattern.modelExtension.MySubPhenomeon;
 import reflectionPattern.persistency.PersistencyHelper;
 import utility.composite.out.CompositeTree;
+import reflectionPattern.persistency.PersistencyHelper.Strategy;
 
 import javax.persistence.EntityTransaction;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
@@ -25,43 +32,51 @@ public class FactTypeManager {
     private static final int DEFAULT_FIXED_TREE_WIDTH = 2;
     private static final int DEFAULT_FIXED_TREE_N_PHEN = 2;
 
+    private static Strategy s1 =  Strategy.singleTable;
+    private static Strategy s2 =  Strategy.joinTable;
+
+    private static boolean ALS = false;
 
     public static void main(String ... params) throws Range.MinimumValueException, Range.InfSupValueException {
         PersistencyHelper.silenceGlobalHibernateLogs();
 
 
-        boolean ALS = false;
+
         boolean SINGLE_TABLE = false;
 
         boolean loop = true;
         while(loop)
         {
-            PersistencyHelper ph_1;
-            PersistencyHelper ph_2;
+
 
             if(SINGLE_TABLE) {
-                ph_1 = new PersistencyHelper(PersistencyHelper.Strategy.singleTabl).connect();
-                ph_2 = new PersistencyHelper(PersistencyHelper.Strategy.joinTable).connect();
+                s1 = Strategy.singleTable;
+                s2 = Strategy.joinTable;
             }
             else{
-                ph_1 = new PersistencyHelper(PersistencyHelper.Strategy.joinTable).connect();
-                ph_2 = new PersistencyHelper(PersistencyHelper.Strategy.singleTabl).connect();
-
+                s1 = Strategy.joinTable;
+                s2 = Strategy.singleTable;
             }
 
             String chose;
             Scanner keyboard = new Scanner(System.in);
             System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-            System.out.print("~ MANAGE FACT TYPE ~\tALS: "+ (ALS==true ? "enabled" : "disabled")   +
+            System.out.print("~ MANAGE FACT TYPE ~\t"  + (ALS==true ? "ALS-ON" : "ALS-OFF") +
                     "\tTest: " + (SINGLE_TABLE==true ? "single-table" : "join-table") + "\tPersistency: single/join-table" +"\n\n");
 
-            long[] ids_1 = list(ph_1);
-            long[] ids_2 = silentList(ph_2);
+            long[] ids_1 = list(s1);
+            long[] ids_2 = listSilently(s2);
             System.out.print("\n");
             System.out.print("Usage: [command] [list-index]\n");
             System.out.print("t  - test of performance      \tt [list-index]\n");
+            System.out.print("ta - test all                 \tta  \n");
+
             System.out.print("a  - Ancestor List Strategy toggle (ALS)\t\n");
             System.out.print("j  - join-table enable/disable (join/single table switch)\t\n");
+
+
+            System.out.print("g  - generate all useCase fixed\t\n");
+
             System.out.print("f  - fixed FactType generation\tf [depth] [width] [nUnits/nPhenoms]\n");
             System.out.print("fa - fixed + aggregate phens  \tf [depth] [width] [nUnits/nPhenoms]\n");
             System.out.print("fs - fixed + sub phens        \tf [depth] [width] [nUnits/nPhenoms]\n");
@@ -90,9 +105,16 @@ public class FactTypeManager {
 
                 case "t":
                     if(pieces.length < 2){ break; }
-                    performanceTest(ph_1.getStrategy(), ids_1[Integer.parseInt(pieces[1])-1], ALS);
+                    performanceTest(s1, ids_1[Integer.parseInt(pieces[1])-1]);
                     break;
 
+                case "ta":
+                    testAll(ids_1, s1);
+                    break;
+
+                case "g":
+                    generateMyUseCaseTypes();
+                    break;
 
                 case "fa":
                 case "fs":
@@ -111,19 +133,19 @@ public class FactTypeManager {
                     if(pieces[0].equals("fa")) subPhenClass = MyAggregatePhenomenon.class;
                     else if(pieces[0].equals("fs")) subPhenClass = MySubPhenomeon.class;
 
-                    generateFixedTypeTree(ph_1, ph_2, depth, width, nPhenoms, subPhenClass);
+                    generateFixedTypeTreeVerbose(depth, width, nPhenoms, subPhenClass, s1, s2);
                     break;
 
-                case "n": generateTypeTree(ph_1, ph_2); break;
+                case "n": generateTypeTree(s1, s2); break;
 
                 case "d":
                     if(pieces.length < 2){ break; }
                     index = Integer.parseInt(pieces[1]); index--;
                     if(index != null && index>=0) {
                         if(index<ids_1.length)
-                             ph_1.factTypeDAO().delete(ids_1[index]);
+                            deleteType(ids_1[index], s1);
                         if(index<ids_2.length)
-                            ph_2.factTypeDAO().delete(ids_2[index]);
+                            deleteType(ids_2[index], s2);
                     }
                     break;
 
@@ -142,15 +164,14 @@ public class FactTypeManager {
                 case "s":if(pieces.length < 2) { break; }
                     index = Integer.parseInt(pieces[1]); index--;
                     if(index != null && index>=0 && index<ids_1.length)
-                        CompositeTree.printTree( ph_1.factTypeDAO().findById(ids_1[index]));
+                        showType(ids_1[index], s1);
                     break;
 
                 default: break;
             }
 
 
-            ph_1.close();
-            ph_2.close();
+
 
         }
 
@@ -159,24 +180,80 @@ public class FactTypeManager {
 
 
 
-    public static long[] silentList(PersistencyHelper ph) {
-        return list(ph, false);
+
+
+
+
+
+
+    private static void generateMyUseCaseTypes() {
+        int width = 2;
+        int nPhenoms = 2;
+
+        for( int i = 5; i < 9; i++) {
+            System.out.print("\nGenerating: " + "DEPTH:"+i + "_width:"+width + "___" + MySubPhenomeon.class.getSimpleName()+":" + nPhenoms );
+            generateFixedTypeTreeSilently(i, width, nPhenoms, MySubPhenomeon.class, s1, s2);
+            System.out.print("\t\tDONE!");
+        }
+        for( int i = 5; i < 9; i++) {
+            System.out.print("\nGenerating: " + "DEPTH:" + i + "_width:" + width + MySubPhenomeon.class.getSimpleName() + ":" + nPhenoms);
+            generateFixedTypeTreeSilently(i, width, nPhenoms, MyAggregatePhenomenon.class, s1, s2);
+            System.out.print("\t\tDONE!");
+        }
     }
 
-    public static long[] list(PersistencyHelper ph) {
-        return list(ph, true);
+    private static void testAll(long[] typeIds, Strategy s) {
+
+        UseCaseTest ucTest = new UseCaseTest(s, UseCaseTest.VerbouseMode.FILE);
+        for(int i = 4; i < 8 ; i++)
+//        for(long idType : typeIds)
+        {
+            long idType = typeIds[i];
+            Path path = Paths.get("/home/nagash/Desktop/UseCasetests/");
+            try {
+                Files.createDirectories(path);
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.print("Can't create directory. Exiting.");
+                return;
+            }
+            ucTest.setOutputFileName("/home/nagash/Desktop/UseCasetests/out-"+ idType + ".xls");
+            ucTest.test(idType, ALS);
+        }
+
     }
 
-    public static long[] list(PersistencyHelper ph, boolean verbose)
-    {
 
+
+
+
+    public static void showType(long typeId, Strategy s) {
+        PersistencyHelper ph = new PersistencyHelper(s, false).connect();
+        FactType t = ph.factTypeDAO().findById(typeId);
+        CompositeTree.printTree(t); // use this before close, otherwise will get error (lazy load of t)
+        ph.close();
+    }
+
+
+
+    private static long[] listSilently(Strategy s) {
+        return list(s, false);
+    }
+    private static long[] list(Strategy s) {
+        return list(s, true);
+    }
+    private static long[] list(Strategy s, boolean verbose) {
+        List<CompositeType> factTypes;
+
+        PersistencyHelper ph = new PersistencyHelper(s, false).connect();
         EntityTransaction transact = ph.newTransaction();
         transact.begin();
-        List<FactType> factTypes = ph.factTypeDAO().findAllRoots(false);
+         factTypes = ph.factTypeDAO().findAllCompositeRoots();
         transact.commit();
-
+        ph.close();
 
         long ids[] = new long[factTypes.size()];
+
         int i =0;
         for (FactType ft : factTypes) {
             ids[i] = ft.getId();
@@ -189,7 +266,18 @@ public class FactTypeManager {
 
 
 
-    public static void generateFixedTypeTree( @NotNull  PersistencyHelper primary, @Nullable PersistencyHelper secondary, Integer depth, Integer width, Integer nUnitPhenom, Class subPhenClass) {
+
+
+    private static void     generateFixedTypeTreeSilently  (Integer depth, Integer width, Integer nUnitPhenom, Class subPhenClass, @NotNull  Strategy s1, @Nullable Strategy s2) {
+        FactType ft = generateFixedTypeTreeNoPersist(depth, width,nUnitPhenom, subPhenClass, s1, s2);
+        persistFactTypeSilently(ft, s1, s2);
+    }
+    private static void     generateFixedTypeTreeVerbose   (Integer depth, Integer width, Integer nUnitPhenom, Class subPhenClass, @NotNull  Strategy s1, @Nullable Strategy s2) {
+        FactType ft = generateFixedTypeTreeNoPersist(depth, width,nUnitPhenom, subPhenClass, s1, s2);
+        persistFactType(ft, s1, s2);
+    }
+    private static FactType generateFixedTypeTreeNoPersist (Integer depth, Integer width, Integer nUnitPhenom, Class subPhenClass, @NotNull  Strategy s1, @Nullable Strategy s2) {
+
         if(depth == null)
             depth = DEFAULT_FIXED_TREE_DEPTH;
         if(width == null)
@@ -213,16 +301,11 @@ public class FactTypeManager {
 
         FactTypeGenerator gen = new FactTypeGenerator(params);
         FactType factType =  gen.randomFactType();
-
         factType.setTypeName("COMPOSITE_DEPTH:"+depth+"__WIDTH:"+ width +"__"+ subPhenClass.getSimpleName() + ":"+nUnitPhenom  + "___" + timeMillis() );
-
-        persistFactType(factType, primary, secondary);
+        return factType;
     }
 
-
-
-
-    public static void generateTypeTree( @NotNull  PersistencyHelper primary, @Nullable PersistencyHelper secondary) throws  Range.InfSupValueException, Range.MinimumValueException {
+    private static void generateTypeTree(@NotNull  Strategy s1, @Nullable Strategy s2) throws  Range.InfSupValueException, Range.MinimumValueException {
         Scanner keyboard = new Scanner(System.in);
         FactTypeGenerator typeGenerator = new FactTypeGenerator();
 
@@ -236,7 +319,7 @@ public class FactTypeManager {
 
         do{
             FactType factType = typeGenerator.randomFactType();
-            persistFactType(factType, primary, secondary);
+            persistFactType(factType, s1, s2);
 
         }while(   !answerNy("\n\nGo to main menu?")    );
     }
@@ -244,28 +327,30 @@ public class FactTypeManager {
 
 
 
+    private static void persistFactTypeSilently (FactType factType, @NotNull  Strategy s1, @Nullable Strategy s2) {
+        FactType clone = factType.clone();
+        PersistencyHelper ph1 = new PersistencyHelper(s1).connect();
+        EntityTransaction t = ph1.newTransaction();
+        t.begin();
+        ph1.persist(factType);
+        t.commit();
+        ph1.close();
 
-    private static boolean persistFactType(FactType factType, @NotNull  PersistencyHelper primary, @Nullable PersistencyHelper secondary) {
+        if( s2 != null) {
+            PersistencyHelper ph2 = new PersistencyHelper(s2).connect();
+            EntityTransaction t1 = ph2.newTransaction();
+            t1.begin();
+            ph2.persist(clone);
+            t1.commit();
+            ph2.close();
+        }
+    }
+    private static boolean persistFactType      (FactType factType, @NotNull  Strategy s1, @Nullable Strategy s2) {
         Scanner keyboard = new Scanner(System.in);
 
         CompositeTree.printTree(factType);
-        if(  answerNy("\n\nPersist this FactType?")  )
-        {
-
-            FactType clone = factType.clone();
-
-            EntityTransaction saveTransact = primary.newTransaction();
-            saveTransact.begin();
-            primary.persist(factType);
-            saveTransact.commit();
-
-            if( secondary != null) {
-                EntityTransaction saveTransact2 = secondary.newTransaction();
-                saveTransact2.begin();
-                secondary.persist(clone);
-                saveTransact2.commit();
-            }
-
+        if(  answerNy("\n\nPersist this FactType?")  ) {
+            persistFactTypeSilently(factType, s1, s2);
             return true;
         }
         else return false;
@@ -275,10 +360,17 @@ public class FactTypeManager {
 
 
 
-    private static void performanceTest(PersistencyHelper.Strategy helperStrategy, long idType, boolean ALS)
+    private static void performanceTest (Strategy helperStrategy, long idType)
     {
-        UseCaseTest ucTest = new UseCaseTest(helperStrategy, false);
+        UseCaseTest ucTest = new UseCaseTest(helperStrategy, UseCaseTest.VerbouseMode.CONSOLLE);
         ucTest.test(idType, ALS);
     }
 
+
+    private static void deleteType (long id, Strategy helperStrategy)
+    {
+        PersistencyHelper ph = new PersistencyHelper(helperStrategy, false).connect();
+        ph.factTypeDAO().delete(id);
+        ph.close();
+    }
 }

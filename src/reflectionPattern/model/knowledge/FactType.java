@@ -4,6 +4,9 @@
 package reflectionPattern.model.knowledge;
 
 import com.sun.istack.internal.NotNull;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyToOne;
 import utility.composite.ComponentManager;
 import utility.composite.IComponent;
 import utility.visitor.Visitable;
@@ -36,7 +39,9 @@ public abstract class FactType implements IComponent<CompositeType>, Visitable<I
 
 
 
-    @ManyToOne @JoinColumn(name="parent_fk")
+    @ManyToOne (fetch=FetchType.LAZY, optional = true)
+    @JoinColumn(name="parent_fk")
+    //@Fetch(FetchMode.SELECT)
     @Override
     public CompositeType    getParent()                  { return componentManager.getParent(); }
     public void          setParent(CompositeType parent) { componentManager.setParent(parent);  }

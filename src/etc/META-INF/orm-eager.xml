@@ -1,7 +1,0 @@
-<!--<entity-mappings>-->
-    <!--<entity class="FactType">-->
-        <!--<attributes>-->
-            <!--<basic name="name" fetch="EAGER"/>-->
-        <!--</attributes>-->
-    <!--</entity>-->
-<!--</entity-mappings>-->

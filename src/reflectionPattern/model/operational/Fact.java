@@ -4,7 +4,11 @@
 package reflectionPattern.model.operational;
 
 import com.sun.istack.internal.NotNull;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import reflectionPattern.model.knowledge.FactType;
+import utility.composite.ComponentManager;
+import utility.composite.IComponent;
 import utility.compositeWithAncestors.ComponentManagerALS;
 import utility.compositeWithAncestors.IComponentALS;
 import utility.visitor.Visitable;
@@ -15,11 +19,11 @@ import java.util.List;
 
 @Entity
 @Access(AccessType.PROPERTY)
-public abstract class Fact implements IComponentALS<CompositeFact>, Visitable<IFactVisitor> {
+public abstract class Fact implements IComponent<CompositeFact>, Visitable<IFactVisitor> {
 
 
 
-    ComponentManagerALS<Fact, CompositeFact> componentManager = new ComponentManagerALS<>(this);
+    ComponentManager<Fact, CompositeFact> componentManager = new ComponentManager<>(this);
     private Long     id = null;
     private FactType type;
 
@@ -32,21 +36,6 @@ public abstract class Fact implements IComponentALS<CompositeFact>, Visitable<IF
 
 
 
-    @ManyToMany(fetch=FetchType.LAZY )
-    @JoinTable(name="Fact_AncestorsTable")
-    public List<CompositeFact> getAncestors() { return componentManager.getAncestors(); }
-    protected void setAncestors(List<CompositeFact> ancestors) { componentManager.setAncestors(ancestors);}
-
-
-
-
-
-
-
-
-
-
-
 
     @Id @GeneratedValue
     @Column(name = "id")
@@ -55,14 +44,14 @@ public abstract class Fact implements IComponentALS<CompositeFact>, Visitable<IF
 
 
 
-    @ManyToOne
-    @JoinTable(name="Fact_FactTye")
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinTable(name="Fact_FactType")
     public FactType   getType ()               { return type; }
     protected  void   setType (FactType type)  { this.type = type; }
 
 
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="parent_fact")
     @Override
     public CompositeFact getParent ()                      { return componentManager.getParent(); }
@@ -76,25 +65,7 @@ public abstract class Fact implements IComponentALS<CompositeFact>, Visitable<IF
     *******************************************************************************************************************/
 
 
-    // Should be protected/private, think about tocken-friend method in CompositeManagerALS-ICompositeALS
-    // or remove them from the interface if posssible (I don't think so, I can remove addLastAncestor only).
-    @Override public void addFirstAncestor(CompositeFact newAncestor) {
-        componentManager.addFirstAncestor(newAncestor);
-    }
-    @Override public void addLastAncestor(CompositeFact newAncestor) {
-        componentManager.addLastAncestor(newAncestor);
-    }
-    @Override public void appendAllAncestors(List<CompositeFact> newAncestors) {
-        componentManager.appendAllAncestors(newAncestors);
-    }
 
-
-
-
-    // needed by ComponentManager (IComponent interface)
-//    @Override public void setParent(CompositeFact parent, CompositeManager.CompositeManagerToken friendToken) {
-//        componentManager.setParent(parent, friendToken);
-//    }
 
 
     @Override

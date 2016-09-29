@@ -22,48 +22,48 @@ public class FactTypeDAO {
 
 
     public FactType findById(Long id) {
-//        List<?> results = entityManager.createQuery(
-//                        "select distinct et " +
-//                        " from FactType ft " +
-//                        " where ft.id = :id")
-//                .setParameter("id", id )
-//                .getResultList();
-//
-//        if ( results.size() == 0 ) {
-//            return null;
-//        }
-//
-//        return (FactType) results.get( 0 );
-        return entityManager.find(FactType.class, id);
+        List<FactType> results = entityManager.createQuery(
+                                " select distinct t " +
+                                " from FactType t " +
+                                " where t.id = :id"   )
+                                .setParameter("id", id )
+                                .getResultList();
+        if ( results.size() == 0 ) {
+            return null;
+        }
+        else return results.get(0);
+        //return entityManager.find(FactType.class, id);
     }
 
 
-    public List<FactType> findAllRoots(boolean eager) {
+    public List<FactType> findAllRoots() {
         List<FactType> types =  entityManager
                 .createQuery(   "select ft " +
                                 "from FactType ft " +
                                 "where ft.parent IS NULL")
                 .getResultList();
-
-        if(eager && types != null)
-            for(FactType t : types)
-                if(t instanceof CompositeType)
-                    fetchCompositeEager((CompositeType) t);
-
         return types;
     }
 
-    public List<CompositeType> findAllCompositeRoots(boolean eager) {
+    public List<CompositeType> findAllCompositeRoots() {
         List<CompositeType> types = entityManager
                                         .createQuery(   "select ft " +
-                                                " from FactType ft " +
-                                                " where TYPE(ft)= :type AND ft.parent IS NULL")
-                                        .setParameter("type", CompositeType.class)
+                                                " from CompositeType ft " +
+                                                " where ft.parent IS NULL")
                                         .getResultList();
+        return types;
+    }
+    public List<CompositeType> findAllCompositeRootsEager() {
+        List<CompositeType> types = entityManager
+                .createQuery(   "select ft " +
+                        " from CompositeType ft FETCH ALL PROPERTIES " +
+                        " where TYPE(ft)= :type AND ft.parent IS NULL")
+                .setParameter("type", CompositeType.class)
+                .getResultList();
 
-        if(eager && types != null)
-            for(CompositeType t : types)
-                fetchCompositeEager((CompositeType) t);
+        //  Hibelrnate.initialize(comp); // use smply this doesn't work
+        for(CompositeType c : types)
+            fetchCompositeEager(c);
 
         return types;
     }
@@ -74,8 +74,7 @@ public class FactTypeDAO {
     // TODO: reflectionPattern.test performance with annotation EAGER vs annotation LAZY + this function
     public void fetchCompositeEager(CompositeType comp)
     {
-//        EntityTransaction loadTransact = entityManager.getTransaction();
-//        loadTransact.begin();
+        Hibernate.initialize(comp);
 
         if(comp.getChilds() != null && comp.getChilds().size() > 0)
         {
@@ -85,8 +84,6 @@ public class FactTypeDAO {
                 if(child instanceof  CompositeType)
                     fetchCompositeEager((CompositeType) child);
         }
-
-//        loadTransact.commit();
     }
 
 

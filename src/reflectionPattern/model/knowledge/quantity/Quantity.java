@@ -23,7 +23,7 @@ public class Quantity {
 
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "unit_id")
     public Unit getUnit ()           { return unit; }
     protected  void  setUnit (Unit unit)  { this.unit = unit; }

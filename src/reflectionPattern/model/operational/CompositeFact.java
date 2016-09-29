@@ -4,8 +4,12 @@
 package reflectionPattern.model.operational;
 
 import com.sun.istack.internal.NotNull;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;
+import utility.composite.CompositeManager;
+import utility.composite.IComposite;
 import utility.compositeWithAncestors.CompositeManagerALS;
 import utility.compositeWithAncestors.ICompositeALS;
 
@@ -18,12 +22,12 @@ import java.util.Set;
 @Entity
 @Access(AccessType.PROPERTY)
 @DiscriminatorValue("COMPOSITE")
-public class CompositeFact extends Fact implements ICompositeALS<CompositeFact, Fact> {
+public class CompositeFact extends Fact implements IComposite<CompositeFact, Fact> {
 
     private static final  boolean child_limit = true;
     //if true, impose that this compositeFact must have max 1 fact of each FactType contained in the associated CompositeType.
 
-    CompositeManagerALS<CompositeFact, Fact> compositeManager = new CompositeManagerALS<>(this);
+    CompositeManager<CompositeFact, Fact> compositeManager = new CompositeManager<>(this);
 
 
 
@@ -31,8 +35,8 @@ public class CompositeFact extends Fact implements ICompositeALS<CompositeFact, 
     protected   CompositeFact () {}
     public      CompositeFact (@NotNull CompositeType compType) {
         super(compType);
-        for(FactType type : compType.getChilds())
-            compositionTypeCheck.put(type, 0);
+//        for(FactType type : compType.getChilds())
+//            compositionTypeCheck.put(type, 0);
     }
 
 
@@ -40,19 +44,18 @@ public class CompositeFact extends Fact implements ICompositeALS<CompositeFact, 
 
 
 
-    //EAGER = carico tutti i figli subito!
-    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "parent")
+    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "parent")
     @Override
     public      Set<Fact>  getChilds()                 { return compositeManager.getChilds(); }
     protected   void       setChilds(Set<Fact> childs) { this.compositeManager.setChilds(childs);}
 
 
 
-    @ElementCollection
-    @MapKeyColumn(name="typeCheckKey")
-    @Column(name="typeCheckValue")
-    //@CollectionTable(name="example_attributes", joinColumns=@JoinColumn(name="example_id"))
-    private Map<FactType, Integer> compositionTypeCheck = new HashMap<>();
+//    @ElementCollection
+//    @MapKeyColumn(name="typeCheckKey")
+//    @Column(name="typeCheckValue")
+//    //@CollectionTable(name="example_attributes", joinColumns=@JoinColumn(name="example_id"))
+//    private Map<FactType, Integer> compositionTypeCheck = new HashMap<>();
 
 
 
@@ -69,15 +72,16 @@ public class CompositeFact extends Fact implements ICompositeALS<CompositeFact, 
 
 
     @Override public void addChild(Fact childFact ) {
-        Integer n = compositionTypeCheck.get(childFact.getType());
-        if( n == null || (child_limit && n>1)  ) {
-            // throw new IllegalFactTypeException(); // TODO: throw exception
-        }
-        else
-        {
-            compositionTypeCheck.put(childFact.getType(), n+1);
-            compositeManager.addChild(childFact);
-        }
+//        Integer n = compositionTypeCheck.get(childFact.getType());
+//        if( n == null || (child_limit && n>1)  ) {
+//            // throw new IllegalFactTypeException(); // TODO: throw exception
+//        }
+//        else
+//        {
+//            compositionTypeCheck.put(childFact.getType(), n+1);
+//            compositeManager.addChild(childFact);
+//        }
+        compositeManager.addChild(childFact);
     }
 
 

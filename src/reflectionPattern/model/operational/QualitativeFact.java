@@ -29,11 +29,15 @@ public class QualitativeFact extends Fact {
 
 
 
-    @ManyToOne (fetch=FetchType.LAZY)
+    @ManyToOne (fetch=FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name="phenomenon_id")
-    public Phenomenon getPhenomenon ()                { return this.phenomenon; }
-    public void       setPhenomenon (Phenomenon phen) { this.phenomenon = phen; } // for hibernate, no check legal phen check!
-    // TODO: setPhenomenon has to check for legal phenomenon? I don't think so.. (db performance)
+    public     Phenomenon getPhenomenon ()                { return this.phenomenon; }
+    protected  void       setPhenomenon(Phenomenon phen) { this.phenomenon = phen; } // for hibernate, no check legal phen check!
+    public     void       assignPhenomenon(Phenomenon phen) {
+        if( ((QualitativeType)getType()).getLegalPhenomenons().contains(phenomenon) )
+            this.phenomenon = phen;
+        else; // exception
+    }
 
 
  /* *******************************************************************************************************************
