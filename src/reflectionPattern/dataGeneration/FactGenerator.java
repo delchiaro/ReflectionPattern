@@ -1,5 +1,6 @@
 package reflectionPattern.dataGeneration;
 
+import com.sun.istack.internal.NotNull;
 import reflectionPattern.model.knowledge.*;
 import reflectionPattern.model.knowledge.quantity.Quantity;
 import reflectionPattern.model.knowledge.quantity.Unit;
@@ -21,7 +22,7 @@ public class FactGenerator {
     }
 
 
-    public static Fact generate(FactType type) {
+    public static Fact generate(@NotNull FactType type) {
         EmptyFactGenerator efg = new EmptyFactGenerator();
         type.acceptVisitor(efg);
         return efg.getGeneratedFact();

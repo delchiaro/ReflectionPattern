@@ -1,4 +1,5 @@
 import com.sun.istack.internal.NotNull;
+import org.h2.store.fs.FileUtils;
 import org.testng.internal.Nullable;
 import reflectionPattern.dataGeneration.FactGenerator;
 import reflectionPattern.persistency.PersistencyHelper;
@@ -8,7 +9,10 @@ import reflectionPattern.model.operational.Fact;
 import utility.composite.out.CompositeTree;
 
 import javax.persistence.EntityTransaction;
-import javax.transaction.Transaction;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -16,18 +20,34 @@ import java.util.List;
  */
 public class UseCaseTest {
 
-    private final boolean VERBOUSE;
+    private final VerbouseMode verb;
     PersistencyHelper.Strategy helperStrategy = null;
 
+    String outputFileName = "UseCaseTests.txt";
 
+    PrintWriter fileWrt = null;
+    public enum VerbouseMode { NONE, CONSOLLE, FILE }
 
     UseCaseTest(PersistencyHelper.Strategy helperStrategy) {
-        this(helperStrategy, false);
+        this(helperStrategy, VerbouseMode.NONE);
     }
-    UseCaseTest(PersistencyHelper.Strategy helperStrategy, boolean verbouse) {
-        this.VERBOUSE = verbouse;
+    UseCaseTest(PersistencyHelper.Strategy helperStrategy,VerbouseMode verbouseMode) {
+        this.verb = verbouseMode;
         this.helperStrategy = helperStrategy;
+        setOutputFileName(outputFileName);
     }
+
+    public void setOutputFileName(String fileName) {
+        if(fileWrt != null )
+            fileWrt.close();
+        outputFileName = fileName;
+        try {
+            fileWrt = new PrintWriter(outputFileName, "UTF-8");
+        }
+        catch (FileNotFoundException e) { e.printStackTrace();}
+        catch (UnsupportedEncodingException e) { e.printStackTrace(); }
+    }
+    public String getOutputFileName() { return outputFileName; }
 
 
     public void test(@Nullable Long idType)
@@ -42,42 +62,23 @@ public class UseCaseTest {
     public Fact UC1() {
         return UC1(null);
     }
-    public Fact UC1(@Nullable Long idType) {
+    public Fact UC1( Long idType) {
 
-        System.out.print(" ================= UC 1 =================\n");
-        System.out.print("Apertura di un FactType, istanziazione dei Fact (vuoti) corrispondenti alla struttura dei FactType.\n");
+        consolleOut(" ================= UC 1 =================\n");
+        consolleOut("Apertura di un FactType, istanziazione dei Fact (vuoti) corrispondenti alla struttura dei FactType.\n");
 
         PersistencyHelper.silenceGlobalHibernateLogs();
 
         PersistencyHelper ph = new PersistencyHelper(helperStrategy, true).connect();
-
-
-        List<CompositeType> rootTypes;
-        CompositeType rootType;
-
-
-        //     U.C.1: apertura di una nuova visita medica, istanziazione dei Fact (vuoti) corrispondenti alla struttura dei FactType.
-
-
-        if(idType == null) {
-            // TODO: same reflectionPattern.test but with Eager select (have to modify annotation in FactType, or make a new xml settings for FactType to load).
-            if (VERBOUSE) System.out.print("...Lazy loading of all composite type root...\n");
-            if (VERBOUSE) System.out.print("...Eager fetching of first composite type root...\n");
-        }
 
         EntityTransaction loadTransact = ph.newTransaction();
 
         ph.timer().reset_start();
 
         loadTransact.begin();
-        {
-            if(idType == null) {
-                rootTypes = ph.factTypeDAO().findAllCompositeRoots();
-                rootType = rootTypes.get(0);
-                ph.factTypeDAO().fetchCompositeEager(rootType);
-            }
-            else rootType = (CompositeType) ph.factTypeDAO().findById(idType);
-        }
+
+        CompositeType rootType = (CompositeType) ph.factTypeDAO().findById(idType);
+
         loadTransact.commit();
 
         FactGenerator f = new FactGenerator();
@@ -89,21 +90,25 @@ public class UseCaseTest {
         ph.close();
 
 
-        if(VERBOUSE) {
-            System.out.print("\n\nLoaded FactType: \n");
-            CompositeTree.printTree(rootType);
-        }
 
-        System.out.print("Elapsed load time: \t" +  loadTime + "\n");
-        System.out.print("Executed load queries: \t" +  loadQueries + "\n");
+        consolleOut("\n\nLoaded FactType: \n");
+        consolleOut(CompositeTree.getTree(rootType));
+
+        consolleOut("Elapsed load time: \t" +  loadTime + "\n");
+        consolleOut("Executed load queries: \t" +  loadQueries + "\n");
+
+
+        String typeName = rootType.getTypeName();
+        fileOut("\n"+typeName + "\nUC1: loaded type from db.", "\n\n\n" + typeName + "\n" + loadQueries + "\t" + loadTime );
+
 
         return rootEmptyFact;
 
     }
 
     public  void UC2( Fact rootFact) {
-        System.out.print("\n\n\n ================= UC 2 =================\n");
-        System.out.print("Compilazione casuale di fact vuoto e salvataggio.\n");
+        consolleOut("\n\n\n ================= UC 2 =================\n");
+        consolleOut("Compilazione casuale di fact vuoto e salvataggio.\n");
 
         // U.C.2: il salvataggio di una visita medica compilata
         PersistencyHelper.silenceGlobalHibernateLogs();
@@ -111,11 +116,11 @@ public class UseCaseTest {
         PersistencyHelper ph = new PersistencyHelper(helperStrategy, true).connect();
 
 
-        if(VERBOUSE) System.out.print("...Generating Fact with some random value...\n");
+        consolleOut("...Generating Fact with some random value...\n");
 
         FactGenerator.randomFill(rootFact);
 
-        if(VERBOUSE) System.out.print("...Persisting the generated Fact...\n");
+        consolleOut("...Persisting the generated Fact...\n");
 
         EntityTransaction saveTransact = ph.newTransaction();
 
@@ -133,14 +138,14 @@ public class UseCaseTest {
         ph.entityManager().clear();
         ph.close();
 
-        if(VERBOUSE) {
-            System.out.print("\nSaved Fact: \n");
-            CompositeTree.printTree(rootFact);
-        }
 
-        System.out.print("Elapsed save time: \t" +  saveTime + "\n");
-        System.out.print("Executed save queries: \t" +  saveQueries + "\n");
+        consolleOut("\nSaved Fact: \n");
+        consolleOut(CompositeTree.getTree(rootFact));
+        consolleOut("Elapsed save time: \t" +  saveTime + "\n");
+        consolleOut("Executed save queries: \t" +  saveQueries + "\n");
 
+
+        fileOut("\nUC2: compiled and saved Fact on DB.", "\n"+ saveQueries + "\t" + saveTime  );
 
     }
 
@@ -154,8 +159,8 @@ public class UseCaseTest {
         UC3(null, useALS);
     }
     public  void UC3(@NotNull Long idFact, boolean useALS) {
-        System.out.print("\n\n\n ================= UC 3 =================\n");
-        System.out.print("Lettura Fact precedentemente salvato.\n");
+        consolleOut("\n\n\n ================= UC 3 =================\n");
+        consolleOut("Lettura Fact precedentemente salvato.\n");
 
         PersistencyHelper.silenceGlobalHibernateLogs();
 
@@ -165,7 +170,7 @@ public class UseCaseTest {
         Fact rootFact = null;
         List<Fact> factList = null;
 
-        if(VERBOUSE) System.out.print("...Loading the first root fact associated with the choosen FactType...\n");
+        consolleOut("...Loading the first root fact associated with the choosen FactType...\n");
 
         EntityTransaction loadFactTransact = ph.newTransaction();
 
@@ -192,24 +197,23 @@ public class UseCaseTest {
 
 
         if(rootFact == null)
-            System.out.print("\nTest failed: can't find a corresponding fact in DB \n");
+            consolleOut("\nTest failed: can't find a corresponding fact in DB \n");
         else
         {
-            if(VERBOUSE)
+            if(verb == VerbouseMode.CONSOLLE)
             {
-
                 if(useALS && factList != null)
                 {
-                    System.out.print("\nLoaded Fact (with ALS): \n");
+                    consolleOut("\nLoaded Fact (with ALS): \n");
                     for(Fact f : factList)
-                        System.out.print("\n - " + f.toString() );
+                        consolleOut("\n - " + f.toString() );
                 }
                 else
                 {
-                    System.out.print("\nLoaded Fact: \n");
+                    consolleOut("\nLoaded Fact: \n");
                     CompositeTree.printTree(rootFact);
                 }
-                System.out.print("\n");
+                consolleOut("\n");
             }
 
             // Remove the Fact created in UC2
@@ -224,11 +228,29 @@ public class UseCaseTest {
 
         ph.close();
 
-        System.out.print("Loading fact Elapsed time : \t" +  loadFactTime + "\n");
-        System.out.print("Loading fact Executed queries: \t" +  loadFactQueries + "\n");
+        consolleOut("Loading fact Elapsed time : \t" +  loadFactTime + "\n");
+        consolleOut("Loading fact Executed queries: \t" +  loadFactQueries + "\n");
+
+        fileOut("\nUC3: Loaded Fact from DB.", "\n"+ loadFactQueries + "\t" + loadFactTime  );
+
+        if(fileWrt !=null)
+            fileWrt.close();
     }
 
 
 
+
+
+
+    private void consolleOut(String s) {
+        if(verb == VerbouseMode.CONSOLLE)
+            System.out.print(s);
+    }
+    private void fileOut(String consolleLog, String fileOutString) {
+        if(verb == VerbouseMode.FILE) {
+            System.out.print(consolleLog);
+            fileWrt.print(fileOutString);
+        }
+    }
 
 }
