@@ -39,8 +39,14 @@ public class QuantitativeFact extends Fact {
 
 
     @Embedded
-    public Quantity getQuantity ()               { return this.quantity; }
-    public void     setQuantity (Quantity quant) { this.quantity = quant; } // NO  LEGAL UNIT CHECK!!
+    public    Quantity getQuantity ()                 { return this.quantity; }
+    protected void     setQuantity(Quantity quant)    { this.quantity = quant; } // NO  LEGAL UNIT CHECK!! Only for hibernate
+    public    void     assignQuantity(Quantity quant) {
+        if( ((QuantitativeType)getType()).getLegalUnits().contains(quant))
+            this.quantity = quant;
+        else; // throw exception
+    }
+
 
 
 

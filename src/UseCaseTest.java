@@ -72,7 +72,7 @@ public class UseCaseTest {
         loadTransact.begin();
         {
             if(idType == null) {
-                rootTypes = ph.factTypeDAO().findAllCompositeRoots(false);
+                rootTypes = ph.factTypeDAO().findAllCompositeRoots();
                 rootType = rootTypes.get(0);
                 ph.factTypeDAO().fetchCompositeEager(rootType);
             }
@@ -130,7 +130,7 @@ public class UseCaseTest {
         double saveTime = ph.timer().elapsedMs();
         long   saveQueries = ph.statistics().getPrepareStatementCount();
 
-
+        ph.entityManager().clear();
         ph.close();
 
         if(VERBOUSE) {
@@ -168,10 +168,13 @@ public class UseCaseTest {
         if(VERBOUSE) System.out.print("...Loading the first root fact associated with the choosen FactType...\n");
 
         EntityTransaction loadFactTransact = ph.newTransaction();
+
         ph.timer().reset_start();
         loadFactTransact.begin();
-
+        ph.entityManager().flush();
+        ph.entityManager().clear();
         rootFact = ph.factDAO().findById(idFact);
+
         if(rootFact != null)
         {
             if(useALS && rootFact instanceof CompositeFact);
@@ -194,6 +197,7 @@ public class UseCaseTest {
         {
             if(VERBOUSE)
             {
+
                 if(useALS && factList != null)
                 {
                     System.out.print("\nLoaded Fact (with ALS): \n");
@@ -216,8 +220,6 @@ public class UseCaseTest {
             del.commit();
 
         }
-
-
 
 
         ph.close();

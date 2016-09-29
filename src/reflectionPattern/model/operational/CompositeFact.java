@@ -4,6 +4,8 @@
 package reflectionPattern.model.operational;
 
 import com.sun.istack.internal.NotNull;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;
 import utility.composite.CompositeManager;

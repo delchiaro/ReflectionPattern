@@ -102,7 +102,7 @@ class RandomFactFiller implements IFactVisitor
     public void visit(QualitativeFact fact) {
         Set<Phenomenon> legalPhenomenons = ((QualitativeType)fact.getType()).getLegalPhenomenons();
         Phenomenon phenomenon = legalPhenomenons.toArray(new Phenomenon[]{})[ randInt(0, legalPhenomenons.size()-1)];
-        fact.setPhenomenon(phenomenon);
+        fact.assignPhenomenon(phenomenon);
         return;
     }
 
@@ -110,7 +110,7 @@ class RandomFactFiller implements IFactVisitor
     public void visit(QuantitativeFact fact) {
         Set<Unit> legalUnits = ((QuantitativeType)fact.getType()).getLegalUnits();
         Unit unit = legalUnits.toArray(new Unit[]{})[ randInt(0, legalUnits.size()-1)];
-        fact.setQuantity(new Quantity(randInt(), unit));
+        fact.assignQuantity(new Quantity(randInt(), unit));
         return;
     }
 

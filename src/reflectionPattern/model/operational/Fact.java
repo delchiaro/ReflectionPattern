@@ -4,6 +4,8 @@
 package reflectionPattern.model.operational;
 
 import com.sun.istack.internal.NotNull;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import reflectionPattern.model.knowledge.FactType;
 import utility.composite.ComponentManager;
 import utility.composite.IComponent;
@@ -42,14 +44,14 @@ public abstract class Fact implements IComponent<CompositeFact>, Visitable<IFact
 
 
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinTable(name="Fact_FactType")
     public FactType   getType ()               { return type; }
     protected  void   setType (FactType type)  { this.type = type; }
 
 
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="parent_fact")
     @Override
     public CompositeFact getParent ()                      { return componentManager.getParent(); }

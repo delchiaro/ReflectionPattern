@@ -14,6 +14,19 @@
 
         <properties>
 
+            <!-- DISABLE the second-level cache
+            <property name="hibernate.cache.provider_class" value="net.sf.ehcache.hibernate.EhCacheProvider"/>
+
+            <property name="hibernate.cache.region.factory_class"   value="net.sf.ehcache.hibernate.EhCacheRegionFactory"/>
+            <property name="hibernate.cache.use_query_cache"        value="false"/>
+            <property name="hibernate.cache.use_second_level_cache" value="false"/>
+            <property name="hibernate.cache.use_structured_entries" value="false"/>
+            <property name="hibernate.cache.generate_statistics"    value="false"/>-->
+
+
+
+
+
             <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
             <property name="hibernate.connection.url" value="jdbc:mysql://localhost/reflection-join-table" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
@@ -23,10 +36,10 @@
             <property name="hibernate.archive.autodetection" value="class, hbm" />
 
 
-            <property name="hibernate.c3p0.min_size" value="5" />
-            <property name="hibernate.c3p0.max_size" value="20" />
+            <property name="hibernate.c3p0.min_size" value="1" />
+            <property name="hibernate.c3p0.max_size" value="5" />
             <property name="hibernate.c3p0.timeout" value="300" />
-            <property name="hibernate.c3p0.max_statements" value="50" />
+            <property name="hibernate.c3p0.max_statements" value="0" />
 
             <property name="hibernate.hbm2ddl.auto" value="update"/>
 
@@ -50,6 +63,16 @@
 
         <properties>
 
+            <!-- DISABLE the second-level cache
+            <property name="hibernate.cache.provider_class" value="net.sf.ehcache.hibernate.EhCacheProvider"/>
+            <property name="hibernate.cache.region.factory_class"   value="net.sf.ehcache.hibernate.EhCacheRegionFactory"/>
+            <property name="hibernate.cache.use_query_cache"        value="false"/>
+            <property name="hibernate.cache.use_second_level_cache" value="false"/>
+            <property name="hibernate.cache.use_structured_entries" value="false"/>
+            <property name="hibernate.cache.generate_statistics"    value="false"/>-->
+
+
+
             <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
             <property name="hibernate.connection.url" value="jdbc:mysql://localhost/reflection-single-table" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
@@ -59,10 +82,10 @@
             <property name="hibernate.archive.autodetection" value="class, hbm" />
 
 
-            <property name="hibernate.c3p0.min_size" value="5" />
-            <property name="hibernate.c3p0.max_size" value="20" />
+            <property name="hibernate.c3p0.min_size" value="1" />
+            <property name="hibernate.c3p0.max_size" value="5" />
             <property name="hibernate.c3p0.timeout" value="300" />
-            <property name="hibernate.c3p0.max_statements" value="50" />
+            <property name="hibernate.c3p0.max_statements" value="0" />
 
             <property name="hibernate.hbm2ddl.auto" value="update"/>
 
