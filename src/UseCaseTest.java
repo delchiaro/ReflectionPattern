@@ -23,6 +23,8 @@ public class UseCaseTest {
     private final VerbouseMode verb;
     PersistencyHelper.Strategy helperStrategy = null;
 
+    private boolean printNQueries = true;
+
     String outputFileName = "UseCaseTests.txt";
 
     PrintWriter fileWrt = null;
@@ -36,6 +38,13 @@ public class UseCaseTest {
         this.helperStrategy = helperStrategy;
         setOutputFileName(outputFileName);
     }
+    UseCaseTest(PersistencyHelper.Strategy helperStrategy,VerbouseMode verbouseMode, boolean printNQueries) {
+        this.verb = verbouseMode;
+        this.printNQueries = printNQueries;
+        this.helperStrategy = helperStrategy;
+        setOutputFileName(outputFileName);
+    }
+
 
     public void setOutputFileName(String fileName) {
         if(fileWrt != null )
@@ -54,7 +63,7 @@ public class UseCaseTest {
     {
         Fact rootFact = UC1(idType);
         UC2(rootFact);
-        UC3(rootFact.getId(), false);
+        UC3(rootFact.getId(), useALS);
     }
 
 
@@ -71,15 +80,16 @@ public class UseCaseTest {
 
         PersistencyHelper ph = new PersistencyHelper(helperStrategy, true).connect();
 
-        EntityTransaction loadTransact = ph.newTransaction();
+        // EntityTransaction loadTransact = ph.newTransaction();
 
         ph.timer().reset_start();
 
-        loadTransact.begin();
+        // loadTransact.begin();
 
         CompositeType rootType = (CompositeType) ph.factTypeDAO().findById(idType);
+        ph.factTypeDAO().fetchTypeEager_PhenomsUnits(rootType);
 
-        loadTransact.commit();
+        //loadTransact.commit();
 
         FactGenerator f = new FactGenerator();
         Fact rootEmptyFact = f.generate(rootType);
@@ -99,7 +109,9 @@ public class UseCaseTest {
 
 
         String typeName = rootType.getTypeName();
-        fileOut("\n"+typeName + "\nUC1: loaded type from db.", "\n\n\n" + typeName + "\n" + loadQueries + "\t" + loadTime );
+
+            fileOut("\n"+typeName + "\nUC1: loaded type from db.", "\n\n\n" + typeName
+                    + "\n" + (printNQueries ?  (loadQueries + "\t") : "")  + loadTime );
 
 
         return rootEmptyFact;
@@ -113,7 +125,6 @@ public class UseCaseTest {
         // U.C.2: il salvataggio di una visita medica compilata
         PersistencyHelper.silenceGlobalHibernateLogs();
 
-        PersistencyHelper ph = new PersistencyHelper(helperStrategy, true).connect();
 
 
         consolleOut("...Generating Fact with some random value...\n");
@@ -122,13 +133,16 @@ public class UseCaseTest {
 
         consolleOut("...Persisting the generated Fact...\n");
 
+
+        PersistencyHelper ph = new PersistencyHelper(helperStrategy, true).connect();
+
         EntityTransaction saveTransact = ph.newTransaction();
 
         ph.timer().reset_start();
 
         saveTransact.begin();
         {
-            ph.persist(rootFact);
+            ph.entityManager().persist(rootFact);
         }
         saveTransact.commit();
 
@@ -145,7 +159,7 @@ public class UseCaseTest {
         consolleOut("Executed save queries: \t" +  saveQueries + "\n");
 
 
-        fileOut("\nUC2: compiled and saved Fact on DB.", "\n"+ saveQueries + "\t" + saveTime  );
+        fileOut("\nUC2: compiled and saved Fact on DB.", "\n" + (printNQueries ? (saveQueries + "\t") : "") + saveTime  );
 
     }
 
@@ -170,29 +184,24 @@ public class UseCaseTest {
         Fact rootFact = null;
         List<Fact> factList = null;
 
-        consolleOut("...Loading the first root fact associated with the choosen FactType...\n");
-
-        EntityTransaction loadFactTransact = ph.newTransaction();
+        //EntityTransaction loadFactTransact = ph.newTransaction();
 
         ph.timer().reset_start();
-        loadFactTransact.begin();
-        ph.entityManager().flush();
-        ph.entityManager().clear();
+        //loadFactTransact.begin();
         rootFact = ph.factDAO().findById(idFact);
 
         if(rootFact != null)
         {
-            if(useALS && rootFact instanceof CompositeFact);
-                //factList = ph.factDAO().findAllDescendants((CompositeFact)rootFact);
+            if(useALS && rootFact instanceof CompositeFact)
+                factList = ph.factDAO().findAllDescendants((CompositeFact)rootFact);
 
             else if(rootFact instanceof CompositeFact )
-                ph.factDAO().fetchCompositeEager((CompositeFact) rootFact);
-
-            loadFactTransact.commit();
+                ph.factDAO().fetchEager_TypeUnitPhenom((CompositeFact) rootFact);
         }
+        //loadFactTransact.commit();
         double loadFactTime = ph.timer().elapsedMs();
         long   loadFactQueries = ph.statistics().getPrepareStatementCount();
-
+        ph.close();
 
 
 
@@ -217,21 +226,23 @@ public class UseCaseTest {
             }
 
             // Remove the Fact created in UC2
+            ph.connect();
             EntityTransaction del = ph.newTransaction();
             del.begin();
             ph.factDAO().delete(idFact);
             //ph.remove(rootFact);
             del.commit();
+            ph.close();
 
         }
 
 
-        ph.close();
 
         consolleOut("Loading fact Elapsed time : \t" +  loadFactTime + "\n");
         consolleOut("Loading fact Executed queries: \t" +  loadFactQueries + "\n");
 
-        fileOut("\nUC3: Loaded Fact from DB.", "\n"+ loadFactQueries + "\t" + loadFactTime  );
+
+        fileOut("\nUC3: Loaded Fact from DB.", "\n"+ (printNQueries ? ( loadFactQueries + "\t") : "" ) + loadFactTime  );
 
         if(fileWrt !=null)
             fileWrt.close();

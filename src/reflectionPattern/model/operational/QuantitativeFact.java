@@ -42,10 +42,12 @@ public class QuantitativeFact extends Fact {
     public    Quantity getQuantity ()                 { return this.quantity; }
     protected void     setQuantity(Quantity quant)    { this.quantity = quant; } // NO  LEGAL UNIT CHECK!! Only for hibernate
     public    void     assignQuantity(Quantity quant) {
-        if( ((QuantitativeType)getType()).getLegalUnits().contains(quant))
+        if( ((QuantitativeType)getType()).getLegalUnits().contains(quant.getUnit()))
             this.quantity = quant;
         else; // throw exception
     }
+
+
 
 
 
@@ -61,7 +63,7 @@ public class QuantitativeFact extends Fact {
 
 
     @Override public String toString() {
-        return super.toString() + ": " + (quantity != null ? quantity.getValue().toString() : "");
+        return super.toString() + ": " + (quantity != null ? quantity.toString() : "");
     }
 
     @Override

@@ -29,12 +29,12 @@ public class QualitativeFact extends Fact {
 
 
 
-    @ManyToOne (fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne (fetch=FetchType.LAZY, cascade = CascadeType.REFRESH )
     @JoinColumn(name="phenomenon_id")
     public     Phenomenon getPhenomenon ()                { return this.phenomenon; }
     protected  void       setPhenomenon(Phenomenon phen) { this.phenomenon = phen; } // for hibernate, no check legal phen check!
     public     void       assignPhenomenon(Phenomenon phen) {
-        if( ((QualitativeType)getType()).getLegalPhenomenons().contains(phenomenon) )
+        if( ((QualitativeType)getType()).getLegalPhenomenons().contains(phen) )
             this.phenomenon = phen;
         else; // exception
     }

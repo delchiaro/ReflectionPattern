@@ -3,8 +3,11 @@ package reflectionPattern.persistency;
 import org.hibernate.Hibernate;
 import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;
+import reflectionPattern.model.knowledge.quantity.Unit;
 import reflectionPattern.model.operational.CompositeFact;
 import reflectionPattern.model.operational.Fact;
+import reflectionPattern.model.operational.QualitativeFact;
+import reflectionPattern.model.operational.QuantitativeFact;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -120,11 +123,47 @@ public class FactDAO {
                     fetchCompositeEager((CompositeFact) child);
         }
     }
+
+    public void fetchEager_TypeUnitPhenom(Fact fact)
+    {
+        Hibernate.initialize(fact);
+        Hibernate.initialize(fact.getType());
+
+        if(fact instanceof CompositeFact)
+            for( Fact t : ((CompositeFact) fact).getChilds())
+                fetchEager_TypeUnitPhenom(t);
+
+//        else if( fact instanceof QualitativeFact)
+//            Hibernate.initialize(((QualitativeFact) fact).getPhenomenon());
+//
+//        else if( fact instanceof QuantitativeFact)
+//                Hibernate.initialize(((QuantitativeFact) fact).getQuantity().getUnit());
+    }
     public void fetchFactType(Fact fact)
     {
         Hibernate.initialize(fact.getType());
     }
 
+
+    public  List<Fact> findAllDescendants(CompositeFact ancestor) {
+            List<Fact> facts = entityManager.createQuery(
+                            "SELECT f " +
+                            "FROM Fact f " +
+                            "LEFT JOIN FETCH f.type t " +
+                            "WHERE :ancestor member of f.ancestors")
+            .setParameter("ancestor", ancestor)
+            .getResultList();
+
+            for (Fact f :    facts)
+            {
+                if(f instanceof QualitativeFact)
+                    Hibernate.initialize(((QualitativeFact) f).getPhenomenon());
+                else if(f instanceof  QuantitativeFact)
+                    Hibernate.initialize(((QuantitativeFact) f).getQuantity().getUnit());
+        }
+
+            return facts;
+        }
 
 
 

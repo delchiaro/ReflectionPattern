@@ -37,12 +37,16 @@ public class FactTypeManager {
 
     private static boolean ALS = false;
 
-    public static void main(String ... params) throws Range.MinimumValueException, Range.InfSupValueException {
+
+
+
+    public static void main(String ... params) throws Range.MinimumValueException, Range.InfSupValueException
+    {
         PersistencyHelper.silenceGlobalHibernateLogs();
 
 
 
-        boolean SINGLE_TABLE = false;
+        boolean SINGLE_TABLE = true;
 
         boolean loop = true;
         while(loop)
@@ -60,9 +64,9 @@ public class FactTypeManager {
 
             String chose;
             Scanner keyboard = new Scanner(System.in);
-            System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
             System.out.print("~ MANAGE FACT TYPE ~\t"  + (ALS==true ? "ALS-ON" : "ALS-OFF") +
-                    "\tTest: " + (SINGLE_TABLE==true ? "single-table" : "join-table") + "\tPersistency: single/join-table" +"\n\n");
+                    "\t\tTest: " + (SINGLE_TABLE==true ? "single-table" : "join-table") + "\tPersistency: single/join-table" +"\n\n");
 
             long[] ids_1 = list(s1);
             long[] ids_2 = listSilently(s2);
@@ -187,8 +191,8 @@ public class FactTypeManager {
 
 
     private static void generateMyUseCaseTypes() {
-        int width = 2;
-        int nPhenoms = 2;
+        int width = DEFAULT_FIXED_TREE_WIDTH;
+        int nPhenoms = DEFAULT_FIXED_TREE_N_PHEN;
 
         for( int i = 5; i < 9; i++) {
             System.out.print("\nGenerating: " + "DEPTH:"+i + "_width:"+width + "___" + MySubPhenomeon.class.getSimpleName()+":" + nPhenoms );
@@ -205,7 +209,7 @@ public class FactTypeManager {
     private static void testAll(long[] typeIds, Strategy s) {
 
         UseCaseTest ucTest = new UseCaseTest(s, UseCaseTest.VerbouseMode.FILE);
-        for(int i = 4; i < 8 ; i++)
+        for(int i = 0; i < 5 ; i++)
 //        for(long idType : typeIds)
         {
             long idType = typeIds[i];
@@ -247,9 +251,9 @@ public class FactTypeManager {
 
         PersistencyHelper ph = new PersistencyHelper(s, false).connect();
         EntityTransaction transact = ph.newTransaction();
-        transact.begin();
+        //transact.begin();
          factTypes = ph.factTypeDAO().findAllCompositeRoots();
-        transact.commit();
+        //transact.commit();
         ph.close();
 
         long ids[] = new long[factTypes.size()];

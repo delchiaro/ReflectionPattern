@@ -1,8 +1,8 @@
 package reflectionPattern.persistency;
 
 import org.hibernate.Hibernate;
-import reflectionPattern.model.knowledge.CompositeType;
-import reflectionPattern.model.knowledge.FactType;
+import reflectionPattern.model.knowledge.*;
+import reflectionPattern.model.knowledge.quantity.Unit;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -51,6 +51,8 @@ public class FactTypeDAO {
                                                 " from CompositeType ft " +
                                                 " where ft.parent IS NULL")
                                         .getResultList();
+
+
         return types;
     }
     public List<CompositeType> findAllCompositeRootsEager() {
@@ -61,7 +63,6 @@ public class FactTypeDAO {
                 .setParameter("type", CompositeType.class)
                 .getResultList();
 
-        //  Hibelrnate.initialize(comp); // use smply this doesn't work
         for(CompositeType c : types)
             fetchCompositeEager(c);
 
@@ -71,7 +72,6 @@ public class FactTypeDAO {
 
 
     // Enforce EAGER fetch
-    // TODO: reflectionPattern.test performance with annotation EAGER vs annotation LAZY + this function
     public void fetchCompositeEager(CompositeType comp)
     {
         Hibernate.initialize(comp);
@@ -86,6 +86,23 @@ public class FactTypeDAO {
         }
     }
 
+    public void fetchTypeEager_PhenomsUnits(FactType type)
+    {
+        Hibernate.initialize(type);
+
+        if(type instanceof CompositeType)
+            for( FactType t : ((CompositeType) type).getChilds())
+                fetchTypeEager_PhenomsUnits(t);
+
+        else if( type instanceof QualitativeType )
+            for(Phenomenon p : ((QualitativeType) type).getLegalPhenomenons())
+                Hibernate.initialize(p);
+
+        else if( type instanceof QuantitativeType )
+            for(Unit u : ((QuantitativeType)type).getLegalUnits() )
+                Hibernate.initialize(u);
+
+    }
 
 
     public void delete(Long id) {

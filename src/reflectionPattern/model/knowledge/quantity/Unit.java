@@ -66,6 +66,10 @@ public class Unit {
     }
 
 
+    @Override
+    public String toString() {
+        return "[" + this.symbol + "]" + " (" + this.name + ")";
+    }
 
     @Override
     public int hashCode() {
@@ -77,6 +81,8 @@ public class Unit {
 
     @Override
     public boolean equals(Object obj) {
+        if(this == obj) return true;
+        if(!(obj instanceof Unit)) return false;
         if( obj instanceof Unit)
         {
             Unit unit = (Unit) obj;

@@ -23,7 +23,7 @@ public class Quantity {
 
 
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "unit_id")
     public Unit getUnit ()           { return unit; }
     protected  void  setUnit (Unit unit)  { this.unit = unit; }
@@ -46,8 +46,10 @@ public class Quantity {
     *******************************************************************************************************************/
 
 
-
-
+    @Override
+    public String toString() {
+        return this.value.toString() + this.unit.toString();
+    }
 
     public Quantity convert(@NotNull Unit toUnit) throws ImpossibleConversionException {
         return UnitConverter.converter().convert(this, toUnit);
@@ -61,6 +63,7 @@ public class Quantity {
     }
 
     @Override public boolean equals(Object obj) {
+        if(this==obj) return true;
         if(!(obj instanceof Quantity)) return false;
         Quantity q = (Quantity) obj;
         if(this.getUnit().equals(q.getUnit()) && this.getValue().equals(q.getValue()))

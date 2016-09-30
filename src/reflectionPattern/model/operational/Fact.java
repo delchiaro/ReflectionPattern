@@ -6,6 +6,7 @@ package reflectionPattern.model.operational;
 import com.sun.istack.internal.NotNull;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.ManyToAny;
 import reflectionPattern.model.knowledge.FactType;
 import utility.composite.ComponentManager;
 import utility.composite.IComponent;
@@ -19,11 +20,11 @@ import java.util.List;
 
 @Entity
 @Access(AccessType.PROPERTY)
-public abstract class Fact implements IComponent<CompositeFact>, Visitable<IFactVisitor> {
+public abstract class Fact implements IComponentALS<CompositeFact>, Visitable<IFactVisitor> {
 
 
 
-    ComponentManager<Fact, CompositeFact> componentManager = new ComponentManager<>(this);
+    ComponentManagerALS<Fact, CompositeFact> componentManager = new ComponentManagerALS<>(this);
     private Long     id = null;
     private FactType type;
 
@@ -59,18 +60,39 @@ public abstract class Fact implements IComponent<CompositeFact>, Visitable<IFact
 
 
 
+    @ManyToMany(fetch=FetchType.LAZY )
+    @JoinTable(name="Fact_AncestorsTable")
+    public List<CompositeFact> getAncestors() { return componentManager.getAncestors(); }
+    protected void setAncestors(List<CompositeFact> ancestors) { componentManager.setAncestors(ancestors);}
 
- /* *******************************************************************************************************************
+
+
+    /* *******************************************************************************************************************
     *******************************************************************************************************************
     *******************************************************************************************************************/
 
+
+    @Override
+    public void addFirstAncestor(CompositeFact newAncestor) {
+        componentManager.addFirstAncestor(newAncestor);
+    }
+
+    @Override
+    public void addLastAncestor(CompositeFact newAncestor) {
+        componentManager.addLastAncestor(newAncestor);
+    }
+
+    @Override
+    public void appendAllAncestors(List<CompositeFact> newAncestors) {
+        componentManager.appendAllAncestors(newAncestors);
+    }
 
 
 
 
     @Override
     public String toString() {
-        return this.getType().toString();
+        return ((this.type != null) ? this.type.toString() : "");
     }
 
     @Override
