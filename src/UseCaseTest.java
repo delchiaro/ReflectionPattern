@@ -34,18 +34,18 @@ public class UseCaseTest {
         this(helperStrategy, VerbouseMode.NONE);
     }
     UseCaseTest(PersistencyHelper.Strategy helperStrategy,VerbouseMode verbouseMode) {
-        this.verb = verbouseMode;
-        this.helperStrategy = helperStrategy;
-        setOutputFileName(outputFileName);
+        this(helperStrategy, verbouseMode, false);
     }
     UseCaseTest(PersistencyHelper.Strategy helperStrategy,VerbouseMode verbouseMode, boolean printNQueries) {
         this.verb = verbouseMode;
         this.printNQueries = printNQueries;
         this.helperStrategy = helperStrategy;
-        setOutputFileName(outputFileName);
     }
 
 
+    public void setPrintNQueries(boolean b) {
+        this.printNQueries = b;
+    }
     public void setOutputFileName(String fileName) {
         if(fileWrt != null )
             fileWrt.close();
@@ -110,8 +110,7 @@ public class UseCaseTest {
 
         String typeName = rootType.getTypeName();
 
-            fileOut("\n"+typeName + "\nUC1: loaded type from db.", "\n\n\n" + typeName
-                    + "\n" + (printNQueries ?  (loadQueries + "\t") : "")  + loadTime );
+            fileOut("\n"+typeName + "\nUC1: loaded type from db.", (printNQueries ?  (loadQueries + "\t") : "")  + loadTime );
 
 
         return rootEmptyFact;

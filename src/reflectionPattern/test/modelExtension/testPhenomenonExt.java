@@ -4,8 +4,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import reflectionPattern.model.knowledge.*;
 import reflectionPattern.model.knowledge.quantity.Unit;
-import reflectionPattern.modelExtension.MyAggregatePhenomenon;
-import reflectionPattern.modelExtension.MySubPhenomeon;
+import reflectionPattern.model.knowledge.MyAggregatePhenomenon;
+import reflectionPattern.model.knowledge.MySubPhenomeon;
 import reflectionPattern.persistency.PersistencyHelper;
 
 import javax.persistence.EntityTransaction;

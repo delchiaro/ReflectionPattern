@@ -2,8 +2,8 @@ package reflectionPattern.dataGeneration;
 
 import reflectionPattern.model.knowledge.*;
 import reflectionPattern.model.knowledge.quantity.Unit;
-import reflectionPattern.modelExtension.MyAggregatePhenomenon;
-import reflectionPattern.modelExtension.MySubPhenomeon;
+import reflectionPattern.model.knowledge.MyAggregatePhenomenon;
+import reflectionPattern.model.knowledge.MySubPhenomeon;
 
 import static reflectionPattern.dataGeneration.RandomUtils.randInt;
 import static reflectionPattern.dataGeneration.RandomUtils.randomString;

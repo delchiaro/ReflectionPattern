@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Embeddable
 @Access(AccessType.PROPERTY)
 public class Quantity {
-    private Unit unit;
+    private Unit    unit;
     private Number  value;
 
 
@@ -20,7 +20,15 @@ public class Quantity {
         this.unit=unit;
         this.value=value;
     }
+    public      Quantity(Quantity copy) {
+        this.unit = copy.unit.deepCopy();
+        this.value = copy.value;
+    }
 
+
+    public Quantity deepCopy() {
+        return new Quantity(this);
+    }
 
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)

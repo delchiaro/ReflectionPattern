@@ -4,14 +4,13 @@ import reflectionPattern.dataGeneration.*;
 import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;
 import reflectionPattern.model.knowledge.Phenomenon;
-import reflectionPattern.modelExtension.MyAggregatePhenomenon;
-import reflectionPattern.modelExtension.MySubPhenomeon;
+import reflectionPattern.model.knowledge.MyAggregatePhenomenon;
+import reflectionPattern.model.knowledge.MySubPhenomeon;
 import reflectionPattern.persistency.PersistencyHelper;
 import utility.composite.out.CompositeTree;
 import reflectionPattern.persistency.PersistencyHelper.Strategy;
 
 import javax.persistence.EntityTransaction;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,15 +27,16 @@ import static utility.io.UtilsIO.answerNy;
 public class FactTypeManager {
 
 
-    private static final int DEFAULT_FIXED_TREE_DEPTH = 4;
-    private static final int DEFAULT_FIXED_TREE_WIDTH = 2;
-    private static final int DEFAULT_FIXED_TREE_N_PHEN = 2;
+    private static final int DEFAULT_FIXED_TREE_DEPTH = 5;
+    private static final int DEFAULT_FIXED_TREE_WIDTH = 3;
+    private static final int DEFAULT_FIXED_TREE_N_PHEN = 3;
 
     private static Strategy s1 =  Strategy.singleTable;
     private static Strategy s2 =  Strategy.joinTable;
 
     private static boolean ALS = false;
 
+    private static String bench_dir = "/home/nagash/Desktop/BENCH/";
 
 
 
@@ -45,8 +45,10 @@ public class FactTypeManager {
         PersistencyHelper.silenceGlobalHibernateLogs();
 
 
+        boolean ALS = false;
+        boolean SINGLE_TABLE = false;
 
-        boolean SINGLE_TABLE = true;
+
 
         boolean loop = true;
         while(loop)
@@ -72,21 +74,22 @@ public class FactTypeManager {
             long[] ids_2 = listSilently(s2);
             System.out.print("\n");
             System.out.print("Usage: [command] [list-index]\n");
-            System.out.print("t  - test of performance      \tt [list-index]\n");
-            System.out.print("ta - test all                 \tta  \n");
+            System.out.print("t   - test of performance      \tt [list-index]\n");
+            System.out.print("ta  - test all                 \tta  \n");
+            System.out.print("tah - test all (1 cold + 3 hot)\ttah \n");
 
-            System.out.print("a  - Ancestor List Strategy toggle (ALS)\t\n");
-            System.out.print("j  - join-table enable/disable (join/single table switch)\t\n");
+            System.out.print("a   - Ancestor List Strategy toggle (ALS)\t\n");
+            System.out.print("j   - join-table enable/disable (join/single table switch)\t\n");
 
 
-            System.out.print("g  - generate all useCase fixed\t\n");
+            System.out.print("g   - generate all useCase fixed\t\n");
 
-            System.out.print("f  - fixed FactType generation\tf [depth] [width] [nUnits/nPhenoms]\n");
-            System.out.print("fa - fixed + aggregate phens  \tf [depth] [width] [nUnits/nPhenoms]\n");
-            System.out.print("fs - fixed + sub phens        \tf [depth] [width] [nUnits/nPhenoms]\n");
-            System.out.print("n  - new random FactType generation\n");
-            System.out.print("d  - delete fact FactType     \td [list-index]\n");
-            System.out.print("s  - show FactType tree       \ts [list-index]\n");
+            System.out.print("f   - fixed FactType generation\tf [depth] [width] [nUnits/nPhenoms]\n");
+            System.out.print("fa  - fixed + aggregate phens  \tf [depth] [width] [nUnits/nPhenoms]\n");
+            System.out.print("fs  - fixed + sub phens        \tf [depth] [width] [nUnits/nPhenoms]\n");
+            System.out.print("n   - new random FactType generation\n");
+            System.out.print("d   - delete fact FactType     \td [list-index]\n");
+            System.out.print("s   - show FactType tree       \ts [list-index]\n");
 
             // System.out.print("r  - reset DB (delete all)\n");
             System.out.print("q  - quit\n");
@@ -113,7 +116,12 @@ public class FactTypeManager {
                     break;
 
                 case "ta":
-                    testAll(ids_1, s1);
+                    testAll(ids_1, s1, 1, true);
+
+                case "tah":
+                    testAll(ids_1, s1, 1, true);
+                    for(int i = 1; i < 3; i++)
+                        testAll(ids_1, s1, i, false);
                     break;
 
                 case "g":
@@ -194,26 +202,27 @@ public class FactTypeManager {
         int width = DEFAULT_FIXED_TREE_WIDTH;
         int nPhenoms = DEFAULT_FIXED_TREE_N_PHEN;
 
-        for( int i = 5; i < 9; i++) {
+        for( int i = 5; i <= 8; i++) {
             System.out.print("\nGenerating: " + "DEPTH:"+i + "_width:"+width + "___" + MySubPhenomeon.class.getSimpleName()+":" + nPhenoms );
             generateFixedTypeTreeSilently(i, width, nPhenoms, MySubPhenomeon.class, s1, s2);
             System.out.print("\t\tDONE!");
         }
-        for( int i = 5; i < 9; i++) {
+        for( int i = 5; i <= 8; i++) {
             System.out.print("\nGenerating: " + "DEPTH:" + i + "_width:" + width + MySubPhenomeon.class.getSimpleName() + ":" + nPhenoms);
             generateFixedTypeTreeSilently(i, width, nPhenoms, MyAggregatePhenomenon.class, s1, s2);
             System.out.print("\t\tDONE!");
         }
     }
 
-    private static void testAll(long[] typeIds, Strategy s) {
+    private static void testAll(long[] typeIds, Strategy s, int iter, boolean coldExec) {
 
         UseCaseTest ucTest = new UseCaseTest(s, UseCaseTest.VerbouseMode.FILE);
-        for(int i = 0; i < 5 ; i++)
-//        for(long idType : typeIds)
+
+        for(int i = 4; i < 8 ; i++)
+        //for(long idType : typeIds)
         {
             long idType = typeIds[i];
-            Path path = Paths.get("/home/nagash/Desktop/UseCasetests/");
+            Path path = Paths.get(bench_dir);
             try {
                 Files.createDirectories(path);
             } catch (IOException e) {
@@ -221,7 +230,14 @@ public class FactTypeManager {
                 System.out.print("Can't create directory. Exiting.");
                 return;
             }
-            ucTest.setOutputFileName("/home/nagash/Desktop/UseCasetests/out-"+ idType + ".xls");
+            PersistencyHelper ph = new PersistencyHelper(s, false).connect();
+            FactType t = ph.factTypeDAO().findById(idType);
+
+            ucTest.setOutputFileName(bench_dir +
+                    ( s==Strategy.singleTable ? "singleT" : "joinT") + "_" +
+                    ( ALS ? "AlsON" : "AlsOFF") +
+                    "/out-"+  t.toString() + "_" +
+                    (coldExec ? "cold" : "hot") + iter + ".txt");
             ucTest.test(idType, ALS);
         }
 
@@ -250,10 +266,7 @@ public class FactTypeManager {
         List<CompositeType> factTypes;
 
         PersistencyHelper ph = new PersistencyHelper(s, false).connect();
-        EntityTransaction transact = ph.newTransaction();
-        //transact.begin();
-         factTypes = ph.factTypeDAO().findAllCompositeRoots();
-        //transact.commit();
+        factTypes = ph.factTypeDAO().findAllCompositeRoots();
         ph.close();
 
         long ids[] = new long[factTypes.size()];
@@ -262,7 +275,8 @@ public class FactTypeManager {
         for (FactType ft : factTypes) {
             ids[i] = ft.getId();
             if(verbose)
-                System.out.print("  " + (++i) + ") " + ft.toString() + "\n");
+                System.out.print("  " + (i+1) + ") " + ft.toString() + "\n");
+            i++;
         }
 
         return ids;
@@ -332,7 +346,10 @@ public class FactTypeManager {
 
 
     private static void persistFactTypeSilently (FactType factType, @NotNull  Strategy s1, @Nullable Strategy s2) {
-        FactType clone = factType.clone();
+        FactType clone = factType.deepCopy();
+
+
+
         PersistencyHelper ph1 = new PersistencyHelper(s1).connect();
         EntityTransaction t = ph1.newTransaction();
         t.begin();
@@ -348,6 +365,7 @@ public class FactTypeManager {
             t1.commit();
             ph2.close();
         }
+
     }
     private static boolean persistFactType      (FactType factType, @NotNull  Strategy s1, @Nullable Strategy s2) {
         Scanner keyboard = new Scanner(System.in);

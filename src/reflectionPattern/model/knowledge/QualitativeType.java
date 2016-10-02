@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity
 @Access(AccessType.PROPERTY)
 @DiscriminatorValue("QUALITATIVE")
-public class QualitativeType extends FactType
+public class QualitativeType extends FactType implements Cloneable
 {
 
     Set<Phenomenon> legalPhenomenons = new HashSet<>();
@@ -25,9 +25,10 @@ public class QualitativeType extends FactType
     public      QualitativeType(QualitativeType copy) {
         super(copy);
         for( Phenomenon l : copy.legalPhenomenons)
-            legalPhenomenons.add(new Phenomenon(l));
+            legalPhenomenons.add(l.deepCopy());
     }
-    @Override public FactType clone() {
+
+    @Override public FactType deepCopy() {
         return new QualitativeType(this);
     }
 

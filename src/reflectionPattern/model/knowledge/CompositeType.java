@@ -4,10 +4,6 @@
 package reflectionPattern.model.knowledge;
 
 import com.sun.istack.internal.NotNull;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.LazyCollection;
-import org.testng.annotations.Optional;
 import utility.composite.CompositeManager;
 import utility.composite.IComposite;
 
@@ -58,9 +54,9 @@ public class CompositeType extends FactType implements IComposite<CompositeType,
     public    CompositeType (CompositeType copy) {
         super( copy );
         for( FactType f : copy.compositeManager.getChilds() )
-            this.compositeManager.addChild( f.clone() );
+            this.compositeManager.addChild( f.deepCopy() );
     }
-    @Override public FactType clone() {
+    @Override public FactType deepCopy() {
         return new CompositeType(this);
     }
 

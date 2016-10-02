@@ -22,7 +22,7 @@ public class TextualType extends FactType {
         super(copy);
     }
     @Override
-    public FactType clone() {
+    public FactType deepCopy() {
         return new TextualType(this);
     }
 

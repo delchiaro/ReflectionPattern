@@ -36,10 +36,10 @@ public class QuantitativeType extends FactType {
         super(copy);
         this.legalUnits = new HashSet<>();
         for( Unit c : copy.legalUnits)
-            legalUnits.add( new Unit(c) );
+            legalUnits.add( c.deepCopy() );
     }
     @Override
-    public FactType clone() {
+    public FactType deepCopy() {
         return new QuantitativeType(this);
     }
 

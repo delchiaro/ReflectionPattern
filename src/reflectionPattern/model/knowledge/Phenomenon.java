@@ -1,6 +1,10 @@
 package reflectionPattern.model.knowledge;
 
 import com.sun.istack.internal.NotNull;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
 
 import javax.persistence.*;
 
@@ -13,16 +17,27 @@ import javax.persistence.*;
 public class Phenomenon {
 
 
+    @Transient
+    private MyAggregatePhenomenon aggregatePhenomenon = null;
 
     protected Phenomenon() {}
     public Phenomenon(@NotNull String value){
         this.value = value;
     }
-    public Phenomenon(@NotNull Phenomenon copy) {
+    public Phenomenon(@NotNull Phenomenon copy)
+    {
         this.value = copy.value;
+        if(copy.aggregatePhenomenon != null)
+        {
+            this.aggregatePhenomenon = copy.aggregatePhenomenon.deepCopy();
+            aggregatePhenomenon.setPhenomenon(this);
+        }
     }
 
 
+    public Phenomenon deepCopy() {
+        return new Phenomenon(this);
+    }
 
     @Column(name = "id")
     @Id @GeneratedValue
@@ -39,11 +54,25 @@ public class Phenomenon {
 
 
 
+    @OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    @JoinColumn(name="id")
+    @LazyToOne(LazyToOneOption.NO_PROXY)
+    public MyAggregatePhenomenon getAggregatePhenomenon() {
+        return aggregatePhenomenon;
+    }
+    protected void setAggregatePhenomenon(MyAggregatePhenomenon aggregatePhenomenon) {
+        this.aggregatePhenomenon = aggregatePhenomenon;
+    }
+//    protected void onAggregatePhenAssignPhen(MyAggregatePhenomenon aggregatePhenomenon){
+//        this.aggregatePhenomenon = aggregatePhenomenon;
+//    }
+
+
+
 
  /* *******************************************************************************************************************
     *******************************************************************************************************************
     *******************************************************************************************************************/
-
 
 
     @Override public String toString() {

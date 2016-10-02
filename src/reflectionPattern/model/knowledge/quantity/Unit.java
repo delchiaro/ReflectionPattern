@@ -26,6 +26,9 @@ public class Unit {
         this.symbol = copy.symbol;
     }
 
+    public Unit deepCopy() {
+        return new Unit(this);
+    }
 
     @Column(name = "id")
     @Id @GeneratedValue

@@ -1,6 +1,4 @@
-package reflectionPattern.modelExtension;
-
-import reflectionPattern.model.knowledge.Phenomenon;
+package reflectionPattern.model.knowledge;
 
 import javax.persistence.*;
 
@@ -25,24 +23,39 @@ public class MyAggregatePhenomenon {
         this.phenomenon = null;
     }
     public MyAggregatePhenomenon(Phenomenon phen, String code, String description) {
-        this.phenomenon = phen;
         this.code = code;
         this.description = description;
+        assignPhenomenon(phen);
+    }
+    public MyAggregatePhenomenon(MyAggregatePhenomenon copy) {
+        this.code = copy.code;
+        this.description = copy.description;
+        this.phenomenon = copy.phenomenon;
+    }
+
+    public MyAggregatePhenomenon deepCopy() {
+        return new MyAggregatePhenomenon(this);
     }
 
 
-    @ManyToOne (cascade = CascadeType.ALL)
-    @JoinColumn(name="phen_id")
+
+    @OneToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @JoinColumn(name="id")
     public Phenomenon getPhenomenon() {
         return phenomenon;
     }
     protected void setPhenomenon(Phenomenon phen) {
         this.phenomenon = phen;
     }
-
+    public void assignPhenomenon(Phenomenon phen) {
+        setPhenomenon(phen);
+        phen.setAggregatePhenomenon(this);
+    }
 
 
 
     public String getCode() { return code; }
     public String getDescription() { return description; }
+
+
 }

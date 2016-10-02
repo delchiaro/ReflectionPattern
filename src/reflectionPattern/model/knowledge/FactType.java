@@ -35,7 +35,7 @@ public abstract class FactType implements IComponent<CompositeType>, Visitable<I
     public FactType(FactType copy) {
         this.typeName = copy.getTypeName();
     }
-    public abstract FactType clone();
+    public abstract FactType deepCopy();
 
 
 
