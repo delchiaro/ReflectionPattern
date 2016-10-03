@@ -3,13 +3,13 @@ package reflectionPattern.model.knowledge;
 import com.sun.istack.internal.NotNull;
 import reflectionPattern.model.knowledge.Phenomenon;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 /**
  * Created by nagash on 22/09/16.
  */
 @Entity
+@Access(AccessType.PROPERTY)
 @DiscriminatorValue("MY_SUB_PHEN")
 public class MySubPhenomeon extends Phenomenon {
 
@@ -33,8 +33,17 @@ public class MySubPhenomeon extends Phenomenon {
         return new MySubPhenomeon(this);
     }
 
+    @Column
     public String getCode() { return code; }
+    protected void setCode(String code) {
+        this.code = code;
+    }
+
+    @Column
     public String getDescription() { return description; }
+    public void setDescription(String descr) {
+        this.description = descr;
+    }
 
 
 }

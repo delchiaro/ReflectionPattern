@@ -11,21 +11,21 @@ import javax.persistence.*;
 /**
  * Created by nagash on 02/09/16.
  */
-@Access(AccessType.FIELD)
+@Access(AccessType.PROPERTY)
 @Inheritance( strategy = InheritanceType.JOINED )
 @Entity
 public class Phenomenon {
 
-
-    @Transient
+    private Long id = null;
+    private String value;
     private MyAggregatePhenomenon aggregatePhenomenon = null;
+
 
     protected Phenomenon() {}
     public Phenomenon(@NotNull String value){
         this.value = value;
     }
-    public Phenomenon(@NotNull Phenomenon copy)
-    {
+    public Phenomenon(@NotNull Phenomenon copy) {
         this.value = copy.value;
         if(copy.aggregatePhenomenon != null)
         {
@@ -33,29 +33,38 @@ public class Phenomenon {
             aggregatePhenomenon.setPhenomenon(this);
         }
     }
-
-
     public Phenomenon deepCopy() {
         return new Phenomenon(this);
     }
 
+
+
+
     @Column(name = "id")
     @Id @GeneratedValue
-    private Long id = null;
+    public Long getId() {
+        return id;
+    }
+    protected void setId(Long id) {
+        this.id = id;
+    }
 
 
 
     @Column
-    private String value;
     public String getValue() {
         return value;
+    }
+    protected void setValue(String value ) {
+        this.value = value;
     }
 
 
 
 
-    @OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-    @JoinColumn(name="id")
+
+    @OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY,  mappedBy = "phenomenon", optional = true )
+    //@JoinColumn(name="id_aggregate")
     @LazyToOne(LazyToOneOption.NO_PROXY)
     public MyAggregatePhenomenon getAggregatePhenomenon() {
         return aggregatePhenomenon;

@@ -1,5 +1,8 @@
 package reflectionPattern.model.knowledge;
 
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
+
 import javax.persistence.*;
 
 /**
@@ -7,15 +10,12 @@ import javax.persistence.*;
  */
 
 @Entity
-@Access(AccessType.FIELD)
+@Access(AccessType.PROPERTY)
 public class MyAggregatePhenomenon {
-
-
-    @Id  @GeneratedValue @Column(name="id")  private Long id;
-    @Transient private Phenomenon phenomenon;
-
+    private Long id;
     private String code;
     private String description;
+    private Phenomenon phenomenon;
 
 
 
@@ -38,9 +38,34 @@ public class MyAggregatePhenomenon {
     }
 
 
+    @Id  @GeneratedValue @Column(name="id")
+    public Long getId() {
+        return id;
+    }
+    protected void setId(Long id) {
+        this.id = id;
+    }
 
-    @OneToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-    @JoinColumn(name="id")
+
+    @Column
+    public String getCode() { return code; }
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+
+    @Column
+    public String getDescription() { return description; }
+    protected void setDescription(String description) {
+        this.description = description;
+    }
+
+
+
+    @OneToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER, optional = false)
+    @JoinColumn(name="id_phen")
+    @LazyToOne(LazyToOneOption.NO_PROXY)
+
     public Phenomenon getPhenomenon() {
         return phenomenon;
     }
@@ -52,10 +77,6 @@ public class MyAggregatePhenomenon {
         phen.setAggregatePhenomenon(this);
     }
 
-
-
-    public String getCode() { return code; }
-    public String getDescription() { return description; }
 
 
 }

@@ -203,15 +203,17 @@ public class FactTypeManager {
         int nPhenoms = DEFAULT_FIXED_TREE_N_PHEN;
 
         for( int i = 5; i <= 8; i++) {
-            System.out.print("\nGenerating: " + "DEPTH:"+i + "_width:"+width + "___" + MySubPhenomeon.class.getSimpleName()+":" + nPhenoms );
-            generateFixedTypeTreeSilently(i, width, nPhenoms, MySubPhenomeon.class, s1, s2);
-            System.out.print("\t\tDONE!");
-        }
-        for( int i = 5; i <= 8; i++) {
             System.out.print("\nGenerating: " + "DEPTH:" + i + "_width:" + width + MySubPhenomeon.class.getSimpleName() + ":" + nPhenoms);
             generateFixedTypeTreeSilently(i, width, nPhenoms, MyAggregatePhenomenon.class, s1, s2);
             System.out.print("\t\tDONE!");
         }
+
+        for( int i = 5; i <= 8; i++) {
+            System.out.print("\nGenerating: " + "DEPTH:"+i + "_width:"+width + "___" + MySubPhenomeon.class.getSimpleName()+":" + nPhenoms );
+            generateFixedTypeTreeSilently(i, width, nPhenoms, MySubPhenomeon.class, s1, s2);
+            System.out.print("\t\tDONE!");
+        }
+
     }
 
     private static void testAll(long[] typeIds, Strategy s, int iter, boolean coldExec) {
