@@ -7,13 +7,14 @@ import reflectionPattern.model.knowledge.MySubPhenomeon;
 
 import static reflectionPattern.dataGeneration.RandomUtils.randInt;
 import static reflectionPattern.dataGeneration.RandomUtils.randomString;
-import static reflectionPattern.dataGeneration.RandomUtils.timeMillis;
+import static reflectionPattern.dataGeneration.RandomUtils.uniqueTimeID;
 
 
 /**
  * Created by nagash on 12/09/16.
  */
 public class FactTypeGenerator {
+    private final static int RNDM_STR_LEN = 3;
 
     private FactTypeGeneratorParam param;
     public FactTypeGeneratorParam getParam() { return param; }
@@ -70,7 +71,7 @@ public class FactTypeGenerator {
         switch(type)
         {
             case 0:
-                factType = new CompositeType( "COMPOSITE_" + timeMillis() + "_" + randomString(7) );
+                factType = new CompositeType( "COMPOSITE_" + uniqueTimeID() + "_" + randomString(RNDM_STR_LEN) );
                 int nChilds;
                 if(depth==0)
                     nChilds = randInt( param.getRootChildsRange().inf()>0 ? param.getRootChildsRange().inf() : 1, param.getRootChildsRange().sup());
@@ -81,40 +82,41 @@ public class FactTypeGenerator {
                 break;
 
             case 1:
-                factType = new QuantitativeType( "QUANTITATIVE_" + timeMillis() + "_" + randomString(7) );
+                factType = new QuantitativeType( "QUANTITATIVE_" + uniqueTimeID() + "_" + randomString(RNDM_STR_LEN) );
                 int nUnits = randInt(param.getUnitsRange());
                 for(int i=0; i<nUnits; i++)
                 {
-                    String symbol = randomString(7);
-                    ((QuantitativeType)factType).addLegalUnit(  new Unit("UNIT_"+ timeMillis() + "_" + symbol, symbol));
+                    String symbol = randomString(RNDM_STR_LEN);
+                    ((QuantitativeType)factType).addLegalUnit(  new Unit("UNIT_"+ uniqueTimeID() + "_" + symbol, symbol));
                 }
                 break;
 
             case 2:
-                factType = new QualitativeType( "QUALITATIVE_" + timeMillis() + "_" + randomString(7) );
+                factType = new QualitativeType( "QUALITATIVE_" + uniqueTimeID() + "_" + randomString(RNDM_STR_LEN) );
                 int nPhenom = randInt(param.getUnitsRange());
                 for(int i=0; i<nPhenom; i++)
                 {
                     Phenomenon p;
-                    String value = "PHENOMENON_" + timeMillis() + "_" + randomString(7);
-                    String code = "CODE_" + timeMillis() + "_" + randomString(3);
+                    String value =  "_" + uniqueTimeID() + "_" + randomString(RNDM_STR_LEN);
+                    String code = "CODE_" + uniqueTimeID() + "_" + randomString(RNDM_STR_LEN);
 
                     if(param.getSubPhenomenon() == MySubPhenomeon.class)
-                        p = new MySubPhenomeon( code, value);
+                        p = new MySubPhenomeon( code, MySubPhenomeon.class.getSimpleName() + value);
                     else if(param.getSubPhenomenon() == MyAggregatePhenomenon.class)
                     {
+                        value =  MyAggregatePhenomenon.class.getSimpleName() + value;
                         p = new Phenomenon(value);
                         new MyAggregatePhenomenon(p,code, value);
                     }
                     else
-                        p = new Phenomenon(value);
+                        p = new Phenomenon( Phenomenon.class.getSimpleName() + value);
 
                     ((QualitativeType) factType).addLegalPhenomenon(p);
                 }
                 break;
 
             case 3:
-                factType = new TextualType( "TEXTUAL_" + timeMillis() + "_" + randomString(7) );
+                factType = new TextualType( "TEXTUAL_" + uniqueTimeID() + "_" + randomString(RNDM_STR_LEN) );
                 break;
 
             default: factType=null;

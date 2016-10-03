@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
-import static reflectionPattern.dataGeneration.RandomUtils.timeMillis;
+import static reflectionPattern.dataGeneration.RandomUtils.uniqueTimeID;
 import static utility.io.UtilsIO.answerNy;
 
 /**
@@ -43,7 +43,7 @@ public class FactTypeManager {
     public static void main(String ... params) throws Range.MinimumValueException, Range.InfSupValueException
     {
         PersistencyHelper.silenceGlobalHibernateLogs();
-
+        RandomUtils.initUtils();
 
         boolean ALS = false;
         boolean SINGLE_TABLE = false;
@@ -66,7 +66,7 @@ public class FactTypeManager {
 
             String chose;
             Scanner keyboard = new Scanner(System.in);
-            System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            System.out.print("\n\n\n\n\n\n");
             System.out.print("~ MANAGE FACT TYPE ~\t"  + (ALS==true ? "ALS-ON" : "ALS-OFF") +
                     "\t\tTest: " + (SINGLE_TABLE==true ? "single-table" : "join-table") + "\tPersistency: single/join-table" +"\n\n");
 
@@ -74,9 +74,10 @@ public class FactTypeManager {
             long[] ids_2 = listSilently(s2);
             System.out.print("\n");
             System.out.print("Usage: [command] [list-index]\n");
-            System.out.print("t   - test of performance      \tt [list-index]\n");
-            System.out.print("ta  - test all                 \tta  \n");
-            System.out.print("tah - test all (1 cold + 3 hot)\ttah \n");
+            System.out.print("t   - test of performance             \tt [list-index]\n");
+            System.out.print("tv  - test of performance (verbose)   \tt [list-index]\n");
+            System.out.print("ta  - test all (output in file)       \tta  \n");
+            System.out.print("tah - test all (1 cold + 3 hot)       \ttah \n");
 
             System.out.print("a   - Ancestor List Strategy toggle (ALS)\t\n");
             System.out.print("j   - join-table enable/disable (join/single table switch)\t\n");
@@ -84,12 +85,12 @@ public class FactTypeManager {
 
             System.out.print("g   - generate all useCase fixed\t\n");
 
-            System.out.print("f   - fixed FactType generation\tf [depth] [width] [nUnits/nPhenoms]\n");
-            System.out.print("fa  - fixed + aggregate phens  \tf [depth] [width] [nUnits/nPhenoms]\n");
-            System.out.print("fs  - fixed + sub phens        \tf [depth] [width] [nUnits/nPhenoms]\n");
+            System.out.print("f   - fixed FactType generation       \tf [depth] [width] [nUnits/nPhenoms]\n");
+            System.out.print("fa  - fixed + aggregate phens         \tf [depth] [width] [nUnits/nPhenoms]\n");
+            System.out.print("fs  - fixed + sub phens               \tf [depth] [width] [nUnits/nPhenoms]\n");
             System.out.print("n   - new random FactType generation\n");
-            System.out.print("d   - delete fact FactType     \td [list-index]\n");
-            System.out.print("s   - show FactType tree       \ts [list-index]\n");
+            System.out.print("d   - delete fact FactType            \td [list-index]\n");
+            System.out.print("s   - show FactType tree              \ts [list-index]\n");
 
             // System.out.print("r  - reset DB (delete all)\n");
             System.out.print("q  - quit\n");
@@ -102,6 +103,7 @@ public class FactTypeManager {
             if(pieces.length < 1)
                 return;
 
+            UseCaseTest.OutputMode outMode = UseCaseTest.OutputMode.CONSOLLE;
             Integer index;
             switch( pieces[0] )
             {
@@ -110,10 +112,13 @@ public class FactTypeManager {
                 case "a":  ALS = !ALS; break;
                 case "j": SINGLE_TABLE=!SINGLE_TABLE; break;
 
+                case "tv":
+                    outMode = UseCaseTest.OutputMode.CONSOLLE_VERBOSE;
                 case "t":
                     if(pieces.length < 2){ break; }
-                    performanceTest(s1, ids_1[Integer.parseInt(pieces[1])-1]);
+                    performanceTest(s1, ids_1[Integer.parseInt(pieces[1])-1], outMode);
                     break;
+
 
                 case "ta":
                     testAll(ids_1, s1, 1, true);
@@ -202,11 +207,7 @@ public class FactTypeManager {
         int width = DEFAULT_FIXED_TREE_WIDTH;
         int nPhenoms = DEFAULT_FIXED_TREE_N_PHEN;
 
-        for( int i = 5; i <= 8; i++) {
-            System.out.print("\nGenerating: " + "DEPTH:" + i + "_width:" + width + MySubPhenomeon.class.getSimpleName() + ":" + nPhenoms);
-            generateFixedTypeTreeSilently(i, width, nPhenoms, MyAggregatePhenomenon.class, s1, s2);
-            System.out.print("\t\tDONE!");
-        }
+
 
         for( int i = 5; i <= 8; i++) {
             System.out.print("\nGenerating: " + "DEPTH:"+i + "_width:"+width + "___" + MySubPhenomeon.class.getSimpleName()+":" + nPhenoms );
@@ -214,11 +215,18 @@ public class FactTypeManager {
             System.out.print("\t\tDONE!");
         }
 
+        for( int i = 5; i <= 8; i++) {
+            System.out.print("\nGenerating: " + "DEPTH:" + i + "_width:" + width + MySubPhenomeon.class.getSimpleName() + ":" + nPhenoms);
+            generateFixedTypeTreeSilently(i, width, nPhenoms, MyAggregatePhenomenon.class, s1, s2);
+            System.out.print("\t\tDONE!");
+        }
+
+
     }
 
     private static void testAll(long[] typeIds, Strategy s, int iter, boolean coldExec) {
 
-        UseCaseTest ucTest = new UseCaseTest(s, UseCaseTest.VerbouseMode.FILE);
+        UseCaseTest ucTest = new UseCaseTest(s, UseCaseTest.OutputMode.FILE);
 
         for(int i = 4; i < 8 ; i++)
         //for(long idType : typeIds)
@@ -321,7 +329,7 @@ public class FactTypeManager {
 
         FactTypeGenerator gen = new FactTypeGenerator(params);
         FactType factType =  gen.randomFactType();
-        factType.setTypeName("COMPOSITE_DEPTH:"+depth+"__WIDTH:"+ width +"__"+ subPhenClass.getSimpleName() + ":"+nUnitPhenom  + "___" + timeMillis() );
+        factType.setTypeName("COMPOSITE_DEPTH:"+depth+"__WIDTH:"+ width +"__"+ subPhenClass.getSimpleName() + ":"+nUnitPhenom  + "___" + uniqueTimeID() );
         return factType;
     }
 
@@ -383,10 +391,13 @@ public class FactTypeManager {
 
 
 
+    private static void performanceTest (Strategy helperStrategy, long idType) {
+        performanceTest(helperStrategy, idType, UseCaseTest.OutputMode.CONSOLLE);
+    }
 
-    private static void performanceTest (Strategy helperStrategy, long idType)
+    private static void performanceTest (Strategy helperStrategy, long idType, UseCaseTest.OutputMode outputMode)
     {
-        UseCaseTest ucTest = new UseCaseTest(helperStrategy, UseCaseTest.VerbouseMode.CONSOLLE);
+        UseCaseTest ucTest = new UseCaseTest(helperStrategy, outputMode);
         ucTest.test(idType, ALS);
     }
 

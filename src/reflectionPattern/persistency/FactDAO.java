@@ -3,6 +3,7 @@ package reflectionPattern.persistency;
 import org.hibernate.Hibernate;
 import reflectionPattern.model.knowledge.CompositeType;
 import reflectionPattern.model.knowledge.FactType;
+import reflectionPattern.model.knowledge.QualitativeType;
 import reflectionPattern.model.knowledge.quantity.Unit;
 import reflectionPattern.model.operational.CompositeFact;
 import reflectionPattern.model.operational.Fact;
@@ -133,8 +134,10 @@ public class FactDAO {
             for( Fact t : ((CompositeFact) fact).getChilds())
                 fetchEager_TypeUnitPhenom(t);
 
-//        else if( fact instanceof QualitativeFact)
-//            Hibernate.initialize(((QualitativeFact) fact).getPhenomenon());
+        else if( fact instanceof QualitativeFact)
+        {
+            Hibernate.initialize(((QualitativeFact) fact).getPhenomenon());
+        }
 //
 //        else if( fact instanceof QuantitativeFact)
 //                Hibernate.initialize(((QuantitativeFact) fact).getQuantity().getUnit());
@@ -157,7 +160,7 @@ public class FactDAO {
             for (Fact f :    facts)
             {
                 if(f instanceof QualitativeFact)
-                    Hibernate.initialize(((QualitativeFact) f).getPhenomenon());
+                    Hibernate.initialize( ((QualitativeFact) f).getPhenomenon() );
                 else if(f instanceof  QuantitativeFact)
                     Hibernate.initialize(((QuantitativeFact) f).getQuantity().getUnit());
         }

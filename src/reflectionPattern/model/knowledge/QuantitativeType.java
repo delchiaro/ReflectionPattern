@@ -58,6 +58,20 @@ public class QuantitativeType extends FactType {
     *******************************************************************************************************************/
 
     @Override
+    public String toString() {
+        String ret = super.toString();
+        int size = legalUnits.size();
+        if(size > 0)
+        {
+            ret += " - legals {";
+            int i = 0;
+            for (Unit p : legalUnits)
+                ret += p.getName() + (++i == size ? "}" : ", ");
+        }
+        return ret;
+    }
+
+    @Override
     public void acceptVisitor(IFactTypeVisitor visitor) {
         visitor.visit(this);
     }

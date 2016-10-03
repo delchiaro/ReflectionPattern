@@ -62,10 +62,9 @@ public class MyAggregatePhenomenon {
 
 
 
-    @OneToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER, optional = false)
+    @OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY, optional = false)
     @JoinColumn(name="id_phen")
     @LazyToOne(LazyToOneOption.NO_PROXY)
-
     public Phenomenon getPhenomenon() {
         return phenomenon;
     }
@@ -78,5 +77,10 @@ public class MyAggregatePhenomenon {
     }
 
 
+    @Override
+    public String toString() {
+        return " - " + code; // + " - " + description;
+        //return "";
+    }
 
 }

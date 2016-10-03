@@ -85,7 +85,10 @@ public class Phenomenon {
 
 
     @Override public String toString() {
-        return value;
+        String ret = value;
+        if(aggregatePhenomenon!=null)
+            ret+=aggregatePhenomenon.toString();
+        return ret;
     }
 
     @Override public boolean equals(Object obj) {

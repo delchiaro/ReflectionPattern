@@ -46,9 +46,17 @@ public class RandomUtils {
     }
 
 
-    public static long timeMillis(){
-        return (System.currentTimeMillis()); // % 1000);
+
+    private static long initNanoTime = 0;
+    public static void initUtils() {
+        initNanoTime = System.nanoTime();
     }
+    public static long uniqueTimeID(){
+        long time = System.nanoTime();
+        return (time-initNanoTime)%  999331;
+
+    }
+
 
 
 

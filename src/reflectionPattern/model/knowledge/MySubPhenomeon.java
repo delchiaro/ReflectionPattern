@@ -29,7 +29,7 @@ public class MySubPhenomeon extends Phenomenon {
     }
 
     @Override
-    public Phenomenon deepCopy() {
+    public MySubPhenomeon deepCopy() {
         return new MySubPhenomeon(this);
     }
 
@@ -46,4 +46,8 @@ public class MySubPhenomeon extends Phenomenon {
     }
 
 
+    @Override
+    public String toString() {
+        return super.toString() + " - " + code;
+    }
 }

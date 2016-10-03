@@ -102,7 +102,7 @@ public class CommandLineMain {
         if(coldExec && iter > 1)
             return;
 
-        UseCaseTest ucTest = new UseCaseTest(s, UseCaseTest.VerbouseMode.FILE);
+        UseCaseTest ucTest = new UseCaseTest(s, UseCaseTest.OutputMode.FILE);
         PersistencyHelper.silenceGlobalHibernateLogs();
 
 

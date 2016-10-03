@@ -4,6 +4,8 @@
 package reflectionPattern.model.operational;
 
 import com.sun.istack.internal.NotNull;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
 import reflectionPattern.model.knowledge.Phenomenon;
 import reflectionPattern.model.knowledge.QualitativeType;
 
@@ -14,6 +16,7 @@ import javax.persistence.*;
 @DiscriminatorValue("QUALITATIVE")
 public class QualitativeFact extends Fact {
 
+    private static final boolean TO_STRING_SHOW_LEGAL_PHENS = false; // for true value needs to initializate the Type EAGER.
     private Phenomenon phenomenon = null;
 
     protected   QualitativeFact () {}
@@ -31,6 +34,7 @@ public class QualitativeFact extends Fact {
 
     @ManyToOne (fetch=FetchType.LAZY, cascade = CascadeType.REFRESH )
     @JoinColumn(name="phenomenon_id")
+    @LazyToOne(LazyToOneOption.PROXY)
     public     Phenomenon getPhenomenon ()                { return this.phenomenon; }
     protected  void       setPhenomenon(Phenomenon phen) { this.phenomenon = phen; } // for hibernate, no check legal phen check!
     public     void       assignPhenomenon(Phenomenon phen) {
@@ -52,7 +56,13 @@ public class QualitativeFact extends Fact {
 
     @Override
     public String toString() {
-        return super.toString() + ": " + (phenomenon != null ? phenomenon.getValue() : "");
+        String ret;
+        if(TO_STRING_SHOW_LEGAL_PHENS)
+             ret = super.toString();
+        else ret = ((this.getType() != null) ? this.getType().getTypeName() : "");
+
+        ret +=  ": " + (phenomenon != null ? phenomenon.toString() : "");
+        return ret;
     }
 
 

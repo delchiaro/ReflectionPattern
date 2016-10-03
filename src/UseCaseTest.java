@@ -1,5 +1,4 @@
 import com.sun.istack.internal.NotNull;
-import org.h2.store.fs.FileUtils;
 import org.testng.internal.Nullable;
 import reflectionPattern.dataGeneration.FactGenerator;
 import reflectionPattern.persistency.PersistencyHelper;
@@ -9,7 +8,6 @@ import reflectionPattern.model.operational.Fact;
 import utility.composite.out.CompositeTree;
 
 import javax.persistence.EntityTransaction;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -20,7 +18,7 @@ import java.util.List;
  */
 public class UseCaseTest {
 
-    private final VerbouseMode verb;
+    private final OutputMode verb;
     PersistencyHelper.Strategy helperStrategy = null;
 
     private boolean printNQueries = true;
@@ -28,16 +26,16 @@ public class UseCaseTest {
     String outputFileName = "UseCaseTests.txt";
 
     PrintWriter fileWrt = null;
-    public enum VerbouseMode { NONE, CONSOLLE, FILE }
+    public enum OutputMode { NONE, CONSOLLE, CONSOLLE_VERBOSE, FILE }
 
     UseCaseTest(PersistencyHelper.Strategy helperStrategy) {
-        this(helperStrategy, VerbouseMode.NONE);
+        this(helperStrategy, OutputMode.NONE);
     }
-    UseCaseTest(PersistencyHelper.Strategy helperStrategy,VerbouseMode verbouseMode) {
-        this(helperStrategy, verbouseMode, false);
+    UseCaseTest(PersistencyHelper.Strategy helperStrategy, OutputMode outputMode) {
+        this(helperStrategy, outputMode, false);
     }
-    UseCaseTest(PersistencyHelper.Strategy helperStrategy,VerbouseMode verbouseMode, boolean printNQueries) {
-        this.verb = verbouseMode;
+    UseCaseTest(PersistencyHelper.Strategy helperStrategy, OutputMode outputMode, boolean printNQueries) {
+        this.verb = outputMode;
         this.printNQueries = printNQueries;
         this.helperStrategy = helperStrategy;
     }
@@ -74,7 +72,7 @@ public class UseCaseTest {
     public Fact UC1( Long idType) {
 
         consolleOut(" ================= UC 1 =================\n");
-        consolleOut("Apertura di un FactType, istanziazione dei Fact (vuoti) corrispondenti alla struttura dei FactType.\n");
+        consolleOutVerbose("Apertura di un FactType, istanziazione dei Fact (vuoti) corrispondenti alla struttura dei FactType.\n");
 
         PersistencyHelper.silenceGlobalHibernateLogs();
 
@@ -101,8 +99,8 @@ public class UseCaseTest {
 
 
 
-        consolleOut("\n\nLoaded FactType: \n");
-        consolleOut(CompositeTree.getTree(rootType));
+        consolleOutVerbose("\n\nLoaded FactType: \n");
+        consolleOutVerbose(CompositeTree.getTree(rootType));
 
         consolleOut("Elapsed load time: \t" +  loadTime + "\n");
         consolleOut("Executed load queries: \t" +  loadQueries + "\n");
@@ -118,19 +116,20 @@ public class UseCaseTest {
     }
 
     public  void UC2( Fact rootFact) {
-        consolleOut("\n\n\n ================= UC 2 =================\n");
-        consolleOut("Compilazione casuale di fact vuoto e salvataggio.\n");
+        consolleOutVerbose("\n\n\n");
+        consolleOut("\n ================= UC 2 =================\n");
+        consolleOutVerbose("Compilazione casuale di fact vuoto e salvataggio.\n");
 
         // U.C.2: il salvataggio di una visita medica compilata
         PersistencyHelper.silenceGlobalHibernateLogs();
 
 
 
-        consolleOut("...Generating Fact with some random value...\n");
+        consolleOutVerbose("...Generating Fact with some random value...\n");
 
         FactGenerator.randomFill(rootFact);
 
-        consolleOut("...Persisting the generated Fact...\n");
+        consolleOutVerbose("...Persisting the generated Fact...\n");
 
 
         PersistencyHelper ph = new PersistencyHelper(helperStrategy, true).connect();
@@ -152,8 +151,8 @@ public class UseCaseTest {
         ph.close();
 
 
-        consolleOut("\nSaved Fact: \n");
-        consolleOut(CompositeTree.getTree(rootFact));
+        consolleOutVerbose("\nSaved Fact: \n");
+        consolleOutVerbose(CompositeTree.getTree(rootFact));
         consolleOut("Elapsed save time: \t" +  saveTime + "\n");
         consolleOut("Executed save queries: \t" +  saveQueries + "\n");
 
@@ -172,7 +171,8 @@ public class UseCaseTest {
         UC3(null, useALS);
     }
     public  void UC3(@NotNull Long idFact, boolean useALS) {
-        consolleOut("\n\n\n ================= UC 3 =================\n");
+        consolleOutVerbose("\n\n\n");
+        consolleOut("\n ================= UC 3 =================\n");
         consolleOut("Lettura Fact precedentemente salvato.\n");
 
         PersistencyHelper.silenceGlobalHibernateLogs();
@@ -208,20 +208,20 @@ public class UseCaseTest {
             consolleOut("\nTest failed: can't find a corresponding fact in DB \n");
         else
         {
-            if(verb == VerbouseMode.CONSOLLE)
+            if(verb == OutputMode.CONSOLLE_VERBOSE)
             {
                 if(useALS && factList != null)
                 {
-                    consolleOut("\nLoaded Fact (with ALS): \n");
+                    consolleOutVerbose("\nLoaded Fact (with ALS): \n");
                     for(Fact f : factList)
-                        consolleOut("\n - " + f.toString() );
+                        consolleOutVerbose("\n - " + f.toString() );
                 }
                 else
                 {
-                    consolleOut("\nLoaded Fact: \n");
+                    consolleOutVerbose("\nLoaded Fact: \n");
                     CompositeTree.printTree(rootFact);
                 }
-                consolleOut("\n");
+                consolleOutVerbose("\n");
             }
 
             // Remove the Fact created in UC2
@@ -251,13 +251,17 @@ public class UseCaseTest {
 
 
 
+    private void consolleOutVerbose(String s) {
+        if(verb == OutputMode.CONSOLLE_VERBOSE )
+            System.out.print(s);
+    }
 
     private void consolleOut(String s) {
-        if(verb == VerbouseMode.CONSOLLE)
+        if(verb == OutputMode.CONSOLLE || verb == OutputMode.CONSOLLE_VERBOSE)
             System.out.print(s);
     }
     private void fileOut(String consolleLog, String fileOutString) {
-        if(verb == VerbouseMode.FILE) {
+        if(verb == OutputMode.FILE) {
             System.out.print(consolleLog);
             fileWrt.print(fileOutString);
         }

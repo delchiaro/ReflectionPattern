@@ -95,8 +95,11 @@ public class FactTypeDAO {
                 fetchTypeEager_PhenomsUnits(t);
 
         else if( type instanceof QualitativeType )
-            for(Phenomenon p : ((QualitativeType) type).getLegalPhenomenons())
+        {
+            //Hibernate.initialize( ((QualitativeType) type).getLegalPhenomenons());
+            for (Phenomenon  p : ((QualitativeType) type).getLegalPhenomenons())
                 Hibernate.initialize(p);
+        }
 
         else if( type instanceof QuantitativeType )
             for(Unit u : ((QuantitativeType)type).getLegalUnits() )

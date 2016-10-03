@@ -67,6 +67,21 @@ public class QualitativeType extends FactType implements Cloneable
 
 
 
+    @Override public String toString() {
+        String ret = super.toString();
+        int size = legalPhenomenons.size();
+        if(size > 0)
+        {
+            ret += " - legals {";
+            int i = 0;
+            for (Phenomenon p : legalPhenomenons)
+                ret += p.getValue() + (++i == size ? "}" : ", ");
+        }
+        return ret;
+    }
+
+
+
     @Override public int hashCode() {
         int result = super.hashCode();
         //result = 31 * result + (legalPhenomenons != null ? legalPhenomenons.hashCode() : 0);

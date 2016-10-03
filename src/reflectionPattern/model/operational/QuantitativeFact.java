@@ -15,6 +15,7 @@ import javax.persistence.*;
 @Access(AccessType.PROPERTY)
 @DiscriminatorValue("QUANTITATIVE")
 public class QuantitativeFact extends Fact {
+    private static final boolean TO_STRING_SHOW_LEGAL_UNITS = false; // for true value needs to initializate the Type EAGER.
 
 
     private Quantity quantity = null;
@@ -63,7 +64,13 @@ public class QuantitativeFact extends Fact {
 
 
     @Override public String toString() {
-        return super.toString() + ": " + (quantity != null ? quantity.toString() : "");
+        String ret;
+        if(TO_STRING_SHOW_LEGAL_UNITS)
+            ret = super.toString();
+        else ret = ((this.getType() != null) ? this.getType().getTypeName() : "");
+
+        ret +=  ": " + (quantity != null ? quantity.toString() : "");
+        return ret;
     }
 
     @Override
