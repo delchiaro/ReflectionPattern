@@ -148,14 +148,16 @@ public class FactDAO {
     }
 
 
-    public  List<Fact> findAllDescendants(CompositeFact ancestor) {
+    public  List<Fact> findAllDescendants(CompositeFact root) {
             List<Fact> facts = entityManager.createQuery(
                             "SELECT f " +
                             "FROM Fact f " +
                             "LEFT JOIN FETCH f.type t " +
                             "WHERE :ancestor member of f.ancestors")
-            .setParameter("ancestor", ancestor)
+            .setParameter("ancestor", root)
             .getResultList();
+
+        facts.add(root);
 
             for (Fact f :    facts)
             {
@@ -174,6 +176,8 @@ public class FactDAO {
         Fact toRemove = findById(id);
         entityManager.remove(toRemove);
     }
+
+
 
 
 
